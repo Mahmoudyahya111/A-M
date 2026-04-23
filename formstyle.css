@@ -1,27 +1,60 @@
-body{
+/*body{
     background-color: #000000;
     background-image: url(textile_image.avif);
-    background-size: cover;          /* Scale image to cover entire element */
-     background-repeat: no-repeat;   /* Prevent image from repeating */
-     background-position: center;     /* Center image within the container */
-     background-attachment: fixed;    /* (Optional) Keeps image static during scroll */
-     min-height: 100vh;               /* Ensure body is at least full screen height */
-     /* 1. Turn the body into the Flexbox Container */
+    background-size: cover;          
+     background-repeat: no-repeat;   
+     background-position: center;    
+     background-attachment: fixed;    
+     min-height: 100vh;               
     display: flex;
     
-    /* 2. Center the 'main' element horizontally */
     justify-content: center;
     
-    /* 3. Center the 'main' element vertically */
+    
     align-items: center;
     
-    /* 4. Keep this! It gives the body 'room' to center vertically */
+   
     min-height: 100vh; 
-    margin: 0;            /* Ensure body is at least full screen height */
+    margin: 0;            
     font-family: "Saira Stencil", sans-serif;
+    align-items: center;
+}*/
+
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    /* This prevents the "bounce" that causes white gaps */
+    overflow-x: hidden; 
+}
+
+body {
+    background-color: #000000;
+    font-family: "Saira Stencil", sans-serif;
+    color: #bdd4e7;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
     align-items: center;
 }
 
+/* THE FIX: Create a dedicated background layer */
+body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url(textile_image.avif);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    /* Keeps it behind everything */
+    z-index: -1; 
+    /* Ensures the image doesn't move or reset on scroll */
+    will-change: transform; 
+}
 #surveyform{
     display: flex;
     justify-content: center;
@@ -34,8 +67,8 @@ form {
     min-height: 20rem; 
     
     /* CHANGED: Use percentage for width with a max-limit */
-    width: 90%; 
-    max-width: 40rem; 
+    width: 20%; 
+    min-width: min-content;
     
     font-weight: bold;
     display: flex;
@@ -48,8 +81,9 @@ form {
     transition: 1s;
     
     /* ADDED: Internal spacing so content doesn't hit the edges */
-    padding: 2rem; 
+    padding: 0.2rem; 
     box-sizing: border-box; 
+    object-fit: contain;
 }
 
 form::selection{
