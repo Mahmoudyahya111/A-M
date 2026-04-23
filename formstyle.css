@@ -168,3 +168,10 @@ cursor: pointer;
 box-shadow: 0 0.5em 0.7em  #BDD4E7;
 transform: translatey(-0.25em)
 }
+
+button a{
+    color: #bdd4e7;
+    text-decoration: none;
+    letter-spacing: 5px;
+    transition: 0.25s;
+}
