@@ -25,35 +25,38 @@
    
 
 }*/
-html {
-    /* 1. Allow the HTML to be as tall as the content needs */
-    height: -webkit-fill-available; 
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    /* This prevents the "bounce" that causes white gaps */
+    overflow-x: hidden; 
 }
 
 body {
     background-color: #000000;
+    font-family: "Saira Stencil", sans-serif;
+    color: #bdd4e7;
+    min-height: 100vh;
+}
+
+/* THE FIX: Create a dedicated background layer */
+body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     background-image: url(textile_image.avif);
-    
-    /* 2. THE SECRET SAUCE: Ensure the image stays fixed while content moves */
-    background-attachment: fixed; 
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-
-    /* 3. Ensure the body is at least as tall as the phone screen */
-    min-height: 100vh;
-    min-height: -webkit-fill-available; 
-    
-    margin: 0;
-    font-family: "Saira Stencil", sans-serif;
-    color: #bdd4e7;
-
-    /* 4. Center your content */
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    /* Keeps it behind everything */
+    z-index: -1; 
+    /* Ensures the image doesn't move or reset on scroll */
+    will-change: transform; 
 }
-
 nav{
     display: flex;
     height: fit-content;
