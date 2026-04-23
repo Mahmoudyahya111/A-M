@@ -19,6 +19,7 @@ body{
     min-height: 100vh; 
     margin: 0;            /* Ensure body is at least full screen height */
     font-family: "Saira Stencil", sans-serif;
+    align-items: center;
 }
 
 #surveyform{
@@ -38,6 +39,7 @@ justify-content: center;
 border-radius: 2rem;
 text-align: center;
 transition: 1s;
+align-content: center;
 }
 
 form::selection{
