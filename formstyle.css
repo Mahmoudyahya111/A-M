@@ -26,20 +26,30 @@ body{
     display: flex;
     justify-content: center;
 }
-form{
-       background-color: #696969 ;
-       color: #242424;
-       height: 20rem;
-       width: 40rem;
-       font-weight: bold;
-       display: flex;
-    flex-direction: column; /* Keeps the inputs stacked vertically */
+form {
+    background-color: #696969;
+    color: #242424;
+    
+    /* CHANGED: Use min-height instead of height to prevent text overflow */
+    min-height: 20rem; 
+    
+    /* CHANGED: Use percentage for width with a max-limit */
+    width: 90%; 
+    max-width: 40rem; 
+    
+    font-weight: bold;
+    display: flex;
+    flex-direction: column;
     gap: 15px;
-justify-content: center;
-border-radius: 2rem;
-text-align: center;
-transition: 1s;
-align-content: center;
+    justify-content: center;
+    align-items: center; /* Ensures inputs center within the form */
+    border-radius: 2rem;
+    text-align: center;
+    transition: 1s;
+    
+    /* ADDED: Internal spacing so content doesn't hit the edges */
+    padding: 2rem; 
+    box-sizing: border-box; 
 }
 
 form::selection{
