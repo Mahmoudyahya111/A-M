@@ -38,6 +38,7 @@ body {
     font-family: "Saira Stencil", sans-serif;
     color: #bdd4e7;
     min-height: 100vh;
+    z-index: -1; 
 }
 
 /* THE FIX: Create a dedicated background layer */
@@ -92,18 +93,18 @@ nav a{
 
 .product-card{
      background-color: rgba(40, 42, 50, 0.412);
-    width: clamp(6rem, 5vw, 10rem);
+    width: 5%;
     height: auto;
     display: flex;
     flex-direction: column;
     flex-wrap: wrap;
     justify-content: center;
     background-size: cover;
-    padding: 0%;
+    padding: 0px;
     min-height: fit-content;
     min-width: fit-content;
     text-align: center;
-    border-radius: 10%;
+    border-radius: 2rem;
     align-items: center;
     transition: 0.25s;
 
@@ -116,9 +117,9 @@ nav a{
 }
 
 img{
-    width: 100%;
-    height:  clamp(15.75rem, 30vh, 20rem);
-    min-width: max-content;
+    width: 70%;
+    min-width: 10%;
+    height: 20vh;
     margin: 0;
 }
 
