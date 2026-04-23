@@ -1,0 +1,124 @@
+body{
+    background-color: #000000;
+    background-image: url(textile_image.avif);
+    background-size: cover;          /* Scale image to cover entire element */
+     background-repeat: no-repeat;   /* Prevent image from repeating */
+     background-position: center;     /* Center image within the container */
+     background-attachment: fixed;    /* (Optional) Keeps image static during scroll */
+     min-height: 100vh;               /* Ensure body is at least full screen height */
+     /* 1. Turn the body into the Flexbox Container */
+    display: flex;
+    
+    /* 2. Center the 'main' element horizontally */
+    justify-content: center;
+    
+    /* 3. Center the 'main' element vertically */
+    align-items: center;
+    
+    /* 4. Keep this! It gives the body 'room' to center vertically */
+    min-height: 100vh; 
+    margin: 0;            /* Ensure body is at least full screen height */
+    font-family: "Saira Stencil", sans-serif;
+}
+
+#surveyform{
+    display: flex;
+    justify-content: center;
+}
+form{
+       background-color: #696969 ;
+       color: #242424;
+       height: 20rem;
+       width: 40rem;
+       font-weight: bold;
+       display: flex;
+    flex-direction: column; /* Keeps the inputs stacked vertically */
+    gap: 15px;
+justify-content: center;
+border-radius: 2rem;
+text-align: center;
+transition: 1s;
+}
+
+form::selection{
+    background-color: #BDD4E7;
+    color: #242424;
+    border-radius: 50%;
+    
+}
+
+form:hover{
+    background-color: rgba(0, 0, 0,0.2);
+    color: #BDD4E7;
+}
+
+section input{
+        background-color: #57585c;
+        border-radius: 1rem;
+        color: black;
+        font-weight: bold;
+        padding: 1em;
+        font-family: "Saira Stencil", sans-serif;
+
+}
+input::placeholder{
+    color: black;
+    font-weight: bold;
+    font-family: "Saira Stencil", sans-serif;
+}
+
+
+#feedback{
+    font-family: "Saira Stencil", sans-serif;
+   background-color: rgb(87, 88, 92);
+        border-radius: 1rem;
+        color: black;
+        font-weight: bold;
+        padding: 0.5rem;
+        max-height: max-content;
+        max-width: max-content;
+        min-width: fit-content;
+        min-height: fit-content;
+        
+}
+
+
+
+#feedback::placeholder{
+    color: black;
+    font-weight: bold;
+}
+
+
+
+input:focus, #feedback:focus {
+    outline: none; /* Removes the default blue browser glow */
+    border: 2px solid #c4c4c4; /* Adds your custom gold brand border */
+    background-color: rgba(87, 88, 92, 0.573); /* Slightly changes the box fill */
+    transition: 0.3s; /* Makes the border fade in smoothly */
+    color: #BDD4E7;
+}
+
+
+input::selection, #feedback::selection {
+    background-color: #BDD4E7;
+    color: #242424;
+        border-radius: 50%;
+
+}
+
+button{
+        background-color: #57585c;
+        border-radius: 1rem;
+        color: #BDD4E7;
+            letter-spacing: 5px;
+            transition: 0.25s;
+
+}
+
+button:hover{
+background-color: #282a32;
+cursor: pointer;
+box-shadow: 0 0.5em 0.7em  #BDD4E7;
+transform: translatey(-0.25em)
+}

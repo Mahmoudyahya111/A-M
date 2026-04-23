@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Survey Form</title>
+    <link rel="stylesheet" href="formstyle.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Saira+Stencil:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <main>
+       <!-- <form action="https://script.google.com/macros/s/AKfycbyRF3tkP6T86uIkem6QA0zWfiT4bVWTLLHMGGQpmguGFGOQVEnOUFpNXWJKGy67KKEXlQ/exec" method="post">
+            <Section>
+            <label for="fullname">Enter Your Full Name: </label>
+            <input type="Name" placeholder="Full Name" id="fullname">
+            </Section>
+            <section>
+                <label for="email">Enter Your Email:</label>
+                <input type="email" placeholder="ex-email@domain.com" id="email">
+            </section>
+            <Section>
+                <label for="feedback">Enter description of your Clothing Style preference:</label>
+                <input type="text" placeholder="Ex:Basic, oversize, classic, suites, tshirts,polo" id="feedback">
+            </Section>
+            <section>
+                <button>Submit feedback</button>
+            </section>
+
+        </form>-->
+
+        <div id="success-msg" style="display:none; color: #2ecc71; font-weight: bold; padding: 20px; border: 1px solid #2ecc71; margin-bottom: 20px;">
+    Thank you! Your clothing preferences have been submitted successfully.
+</div>
+
+<div id="surveyform">
+<form id="clothing-form">
+    <section>
+        <label for="fullname">Enter Your Full Name: </label>
+        <input type="text" placeholder="Full Name" id="fullname" name="fullname" required>
+    </section>
+    
+    <section>
+        <label for="email">Enter Your Email:</label>
+        <input type="email" placeholder="Ex: email@domain.com" id="email" name="email"   required>
+    </section>
+    
+    <!-- <section>
+        <label for="feedback">Enter description of your Clothing Style preference:</label>
+        <input type="text" placeholder="Ex:Basic, oversize, classic, suites, tshirts,polo" id="feedback" name="feedback" required> 
+         <textarea rows="4" cols="50" id="feedback" placeholder="Ex:Basic, oversize, classic, suites, tshirts,polo"></textarea> 
+         
+    </section> -->
+    <section>
+        <label for="feedback">Enter description of your Clothing Style preference:</label>
+        <textarea id="feedback" name="feedback" rows="4" cols="50" placeholder="Ex:Basic, oversize, classic, suites, tshirts,polo" required></textarea>
+    </section>
+    
+    <section>
+        <button type="submit" id="submit-btn">Submit feedback</button>
+    </section>
+</form>
+
+</div>
+        
+    </main>
+</body>
+</html>
+
+    <!-- <script>
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbyRF3tkP6T86uIkem6QA0zWfiT4bVWTLLHMGGQpmguGFGOQVEnOUFpNXWJKGy67KKEXlQ/exec'
+        const form = document.getElementById('clothing-form')
+        const successMessage = document.getElementById('success-msg')
+        const submitButton = document.getElementById('submit-btn')
+
+        form.addEventListener('submit', e => {
+            e.preventDefault() // This stops the page from refreshing/redirecting
+            
+            submitButton.disabled = true
+            submitButton.innerHTML = "Sending..."
+
+            fetch(scriptURL, { method: 'POST', body: new FormData(form)})
+                .then(response => {
+                    // Hide the form and show your custom message
+                    form.style.display = 'none';
+                    successMessage.style.display = 'block';
+                })
+                .catch(error => {
+                    console.error('Error!', error.message)
+                    submitButton.disabled = false
+                    submitButton.innerHTML = "Submit feedback"
+                    alert("Something went wrong. Please try again.")
+                })
+        })
+    </script> -->
+
+
+    <script>
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbyRF3tkP6T86uIkem6QA0zWfiT4bVWTLLHMGGQpmguGFGOQVEnOUFpNXWJKGy67KKEXlQ/exec'
+    const form = document.getElementById('clothing-form')
+    const submitButton = document.getElementById('submit-btn')
+
+    form.addEventListener('submit', e => {
+        e.preventDefault() 
+        
+        submitButton.disabled = true
+        submitButton.innerHTML = "Sending..."
+
+        fetch(scriptURL, { method: 'POST', body: new FormData(form)})
+            .then(response => {
+                // 1. Show the Thank You Pop-up
+                alert("Thank you for your submission! Your clothing preferences have been recorded.");
+
+                // 2. Wait 1 second, then redirect
+                setTimeout(() => {
+                    // CHANGE THE LINE BELOW TO YOUR NEW FILE NAME
+                    window.location.href = "shop.html"; 
+                }, 1000); 
+            })
+            .catch(error => {
+                console.error('Error!', error.message)
+                submitButton.disabled = false
+                submitButton.innerHTML = "Submit feedback"
+                alert("Something went wrong. Please try again.")
+            })
+    })
+</script>

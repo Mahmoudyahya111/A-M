@@ -1,0 +1,87 @@
+body{
+    background-color: #212227;
+    background-image: url(textile_image.avif );
+     background-size: cover;          /* Scale image to cover entire element */
+     background-repeat: no-repeat;   /* Prevent image from repeating */
+     background-position: center;     /* Center image within the container */
+     background-attachment: fixed;    /* (Optional) Keeps image static during scroll */
+     min-height: 100vh;               /* Ensure body is at least full screen height */
+     /* 1. Turn the body into the Flexbox Container */
+    display: flex;
+    
+    /* 2. Center the 'main' element horizontally */
+    justify-content: center;
+    
+    /* 3. Center the 'main' element vertically */
+    align-items: center;
+    
+    /* 4. Keep this! It gives the body 'room' to center vertically */
+    min-height: 100vh; 
+    margin: 0;  
+    font-family: "Saira Stencil", sans-serif;
+}
+
+body::selection{
+    background-color: #242424;
+    color: #BDD4E7;
+    
+}
+
+main{
+    font-family: "Saira Stencil", sans-serif;
+      background-color: #696969 ;
+      display: flex;
+       flex-wrap: wrap;
+       justify-content: center;
+       align-content: center;
+       color: #242424;
+       font-weight: bold;
+       height: 20rem;
+       width: 40rem;
+       padding: 10px;
+       border-radius: 2rem;
+       transition: 1s;
+
+}
+
+main:hover{
+     background-color: rgba(0, 0, 0,0.2);
+    color: #BDD4E7;
+}
+
+main::selection{
+    background-color: #BDD4E7;
+    color: #242424;
+}
+section{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap:15px;
+    flex-direction: column;
+}
+
+
+button{
+    font-family: "Saira Stencil", sans-serif;
+        background-color: #57585c;
+        border-radius: 1rem;
+        color: #BDD4E7;
+            letter-spacing: 5px;
+transition: 0.25s;
+}
+
+button:hover{
+
+background-color: #282a32;
+cursor: pointer;
+box-shadow: 0 0.5em 0.7em  #BDD4E7;
+
+transform: translatey(-0.25em)
+}
+
+a{
+    text-decoration: none;
+    font-weight: bold;
+  color: #BDD4E7;;
+}
