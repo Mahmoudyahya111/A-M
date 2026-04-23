@@ -4,7 +4,7 @@ html {
      background-repeat: no-repeat;   /* Prevent image from repeating */
      background-position: center;     /* Center image within the container */
      background-attachment: fixed;    /* (Optional) Keeps image static during scroll */
-     min-height: 100vh;               /* Ensure body is at least full screen height */
+     min-height: auto;               /* Ensure body is at least full screen height */
      /* 1. Turn the body into the Flexbox Container 
     display: flex;
     
@@ -72,7 +72,7 @@ nav{
 }
 
 img{
-    width: 70%;
+    width: auto;
     height: 30vh;
     min-width: max-content;
     margin: 0;
@@ -93,3 +93,4 @@ cursor: pointer;
 box-shadow: 0 0.5em 0.7em  #BDD4E7;
 transform: translatey(-0.25em)
 }
+
