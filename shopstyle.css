@@ -48,10 +48,10 @@ nav{
 
 .product-card{
      background-color: rgba(40, 42, 50, 0.412);
-    width: 20vw;
-    height: 50vh;
+    width: 5%;
+    height: auto;
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     flex-wrap: wrap;
     justify-content: center;
     background-size: cover;
