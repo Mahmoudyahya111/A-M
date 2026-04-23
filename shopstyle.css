@@ -33,7 +33,18 @@ nav{
     background-color: rgba(0, 0, 0, 0.259);
     justify-self: center;
     padding: 1%;
+    margin-bottom: 10%;
 }
+
+nav a{
+    color: #bdd4e7;
+    text-decoration: none;
+    font-size: 1.5rem;
+    font-weight: bold;
+    letter-spacing: 5px;
+    transition: 0.25s;
+}
+
 
 
 #products-container{
