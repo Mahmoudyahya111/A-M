@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://mahmoudyahya111.github.io/A-M/sitemap.xml
