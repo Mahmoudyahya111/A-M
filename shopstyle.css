@@ -72,8 +72,8 @@ nav a{
        
 
 #products-container{
-    width: 60%;
-    height: 80%;
+    width: clamp(30rem, 60vw, 80rem);
+    height: 100%;
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
@@ -81,6 +81,7 @@ nav a{
     justify-content: center;
     align-self: center;
 }
+
 
 .product-card{
      background-color: rgba(40, 42, 50, 0.412);
