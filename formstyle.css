@@ -141,8 +141,9 @@ section{
     display: flex;
   font-size: clamp(0.9rem, 1vw, 1rem);
   gap: 10px;
-  width: 100%;
+  max-width: 100%;
   justify-content: center;
+  align-items: center;
 
   /*---------------------*/
   
@@ -160,8 +161,10 @@ section input{
           font-size: clamp(0.9rem, 1vw, 1rem);
            width: 50%;
         min-width: min-content;
-        max-width: 100%;
+        max-width: 50%;
+        height: 20%;
         min-height: fit-content;
+        margin: 0.4rem;
 
         /*--------------------------*/
         
@@ -176,8 +179,10 @@ section label{
         max-height: max-content;
         width: 50%;
         min-width: min-content;
-        max-width: 100%;
+        max-width: 50%;
         min-height: fit-content;
+          font-size: clamp(0.7rem, 0.9vw, 1rem);
+
 }
 
 input::placeholder{
@@ -193,10 +198,10 @@ input::placeholder{
         border-radius: 1rem;
         font-weight: bold;
         padding: 0.5rem;
+        height: 100%;
         max-height: max-content;
-        width: 50%;
-        min-width: min-content;
         max-width: 50%;
+        min-width: 50%;
         min-height: fit-content;
         
 }
