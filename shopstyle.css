@@ -1,35 +1,20 @@
-/*html {
+html {
     background-image:  url(textile_image.avif);
-    background-size: cover;          /* Scale image to cover entire element 
-     background-repeat: no-repeat;   /* Prevent image from repeating 
-     background-position: center;     /* Center image within the container 
-     background-attachment: fixed;    /* (Optional) Keeps image static during scroll 
-     min-height: auto;               /* Ensure body is at least full screen height 
-     /* 1. Turn the body into the Flexbox Container 
-    display: flex;
-    
-     2. Center the 'main' element horizontally 
-    justify-content: center;
-    
-    Center the 'main' element vertically 
-    align-items: center;
-     display: flex;
-        justify-content: center;
-        max-height: fit-content;
-    
-    4. Keep this! It gives the body 'room' to center vertically 
-    min-height: 100vh; 
-    margin: 0;            /* Ensure body is at least full screen height 
-    font-family: "Saira Stencil", sans-serif;
-    color: #bdd4e7;
+    background-size: cover;           
+     background-repeat: no-repeat;  
+     background-position: center;     
+     background-attachment: fixed;    
+     min-height: 100vh; 
+     margin: 0;         
+     font-family: "Saira Stencil", sans-serif;
+     color: #bdd4e7;
    
 
-}*/
-html, body {
+}
+/*html, body {
     margin: 0;
     padding: 0;
     width: 100%;
-    /* This prevents the "bounce" that causes white gaps */
     overflow-x: hidden; 
 }
 
@@ -41,7 +26,6 @@ body {
     z-index: -1; 
 }
 
-/* THE FIX: Create a dedicated background layer */
 body::before {
     content: "";
     position: fixed;
@@ -53,11 +37,9 @@ body::before {
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    /* Keeps it behind everything */
     z-index: -1; 
-    /* Ensures the image doesn't move or reset on scroll */
     will-change: transform; 
-}
+}*/
 
 nav{
     display: flex;
@@ -77,7 +59,6 @@ nav a{
     transition: 0.25s;
     font-size: clamp(0.9rem, 1.7vw, 1.5rem);
 }
-
 
 
        
@@ -140,3 +121,21 @@ box-shadow: 0 0.5em 0.7em  #BDD4E7;
 transform: translatey(-0.25em)
 }
 
+#foot-nav{
+    display: flex;
+    height: fit-content;
+    width: 100% ;
+   background-color: rgba(0, 0, 0, 0.259);
+    padding: 1%;
+    margin-bottom: 0%;
+    justify-content: start;
+
+}
+#foot-nav a{
+    color: #bdd4e7;
+    text-decoration: none;
+    font-weight: bold;
+    letter-spacing: 2px;
+    transition: 0.25s;
+    font-size: clamp(0.6rem, 1.2vw, 1.5rem);
+}
