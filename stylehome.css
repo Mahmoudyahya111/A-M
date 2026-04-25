@@ -8,6 +8,10 @@ html {
      padding: 0%;         
      font-family: "Saira Stencil", sans-serif;
      color: #bdd4e7;
+      display: flex;
+    justify-content: center;
+    align-items: center;
+
    
 
 }
@@ -41,117 +45,71 @@ body::before {
     will-change: transform; 
 }*/
 
-nav{
-    display: flex;
-    height: fit-content;
-    width: 100% ;
-    background-color: rgba(0, 0, 0, 0.259);
-    justify-content: center;
-    padding: 1%;
-    margin-bottom: 5%;
-}
 
-nav a{
-    color: #bdd4e7;
-    text-decoration: none;
-    font-weight: bold;
-    letter-spacing: 2px;
-    transition: 0.25s;
-    font-size: clamp(0.9rem, 1.7vw, 1.5rem);
-}
-
-
+main{
+    font-family: "Saira Stencil", sans-serif;
+      background-color: #696969 ;
+      display: flex;
+       flex-wrap: wrap;
+       justify-content: center;
+       align-content: center;
+       color: #242424;
+       font-weight: bold;
+       height: fit-content;
+       width: 20rem;
+       min-width: auto;
+       padding: 0.5em;
+       border-radius: 2rem;
+       transition: 1s;
+       text-align: center;
+       object-fit: contain;
        
 
-#products-container{
-    width: 100%;
-    height: 80%;
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    gap: 20px;
-    justify-content: center;
 }
 
-.product-card{
-     background-color: rgba(40, 42, 50, 0.412);
-    width: 5%;
-    height: auto;
+main:hover{
+     background-color: rgba(0, 0, 0,0.2);
+    color: #BDD4E7;
+}
+
+main::selection{
+    background-color: #BDD4E7;
+    color: #242424;
+}
+section{
     display: flex;
-    flex-direction: column;
-    flex-wrap: wrap;
     justify-content: center;
-    background-size: cover;
-    padding: 0px;
-    min-height: fit-content;
-    min-width: fit-content;
-    text-align: center;
-    border-radius: 2rem;
     align-items: center;
-    transition: 0.25s;
-
-}
-
-.product-card:hover{
-    box-shadow: 0 0.5em 0.7em#BDD4E7;
-    transform: translatey(-0.25em);
-    background-color: rgba(40, 42, 50, 0.8);
-}
-
-img{
-    width: 70%;
-    min-width: 10%;
-    height: 20vh;
+    gap:15px;
+    flex-direction: column;
     margin: 0;
+    object-fit: contain;
+    width: fit-content;
+    height: fit-content;
+
 }
+
 
 button{
+    font-family: "Saira Stencil", sans-serif;
         background-color: #57585c;
         border-radius: 1rem;
         color: #BDD4E7;
-        letter-spacing: 5px;
-        transition: 0.25s;
-        margin-bottom: 4%;
+            letter-spacing: 5px;
+transition: 0.25s;
 }
 
 button:hover{
+
 background-color: #282a32;
 cursor: pointer;
 box-shadow: 0 0.5em 0.7em  #BDD4E7;
+
 transform: translatey(-0.25em)
 }
 
-#foot-nav{
-    display: flex;
-    height: fit-content;
-    width: 100% ;
-   background-color: rgba(0, 0, 0, 0.259);
-    padding: 1%;
-    margin-bottom: 0%;
-    margin-left: 0;
-    margin-right: 0;
-    margin-top: 2%;
-    justify-content: start;
-
-}
-#foot-nav a{
-    color: #bdd4e7;
+a{
     text-decoration: none;
     font-weight: bold;
-    letter-spacing: 2px;
-    transition: 0.25s;
-    font-size: clamp(0.6rem, 1.2vw, 1.5rem);
-    display: inline-block;
-}
-
-#foot-nav a:hover{
-    color: #99c4e7;
-    text-shadow: 0 0.5em 0.7em #BDD4E7;
-    transform: translatey(-0.20em);
-}
-
-a:hover{
-    color: #99c4e7;
-    text-shadow: 0 0.5em 0.7em #BDD4E7;
-    transform: translatey(-0.30em);
+  color: #BDD4E7;;
 }
