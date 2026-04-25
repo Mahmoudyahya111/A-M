@@ -3,9 +3,9 @@ html {
     background-size: cover;           
      background-repeat: no-repeat;  
      background-position: center;     
-     background-attachment: fixed;    
-     min-height: 100vh; 
-     margin: 0;         
+     min-height: 100%; 
+     margin: 0%;
+     padding: 0%;         
      font-family: "Saira Stencil", sans-serif;
      color: #bdd4e7;
    
@@ -128,6 +128,9 @@ transform: translatey(-0.25em)
    background-color: rgba(0, 0, 0, 0.259);
     padding: 1%;
     margin-bottom: 0%;
+    margin-left: 0;
+    margin-right: 0;
+    margin-top: 2%;
     justify-content: start;
 
 }
@@ -138,4 +141,17 @@ transform: translatey(-0.25em)
     letter-spacing: 2px;
     transition: 0.25s;
     font-size: clamp(0.6rem, 1.2vw, 1.5rem);
+    display: inline-block;
+}
+
+#foot-nav a:hover{
+    color: #99c4e7;
+    text-shadow: 0 0.5em 0.7em #BDD4E7;
+    transform: translatey(-0.20em);
+}
+
+a:hover{
+    color: #99c4e7;
+    text-shadow: 0 0.5em 0.7em #BDD4E7;
+    transform: translatey(-0.30em);
 }
