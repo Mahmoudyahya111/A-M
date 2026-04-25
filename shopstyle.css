@@ -12,6 +12,10 @@ html, body {
      width: 100%;
      overflow-x: hidden;
      overflow-y: auto;
+     display: flex;
+     flex-direction: column;
+    justify-content: center;
+
    
 
 }
