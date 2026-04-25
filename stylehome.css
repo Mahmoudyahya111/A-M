@@ -57,15 +57,26 @@ nav{
     background-color: #00000050;
     justify-content: center;
     align-items: center;
-    padding: 0%;
+    padding-top:0.7rem ;
+    padding-bottom: 0.5rem;
     margin-bottom: 5%;
-    margin-top: 0;
     background-size: contain;
+    text-decoration: none;
+    font-weight: bold;
+    letter-spacing: 1px;
+    transition: 0.25s;
+    font-size: clamp(1rem, 1.7vw, 1.5rem);
 }
 
-nav h1{
-    color: #bdd4e7;
+nav a{
     text-decoration: none;
+        display: flex;
+        justify-content: center;
+        
+
+}
+
+nav {
     font-weight: bold;
     letter-spacing: 1px;
     transition: 0.25s;
@@ -74,11 +85,8 @@ nav h1{
 
 }
 
-nav a{
-    text-decoration: none;
-}
 #logo{
-    width: auto;
+    width: 70%;
     min-width: 5rem;
     height: auto;
     min-height: 5rem;
