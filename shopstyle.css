@@ -1,6 +1,6 @@
 html, body {
     background-image:  url(textile_image.avif);
-    background-size: cover;           
+    background-size: 100% 100%;           
      background-repeat: no-repeat;  
      background-position: center;
      background-attachment: fixed; 
