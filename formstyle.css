@@ -196,7 +196,7 @@ input::placeholder{
         max-height: max-content;
         width: 50%;
         min-width: min-content;
-        max-width: 100%;
+        max-width: 50%;
         min-height: fit-content;
         
 }
