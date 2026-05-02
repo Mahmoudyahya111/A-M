@@ -13,9 +13,10 @@
 <link href="https://fonts.googleapis.com/css2?family=Saira+Stencil:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 </head>
 <body>
-    <nav name="navigation-bar" id="navigation-bar">    
+      <nav name="navigation-bar" id="navigation-bar">    
             
             <a href="index.html"><img src="Common-Ground-Logo.png" alt="Common-Ground-Logo" id="logo"></a>
+           <div id="Nav-about"> <a href="" class="about">About</a> <a href="" class="about">T&amp;Cs</a></div>
     </nav>
     <main>
        <!-- <form action="https://script.google.com/macros/s/AKfycbyRF3tkP6T86uIkem6QA0zWfiT4bVWTLLHMGGQpmguGFGOQVEnOUFpNXWJKGy67KKEXlQ/exec" method="post">
@@ -57,15 +58,15 @@
          <textarea rows="4" cols="50" id="feedback" placeholder="Ex:Basic, oversize, classic, suites, tshirts,polo"></textarea> 
          
     </section> -->
-    <section>
+    <section id="comment-box">
         <label for="feedback">Enter description of your Clothing Style preference:</label>
         <textarea id="feedback" name="feedback" rows="4" cols="50" placeholder="Ex:Basic, oversize, classic, suites, tshirts,polo" required></textarea>
     </section>
     
-    <section>
+    <div id="buttons">
         <button type="submit" id="submit-btn">Submit feedback</button>
-        <button><a href="shop.html">Skip</a></button>
-    </section>
+        <a href="shop.html" id="skip-btn">Skip</a>
+    </div>
 </form>
 
 </div>
