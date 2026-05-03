@@ -1,9 +1,180 @@
+
+.telegant-navbar {
+    width: 100vw;
+    background-color: #0d0d0d; /* Dark background from palette #0D0D0D */
+    color: #ffffff;
+    font-family: 'Times New Roman', Times, serif; /* Approximate Serif Font */
+    padding: 15px 15px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    display: flex;
+}
+
+.navbar-container {
+    max-width: 100%; /* Or preferred max width */
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0 20px;
+        gap: 100px;
+
+}
+
+/* Logo Section */
+.navbar-logo {
+    display: flex;
+    align-items: center;
+    
+}
+
+.logo-icon {
+    height: 30px; /* Adjust height as needed */
+    margin-right: 10px;
+    border-right: #ffffff 1px solid;
+}
+
+.logo-text {
+    display: flex;
+    flex-direction: column;
+    font-size: 1.5rem;
+    letter-spacing: 0.15em;
+    font-weight: 400;
+}
+.logo-text > P {
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    font-weight: 300;
+     margin: 0;
+}
+
+/* Navigation Links */
+.navbar-links {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 40px; /* Space between links */
+}
+
+.navbar-links a {
+    text-decoration: none;
+    color: #ffffff;
+    font-size: 0.85rem;
+    letter-spacing: 0.1em;
+    font-weight: 400;
+    transition: color 0.3s ease;
+}
+
+.navbar-links a:hover {
+    color: #c8a86a; /* Gold color from palette #C8A86A on hover */
+}
+
+/* Icons Section */
+.navbar-icons {
+    height: 100%;
+    display: flex;
+    align-items: flex-end;
+    gap: 20px;
+}
+
+.icon-link {
+    color: #ffffff;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    position: relative;
+    transition: color 0.3s ease;
+}
+
+.icon-link:hover {
+    color: #c8a86a; /* Gold color on hover */
+}
+
+/* Cart Notification Bubble */
+.cart-icon {
+    position: relative;
+}
+
+/* .cart-count {
+    position: absolute;
+    top: -8px;
+    right: -10px;
+    background-color: #7a1e1e; 
+    color: #ffffff;
+    font-family: sans-serif;
+    font-size: 0.7rem;
+    font-weight: bold;
+    border-radius: 50%;
+    width: 16px;
+    height: 16px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+} */
+
+
+
+
+
+
+
+
+
 /* Text and shadow colors #BDD4E7*/
 /* Background color for the form #696969*/
 /* Button color #57585c*/
 /* hover for button color #282a32*/
 html{
-    background-image:  url(textile_image.avif);
+    background-image:  url(NEBG.png);
+    background-size: 100% 100%;           
+     background-repeat: no-repeat;  
+     background-attachment: fixed; 
+     min-height: 100%; 
+     margin: 0;
+     padding: 0;         
+      font-family: 'Times New Roman', Times, serif;
+     color: #bdd4e7;
+     width: 100%;
+     height: 100%;
+     
+
+
+}
+
+body{
+    display: flex;
+    height: 100%;
+    width: 100%;
+    flex-direction: column;
+    margin: 0;
+    padding: 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Text and shadow colors #BDD4E7*/
+/* Background color for the form #696969*/
+/* Button color #57585c*/
+/* hover for button color #282a32*/
+html{
+    background-image:  url(NEBG.png);
     background-size: 100% 100%;           
      background-repeat: no-repeat;  
      background-attachment: fixed; 
@@ -28,7 +199,7 @@ body{
     padding: 0;
 }
 
-#navigation-bar{
+/* #navigation-bar{
     background-color: #282a3269;
     display: flex;
     flex-direction: row;
@@ -88,7 +259,7 @@ body{
     height: 50px;
     width: 100px;
     margin-right: 20px;
-}
+} */
 
 main{
     display: flex;
@@ -106,17 +277,32 @@ main{
     flex-wrap: wrap;
     justify-content: center;
     align-items: center;
-    gap: 40px;
-    background-color: #bdd4e7;
-    color: black;
-    height: 400px;
-    width: 600px;
-    padding: 5px;
-    border-radius: 10px;
+    gap: 10px;
+    background-color: #0d0d0d9a;
+    color: #ffffff;
+    height: 500px;
+    width: 400px;
+    padding: 0 5px;
+    border-radius: 90px;
     margin: 0 20px;
+    border: 2px solid #c8a86a;
 }
 
-
+#clothing-form h2{
+    font-size: 1.5rem;
+    color: #ffffff;
+    font-weight: 600;
+    margin: 0;
+}
+#clothing-form p{
+    font-size: 0.9rem;
+    color: #ffffff;
+    font-weight: 300;
+    padding: 0;
+    margin-top: 0;
+    margin-bottom: 5px;
+    height: 20px;
+}
 section{  
     display: flex;
     flex-direction: row;
@@ -128,30 +314,31 @@ section{
 }
 
 #clothing-form label{
-    font-size: 1.2rem;
-    color: #282a32;
-    width: 100px;
+    font-size: 1rem;
+    color: #ffffff;
+    width: 400px;
     text-align: center;
+    font-weight: 400;
+    gap: 10px;
 }
 
 #clothing-form input{
-    background-color: #505e94;
-    color: #bdd4e7;
+  background-color: #222;
+    color: #ffffff;
     height: 20px;
     width: 50%;
     
 }
 
 #clothing-form input:focus{
-    background-color: #727a99;
-    color: #bdd4e7;
-    border: 2px solid #282a32;
+    background-color: #222;
+    color: #ffffff;
+    border: 2px solid #c8a86a;
     
 }
 
 #clothing-form input::placeholder{
-    color: #bdd4e7;
-    
+color: #ffffff;    
 }
 
 
@@ -164,8 +351,8 @@ section{
 
 }
 #feedback{
-    background-color: #505e94;
-    color: #bdd4e7;
+    background-color: #222;
+    color: #ffffff;
     height: 100px;
     max-height: 100px;
     min-height: max-content;
@@ -175,23 +362,23 @@ section{
 }
 
 #feedback::placeholder{
-    color: #bdd4e7;
+    color: #ffffff;
     text-align: center;
 }
 
 #feedback:focus{
-    background-color: #727a99;
-    color: #bdd4e7;
-    border: 2px solid #282a32;
+  background-color: #222;
+    color: #ffffff;
+    border: 2px solid #c8a86a;
     
 }
 
 
 
 #skip-btn{
-    color: #bdd4e7;
+    color: #ffffff;
+    background-color: #2a29299d;
     font-weight: 400;
-    background-color: #505e94;
     border: none;
     padding: 7px 20px;
     text-decoration: none;
@@ -203,15 +390,17 @@ section{
 }
 
 #skip-btn:hover{
-     background-color: #343e67;
+    background-color: #c8a86a;
     cursor: pointer;    
-    box-shadow: 0 0.5em 0.7em  #393f58;
-    transform: translatey(-0.25em);
+    border: 1px solid #c8a86a;
+    box-shadow: 0 0.3em 1em  #c8a86a;
+    color: #0d0d0d;
+    transform: translatey(-0.10em);
 }
 
 #submit-btn{
-    color: #bdd4e7;
-    background-color: #505e94;
+     color: #ffffff;
+    background-color: #2a29299d;
     border: none;
     padding: 10px 20px;
     text-decoration: none;
@@ -223,17 +412,19 @@ section{
 }
 
 #submit-btn:hover{
-    background-color: #343e67;
+     background-color: #c8a86a;
     cursor: pointer;    
-    box-shadow: 0 0.5em 0.7em  #393f58;
-    transform: translatey(-0.25em);
+    border: 1px solid #c8a86a;
+    box-shadow: 0 0.3em 1em  #c8a86a;
+    color: #0d0d0d;
+    transform: translatey(-0.10em);
 }
 
 
 @media (min-width: 500px) and (max-width: 1700px) {
 
     
-   #navigation-bar{
+   /* #navigation-bar{
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
@@ -241,12 +432,12 @@ section{
     padding: 20px 0px;
     height: 100px;
     width: 100%;
-        margin-bottom: 30px;
+        margin-bottom: 30px; 
 
-}
+}*/
 
 
-.about{
+/* .about{
     color: #bdd4e7;
     text-decoration: none;
     font-size: 1rem;
@@ -292,7 +483,7 @@ section{
     width: 200px;
     
 
-}
+} */
 
 }
 
@@ -305,16 +496,27 @@ section{
     flex-wrap: wrap;
     justify-content: center;
     align-items: center;
-    gap: 40px;
-    background-color: #bdd4e7;
-    color: black;
-    height: 400px;
-    width: 600px;
-    padding: 5px;
-    border-radius: 10px;
+    gap: 10px;
+    height: 500px;
+    width: 400px;
+    padding: 0 5px;
     margin: 0 20px;
 }
 
+
+#clothing-form h2{
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0;
+}
+#clothing-form p{
+    font-size: 0.9rem;
+    font-weight: 300;
+    padding: 0;
+    margin-top: 0;
+    margin-bottom: 5px;
+    height: 20px;
+}
 section{  
     display: flex;
     flex-direction: row;
@@ -326,31 +528,19 @@ section{
 }
 
 #clothing-form label{
-    font-size: 1.2rem;
-    color: #282a32;
-    width: 200px;
+    font-size: 1rem;
+    width: 400px;
     text-align: center;
+    font-weight: 400;
+    gap: 10px;
 }
 
 #clothing-form input{
-    background-color: #505e94;
-    color: #bdd4e7;
+   
     height: 30px;
     width: 300px;
     border-radius: 10px;
     padding: 5px;
-    
-}
-
-#clothing-form input:focus{
-    background-color: #727a99;
-    color: #bdd4e7;
-    border: 2px solid #282a32;
-    
-}
-
-#clothing-form input::placeholder{
-    color: #bdd4e7;
     
 }
 
@@ -367,8 +557,7 @@ section{
 
 
 #feedback{
-   background-color: #505e94;
-    color: #bdd4e7;
+  
     height: 30px;
     width: 300px;
     border-radius: 10px;
@@ -378,9 +567,8 @@ section{
 }
 
 #skip-btn{
-    color: #bdd4e7;
+
     font-size: 0.9rem;
-    background-color: #505e94;
     border: none;
     width: 100px;
     height: 20px;
@@ -402,11 +590,11 @@ section{
     display: flex;
     flex-direction: row;
     gap: 10px;
+    margin-top: 30px;
 
 }
 #submit-btn{
-    color: #bdd4e7;
-    background-color: #505e94;
+
     border: none;
     padding: 8px;
     text-decoration: none;
@@ -423,7 +611,7 @@ section{
 
 @media (max-width: 600px) {
 
-    .about{
+    /* .about{
     color: #bdd4e7;
     text-decoration: none;
     font-size: 1rem;
@@ -439,7 +627,7 @@ section{
     margin-right: 8px;
     margin-left: 1px;
     border-radius: 10px;
-}
+} */
 main{
     display: flex;
     flex-direction: column;
@@ -460,12 +648,9 @@ main{
     justify-content: center;
     align-items: center;
     gap: 45px;
-    background-color: #bdd4e7;
-    color: black;
     height: 380px;
     width: 480px;
     padding: 5px;
-    border-radius: 10px;
     text-align: right;
 }
 
@@ -481,14 +666,12 @@ section{
 
 #clothing-form label{
     font-size: 1.2rem;
-    color: #282a32;
     width: 220px;
     text-align: center;
 }
 
 #clothing-form input{
-    background-color: #505e94;
-    color: #bdd4e7;
+   
     height: 30px;
     width: 200px;
     border-radius: 10px;
@@ -496,17 +679,8 @@ section{
     
 }
 
-#clothing-form input:focus{
-    background-color: #727a99;
-    color: #bdd4e7;
-    border: 2px solid #282a32;
-    
-}
 
-#clothing-form input::placeholder{
-    color: #bdd4e7;
-    
-}
+
 
 
 
@@ -521,8 +695,6 @@ section{
 
 
 #feedback{
-   background-color: #505e94;
-    color: #bdd4e7;
     height: 30px;
     width: 200px;
     border-radius: 10px;
@@ -533,9 +705,7 @@ section{
 
 
 #skip-btn{
-    color: #bdd4e7;
     font-size: 0.9rem;
-    background-color: #505e94;
     border: none;
     width: 100px;
     height: 20px;
@@ -560,8 +730,6 @@ section{
 
 }
 #submit-btn{
-    color: #bdd4e7;
-    background-color: #505e94;
     border: none;
     padding: 8px;
     text-decoration: none;
@@ -576,7 +744,7 @@ section{
 }
 
 @media (max-width: 450px){
-.about{
+/* .about{
     color: #bdd4e7;
     text-decoration: none;
     font-size: 1rem;
@@ -592,7 +760,7 @@ section{
     margin-right: 8px;
     margin-left: 1px;
     border-radius: 10px;
-}
+} */
     
 #clothing-form{
     display: flex;
@@ -600,13 +768,12 @@ section{
     flex-wrap: wrap;
     justify-content: center;
     align-items: center;
-    background-color: #bdd4e7;
-    color: black;
+    background-color: #0D0D0D;
+    color: white;
     gap: 30px;
     height: 390px;
     width: 300px;
     padding: 10px;
-    border-radius: 10px;
 }
 #clothing-form label{
     font-size: 1rem;
@@ -639,9 +806,7 @@ section{
 }
 
 #skip-btn{
-    color: #bdd4e7;
     font-size: 0.6rem;
-    background-color: #505e94;
     border: none;
     width: 50px;
     height: 20px;
@@ -666,8 +831,6 @@ section{
 
 }
 #submit-btn{
-    color: #bdd4e7;
-    background-color: #505e94;
     border: none;
     padding: 8px;
     text-decoration: none;
