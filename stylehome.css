@@ -1,22 +1,156 @@
 
+
+
+
+
+
+/* Base Styles */
+ /* body {
+    margin: 0;
+    padding: 0;
+    background-color: #f5f2ec; 
+}  */
+
+/* Navbar Structure */
+.telegant-navbar {
+    width: 100vw;
+    background-color: #0d0d0d; /* Dark background from palette #0D0D0D */
+    color: #ffffff;
+    font-family: 'Times New Roman', Times, serif; /* Approximate Serif Font */
+    padding: 15px 15px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    display: flex;
+}
+
+.navbar-container {
+    max-width: 100%; /* Or preferred max width */
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0 20px;
+        gap: 100px;
+
+}
+
+/* Logo Section */
+.navbar-logo {
+    display: flex;
+    align-items: center;
+    
+}
+
+.logo-icon {
+    height: 30px; /* Adjust height as needed */
+    margin-right: 10px;
+    border-right: #ffffff 1px solid;
+}
+
+.logo-text {
+    display: flex;
+    flex-direction: column;
+    font-size: 1.5rem;
+    letter-spacing: 0.15em;
+    font-weight: 400;
+}
+.logo-text > P {
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    font-weight: 300;
+     margin: 0;
+}
+
+/* Navigation Links */
+.navbar-links {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 40px; /* Space between links */
+}
+
+.navbar-links a {
+    text-decoration: none;
+    color: #ffffff;
+    font-size: 0.85rem;
+    letter-spacing: 0.1em;
+    font-weight: 400;
+    transition: color 0.3s ease;
+}
+
+.navbar-links a:hover {
+    color: #c8a86a; /* Gold color from palette #C8A86A on hover */
+}
+
+/* Icons Section */
+.navbar-icons {
+    height: 100%;
+    display: flex;
+    align-items: flex-end;
+    gap: 20px;
+}
+
+.icon-link {
+    color: #ffffff;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    position: relative;
+    transition: color 0.3s ease;
+}
+
+.icon-link:hover {
+    color: #c8a86a; /* Gold color on hover */
+}
+
+/* Cart Notification Bubble */
+.cart-icon {
+    position: relative;
+}
+
+/* .cart-count {
+    position: absolute;
+    top: -8px;
+    right: -10px;
+    background-color: #7a1e1e; 
+    color: #ffffff;
+    font-family: sans-serif;
+    font-size: 0.7rem;
+    font-weight: bold;
+    border-radius: 50%;
+    width: 16px;
+    height: 16px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+} */
+
+
+
+
+
+
+
+
+
 /* Text and shadow colors #BDD4E7*/
-
-
 /* Background color for the form #696969*/
 /* Button color #57585c*/
 /* hover for button color #282a32*/
 html{
-    background-image:  url(textile_image.avif);
+    background-image:  url(NEBG.png);
     background-size: 100% 100%;           
      background-repeat: no-repeat;  
      background-attachment: fixed; 
      min-height: 100%; 
      margin: 0;
      padding: 0;         
-     font-family: "Saira Stencil", sans-serif;
+     font-family: 'Times New Roman', Times, serif;
      color: #bdd4e7;
-     width: 100vw;
-     height: 100vh;
+     width: 100%;
+     height: 100%;
      
 
 
@@ -24,14 +158,14 @@ html{
 
 body{
     display: flex;
-    height: 100vh;
-    width: 100vw;
+    height: 100%;
+    width: 100%;
     flex-direction: column;
     margin: 0;
     padding: 0;
 }
 
-#navigation-bar{
+/* #navigation-bar{
     background-color: #282a3269;
     display: flex;
     flex-direction: row;
@@ -91,7 +225,7 @@ body{
     height: 50px;
     width: 100px;
     margin-right: 20px;
-}
+} */
 
 main{
     display: flex;
@@ -101,42 +235,54 @@ main{
     height: 100%;
 }
 
-section{  color: black; background-color: #bdd4e7;
+section{  
+       
+    color: #ffffff; 
+    font-size: 20px;
+    background-color: #0d0d0d00;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    height: 200px;
+    height: 400px;
+    width:800px;
     padding: 10px;
     margin: 0 20px;
     border-radius: 10px;
     text-align: center;
+    line-height: 45px;
 }
 
 .Submission{
-    color: #bdd4e7;
-    background-color: #505e94;
+    color: #ffffff;
+    background-color: #222222;
     border: none;
-    padding: 10px 20px;
+  padding: 0 20px 15px 20px;
     text-decoration: none;
     font-size: 1.2rem;
-    border-radius: 5px;
+    border-radius: 15px;
     transition: background-color 0.3s ease;
-    width: fit-content;
+    width: 50px;
+    height: 35px;
 
 }
 
 .Submission:hover{
-    background-color: #343e67;
+    background-color: #c8a86a;
     cursor: pointer;    
-    box-shadow: 0 0.5em 0.7em  #393f58;
-    transform: translatey(-0.25em);
+    border: 1px solid #c8a86a;
+    box-shadow: 0 0.3em 1em  #c8a86a;
+    color: #0d0d0d;
+    transform: translatey(-0.10em);
 }
 
-@media (min-width: 900px) {
+/* @media (min-width: 900px) {
 
     
-    section{  color: black; background-color: #bdd4e7;
+    section{  
+    color: #c8a86a; 
+    font-size: 20px;
+    background-color: #0d0d0d;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -148,12 +294,12 @@ section{  color: black; background-color: #bdd4e7;
     border-radius: 10px;
     text-align: center;
 }
-}
+} */
 
 @media (min-width: 400px) and (max-width: 1700px) {
 
     
-   #navigation-bar{
+   /* #navigation-bar{
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
@@ -163,10 +309,10 @@ section{  color: black; background-color: #bdd4e7;
     width: 100%;
         margin-bottom: 30px;
 
-}
+} */
 
 
-.about{
+/* .about{
     color: #bdd4e7;
     text-decoration: none;
     font-size: 1rem;
@@ -214,11 +360,11 @@ section{  color: black; background-color: #bdd4e7;
     width: 200px;
     
 
-}
+} */
 }
 
 @media (max-width: 450px){
-.about{
+/* .about{
     color: #bdd4e7;
     text-decoration: none;
     font-size: 1rem;
@@ -234,12 +380,12 @@ section{  color: black; background-color: #bdd4e7;
     margin-right: 8px;
     margin-left: 1px;
     border-radius: 10px;
-}
+} */
 }
 
 @media (max-width: 600px) {
 
-    .about{
+    /* .about{
     color: #bdd4e7;
     text-decoration: none;
     font-size: 1rem;
@@ -254,13 +400,13 @@ section{  color: black; background-color: #bdd4e7;
     padding: 0 15px;
     margin-right: 8px;
     margin-left: 1px;
-    border-radius: 10px;
-}
+    border-radius: 10px; 
+}*/
 }
 
 @media (min-width: 500px) and (max-width: 1700px) {
 
-    
+/*     
    #navigation-bar{
     display: flex;
     flex-direction: row;
@@ -269,8 +415,8 @@ section{  color: black; background-color: #bdd4e7;
     padding: 20px 0px;
     height: 100px;
     width: 100%;
-        margin-bottom: 30px;
-
+        margin-bottom: 30px; */
+/* 
 }
 
 
@@ -318,7 +464,8 @@ section{  color: black; background-color: #bdd4e7;
 #logo{
     height: 100px;
     width: 200px;
-    
-
-}
+    background-image: url('Navimg.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+} */
 }
