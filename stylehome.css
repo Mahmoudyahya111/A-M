@@ -12,6 +12,15 @@
 }  */
 
 /* Navbar Structure */
+.hamburger {
+    display: none;
+    cursor: pointer;
+    background: transparent;
+    border: 2px solid white;
+    border-radius: 8px;
+    padding: 5px;
+    color: white;
+}
 .telegant-navbar {
     width: 100vw;
     background-color: #0d0d0d; /* Dark background from palette #0D0D0D */
@@ -20,6 +29,8 @@
     padding: 15px 15px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.2);
     display: flex;
+
+    position: relative;
 }
 
 .navbar-container {
@@ -90,6 +101,7 @@
     display: flex;
     align-items: flex-end;
     gap: 20px;
+    order: 1;
 }
 
 .icon-link {
@@ -163,69 +175,9 @@ body{
     flex-direction: column;
     margin: 0;
     padding: 0;
+    overflow: hidden;
 }
 
-/* #navigation-bar{
-    background-color: #282a3269;
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
-    align-items: center;
-    padding: 20px 2px;
-    height: 45px;
-    width: 100%;
-    margin: 0;
-   
-
-}
-
-.about{
-    color: #bdd4e7;
-    text-decoration: none;
-    font-size: 1rem;
-    width: 100px;
-    transition: color 0.3s ease;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 0;
-    margin: 0;
-    padding: 0 15px;
-     margin-right: 8px;
-    margin-left: 5px;
-    border-radius: 10px;
-
-}
-
-.about:last-child{
-    margin-right: 8px;
-    margin-left: 5px;
-    width: 100px;
-    padding: 0 5px;
-    margin: 0;
-}
-
-.about:hover{
-    color: #1c44e2;
-    cursor: pointer;
-}
-
-#Nav-about{
-    display: flex;
-    flex-direction: row;
-    justify-content:  flex-end;
-    align-items: center;
-    margin: 0;
-    width: 100%;
-
-}
-
-#logo{
-    height: 50px;
-    width: 100px;
-    margin-right: 20px;
-} */
 
 main{
     display: flex;
@@ -296,95 +248,104 @@ section{
 }
 } */
 
-@media (min-width: 400px) and (max-width: 1700px) {
+@media (min-width: 600px) and (max-width: 2000px) {
+
+    body{
+   
+    width: 100%;
+    
+}
+.telegant-navbar {
+    width: 100%;
+   
+}
+
+
+}
+
+@media (max-width: 600px){
+ body{
+   
+    width: 100%;
+       
 
     
-   /* #navigation-bar{
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
-    align-items: center;
-    padding: 20px 0px;
-    height: 100px;
-    width: 100%;
-        margin-bottom: 30px;
-
-} */
-
-
-/* .about{
-    color: #bdd4e7;
-    text-decoration: none;
-    font-size: 1rem;
-    width: 100px;
-    transition: color 0.3s ease;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 0;
-    margin: 0;
-    padding: 0 15px;
-     margin-right: 8px;
-    margin-left: 5px;
-    border-radius: 10px;
-
 }
-
-.about:last-child{
-    margin-right: 8px;
-    margin-left: 5px;
-    width: 100px;
-    padding: 0 5px;
-    margin: 0;
-}
-
-.about:hover{
-    color: #1c44e2;
-    cursor: pointer;
-}
-
-
-#Nav-about{
-    display: flex;
-    flex-direction: row;
-    justify-content:  flex-end;
-    align-items: center;
-    margin: 0;
+.telegant-navbar {
     width: 100%;
 
 }
 
-#logo{
-    height: 100px;
-    width: 200px;
-    
 
-} */
+.navbar-links {
+    gap: 8px; /* Reduce space between links on smaller screens */
+    display: flex;
+    flex-direction: row;
+     align-items: center;
 }
 
-@media (max-width: 450px){
-/* .about{
-    color: #bdd4e7;
-    text-decoration: none;
-    font-size: 1rem;
-    width: 1px;
-    transition: color 0.3s ease;
+.navbar-links ul:nth-last-of-type(4) {
+    gap: 8px; /* Reduce space between links on smaller screens */
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 0;
-    margin: 0;
-    padding: 0 15px;
-    margin-right: 8px;
-    margin-left: 1px;
-    border-radius: 10px;
-} */
+     align-items: center;
+}
+.navbar-links a {
+    text-decoration: none;
+    color: #ffffff;
+    font-size: 0.85rem;
+    letter-spacing: 0em;
+    font-weight: 400;
+    transition: color 0.3s ease;
 }
 
-@media (max-width: 600px) {
+.navbar-icons{
+    order:2;
+}
 
+main{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+    padding: 0 20px;
+}
+}
+
+@media (max-width: 690px) {
+.hamburger { display: block; }
+
+    .navbar-container {
+        justify-content: space-between;
+        width: 100%;
+        gap: 0;
+    }
+
+    /* THE DROP DOWN BOX (Must use !important if other styles override) */
+    .navbar-links {
+        display: none !important; 
+        position: absolute;
+        top: 100%; /* Sits exactly at the bottom of the navbar */
+        right: 20px;
+        background-color: #0d0d0d;
+        border: 1px solid #bdd4e7;
+        border-radius: 15px;
+        flex-direction: column;
+        width: 200px;
+        padding: 20px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.8);
+        z-index: 9999;
+    }
+
+    /* Show the box when the class is added by JS */
+    .navbar-links.show {
+        display: flex !important;
+    }
+
+    .navbar-links li { margin: 10px 0; }
+}
     /* .about{
     color: #bdd4e7;
     text-decoration: none;
@@ -402,7 +363,7 @@ section{
     margin-left: 1px;
     border-radius: 10px; 
 }*/
-}
+
 
 @media (min-width: 500px) and (max-width: 1700px) {
 
@@ -469,3 +430,4 @@ section{
     background-repeat: no-repeat;
 } */
 }
+
