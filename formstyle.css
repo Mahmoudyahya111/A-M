@@ -179,7 +179,7 @@ body{
     width: 100%;
     flex-direction: column;
     margin: 0;
-    padding: 0;
+    
 }
 
 
@@ -364,17 +364,30 @@ color: #ffffff;
  
 }*/
 
+@media (min-width: 600px) and (max-width: 2000px) {
+
+    body{
+   
+    width: 100%;
+    
+}
+.telegant-navbar {
+    width: 100%;
+   
+}
+
+
+}
 
 @media (max-width: 690px) {
 
-    body{
+html, body{
     display: flex;
-    height: 100%;
+   align-items: center;
     width: 100%;
-    flex-direction: column;
-    justify-content: center;
-    margin: 0;
-    padding: 0;
+    height: 100%;
+   
+
 }
 
     .hamburger { display: block; }
@@ -397,6 +410,8 @@ color: #ffffff;
         padding: 20px;
         box-shadow: 0 10px 25px rgba(0,0,0,0.8);
         z-index: 9999;
+        background-color: #0d0d0d;
+        border: 1px solid #c8a86a;
     }
 
     /* Show the box when the class is added by JS */
@@ -428,10 +443,10 @@ main{
     align-items: center;
     gap: 25px;
     height: 600px;
-    width: 350px;
-    padding: 30px;
-    text-align: right;
-    margin-left: 10px;
+    width: 310px;
+    padding: 30px 20px;
+    text-align: center;
+    
 }
 
 section{  
