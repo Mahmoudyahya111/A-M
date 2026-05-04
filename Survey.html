@@ -20,39 +20,50 @@
     </nav> -->
 
 
-    <nav class="telegant-navbar">
+       <nav class="telegant-navbar">
+        
         <div class="navbar-container">
             <!-- Logo Section -->
             <!-- <div class="navbar-logo">
                 <img src="Tfavco-w-transparent.png" alt="Telegant Logo" class="logo-icon">
                 <span class="logo-text">TELEGANT</span>
             </div> -->
-
-            <!-- Navigation Links -->
-            <ul class="navbar-links">
-                <li><a href="#home">HOME</a></li>
-                <li><a href="#shop">SHOP</a></li>
-                <li><a href="#newin">NEW IN</a></li>
-                 <div class="navbar-logo">
+              <div class="navbar-logo">
                 <!-- Replace 'logo-white.png' with your actual image path -->
                 <img src="Tfavco-w-transparent.png" alt="Telegant Logo" class="logo-icon">
                 <span class="logo-text">TELEGANT<p>DEFINED BY ELEGANCE</p></span>
             </div>
-                <li><a href="#about">ABOUT</a></li>
-                <li><a href="#contact">CONTACT</a></li>
-            </ul>
-
-            <!-- Icons Section -->
+             <!-- Icons Section -->
             <div class="navbar-icons">
                 <a href="#search" class="icon-link search-icon">
                     <!-- Search Icon (SVG or Icon Font) -->
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
                 </a>
-                <a href="#cart" class="icon-link cart-icon">
+                
+
+            <button class="hamburger" id="menu-btn" aria-label="Toggle Menu">
+                <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+            </button>
+            <!-- Navigation Links -->
+            <ul class="navbar-links" id="nav-menu">
+                <li><a href="#home">HOME</a></li>
+                <li><a href="#shop">SHOP</a></li>
+                <li><a href="#newin">NEW IN</a></li>
+               
+                <li><a href="#about">ABOUT</a></li>
+                <li><a href="#contact">CONTACT</a></li>
+                
+            </ul>
+            <a href="#cart" class="icon-link cart-icon">
                     <!-- Cart Icon (SVG or Icon Font) -->
                     <!-- <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
                     <span class="cart-count">2</span> -->
                 </a>
+           
             </div>
         </div>
     </nav>
@@ -177,4 +188,27 @@
                 alert("Something went wrong. Please try again.")
             })
     })
+
+     // Ensure the script runs after the HTML is fully loaded
+    window.addEventListener('load', () => {
+        const menuBtn = document.getElementById('menu-btn');
+        const navMenu = document.getElementById('nav-menu');
+
+        if (menuBtn && navMenu) {
+            menuBtn.addEventListener('click', (e) => {
+                e.stopPropagation(); // Stops the click from bubbling to the document
+                navMenu.classList.toggle('show');
+                console.log("Menu toggled"); // Check your console (F12) to see this
+            });
+
+            // Close the box if the user clicks anywhere else[cite: 5]
+            document.addEventListener('click', (e) => {
+                if (!navMenu.contains(e.target) && !menuBtn.contains(e.target)) {
+                    navMenu.classList.remove('show');
+                }
+            });
+        } else {
+            console.error("Menu elements not found. Check your IDs!");
+        }
+    });
 </script>
