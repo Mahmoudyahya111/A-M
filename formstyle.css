@@ -174,10 +174,9 @@ html{
 }
 
 body{
-    display: ;
+   
     height: 100%;
     width: 100%;
-    flex-direction: column;
     margin: 0;
     
 }
@@ -435,7 +434,7 @@ main{
     align-items: center;
     gap: 25px;
     height: 600px;
-    width: 310px;
+    width: 290px;
     padding: 30px 20px;
     text-align: center;
     
