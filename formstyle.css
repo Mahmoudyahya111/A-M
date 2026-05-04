@@ -381,8 +381,8 @@ color: #ffffff;
 
 @media (max-width: 690px) {
 
+
 html, body{
-    display: flex;
    align-items: center;
     width: 100%;
     height: 100%;
