@@ -328,9 +328,9 @@ section{
 }
 
     /* 6. Section Box Styling */
-    section {
-        width: 90%; /* Adapts to any mobile screen width[cite: 6] */
-        max-width: 100%;
+   section {
+        width: 80%; /* Adapts to any mobile screen width[cite: 6] */
+        max-width: 90%;
         height: auto; /* Box expands based on text length[cite: 6] */
         line-height: 1.;
         padding: 10px;
