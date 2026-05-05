@@ -181,6 +181,18 @@ h1 { color: #c8a86a; letter-spacing: 0.1em; font-weight: 400; }
 
     /* 2. NAVBAR CONTAINER LAYOUT 
        Logo stays Left, Hamburger stays Right */
+     /* 1. STOP HORIZONTAL SCROLLING 
+       Applies only to the root containers to protect page alignment */
+    html, body {
+        width: 100% !important;
+        max-width: 100vw !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow-x: hidden !important; 
+    }
+
+    /* 2. NAVBAR CONTAINER LAYOUT 
+       Logo stays Left, Hamburger stays Right */
     .navbar-container {
         display: flex !important;
         flex-direction: row !important;
@@ -259,4 +271,7 @@ h1 { color: #c8a86a; letter-spacing: 0.1em; font-weight: 400; }
         flex-direction: column !important;
         align-items: center !important;
     }
+    /* 5. PRESERVE FORM ALIGNMENT 
+       Ensures main content doesn't break from navbar fixes */
+ 
 }
