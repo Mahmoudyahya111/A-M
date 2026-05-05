@@ -160,7 +160,7 @@ main {
 }
 
 h1 { color: #c8a86a; letter-spacing: 0.1em; font-weight: 400; }
-.joke { font-style: italic; color: #bdd4e7; margin-top: 30px; font-size: 0.9rem; }
+.joke { font-style: italic; color: #c8a96a; margin-top: 30px; font-size: 0.9rem; }
 
 /* Mobile Alignment & Scroll Protection */
 @media (min-width: 300px) and (max-width: 690px) {
