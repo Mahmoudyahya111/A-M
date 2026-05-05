@@ -1,6 +1,7 @@
+
+
 .hamburger {
     display: none;
-    
     cursor: pointer;
     background: transparent;
     border: 2px solid white;
@@ -15,7 +16,7 @@
     padding: 15px 15px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.2);
     display: flex;
-
+    flex-direction: column;
     position: relative;
 }
 
@@ -107,7 +108,6 @@
 .cart-icon {
     position: relative;
 }
-
 /* .cart-count {
     position: absolute;
     top: -8px;
@@ -272,14 +272,13 @@ a:hover{
 
 } */
 
+@media (min-width: 300px) and (max-width: 690px) {
 
 
 /* =========================================
    UNIVERSAL MOBILE NAVBAR & SCROLL FIX
    ========================================= */
-@media (min-width: 300px) and (max-width: 690px) {
-    
-    /* 1. STOP HORIZONTAL SCROLLING 
+/* 1. STOP HORIZONTAL SCROLLING 
        Applies only to the root containers to protect page alignment */
     html, body {
         width: 100% !important;
@@ -375,7 +374,7 @@ a:hover{
     }
 
 
-        #products-container{
+    #products-container{
     margin: 30px 10px;
     display: flex;
     flex-direction: row;
