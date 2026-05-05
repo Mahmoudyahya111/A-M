@@ -1,0 +1,262 @@
+/* Base Styles from your Home Page */
+html {
+    background-image: url(NEBG.png);
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    min-height: 100%;
+    font-family: 'Times New Roman', Times, serif;
+    color: #ffffff;
+    margin: 0;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.hamburger {
+    display: none;
+    cursor: pointer;
+    background: transparent;
+    border: 2px solid white;
+    border-radius: 8px;
+    padding: 5px;
+    color: white;
+}
+.telegant-navbar {
+    background-color: #0d0d0d; /* Dark background from palette #0D0D0D */
+    color: #ffffff;
+    font-family: 'Times New Roman', Times, serif; /* Approximate Serif Font */
+    padding: 15px 15px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    display: flex;
+
+    position: relative;
+}
+
+.navbar-container {
+    max-width: 100%; /* Or preferred max width */
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0 20px;
+        gap: 100px;
+
+}
+
+/* Logo Section */
+.navbar-logo {
+    display: flex;
+    align-items: center;
+    
+}
+
+.logo-icon {
+    height: 30px; /* Adjust height as needed */
+    margin-right: 10px;
+    border-right: #ffffff 1px solid;
+}
+
+.logo-text {
+    display: flex;
+    flex-direction: column;
+    font-size: 1.5rem;
+    letter-spacing: 0.15em;
+    font-weight: 400;
+}
+.logo-text > P {
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    font-weight: 300;
+     margin: 0;
+}
+
+/* Navigation Links */
+.navbar-links {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 40px; /* Space between links */
+}
+
+.navbar-links a {
+    text-decoration: none;
+    color: #ffffff;
+    font-size: 0.85rem;
+    letter-spacing: 0.1em;
+    font-weight: 400;
+    transition: color 0.3s ease;
+}
+
+.navbar-links a:hover {
+    color: #c8a86a; /* Gold color from palette #C8A86A on hover */
+}
+
+/* Icons Section */
+.navbar-icons {
+    height: 100%;
+    display: flex;
+    align-items: flex-end;
+    gap: 20px;
+    order: 1;
+}
+
+.icon-link {
+    color: #ffffff;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    position: relative;
+    transition: color 0.3s ease;
+}
+
+.icon-link:hover {
+    color: #c8a86a; /* Gold color on hover */
+}
+
+/* Cart Notification Bubble */
+.cart-icon {
+    position: relative;
+}
+
+/* .cart-count {
+    position: absolute;
+    top: -8px;
+    right: -10px;
+    background-color: #7a1e1e; 
+    color: #ffffff;
+    font-family: sans-serif;
+    font-size: 0.7rem;
+    font-weight: bold;
+    border-radius: 50%;
+    width: 16px;
+    height: 16px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+} */
+/* About Page Specific Content */
+main {
+    display: flex;
+    justify-content: center;
+    padding: 40px 20px;
+}
+
+.about-content {
+    background-color: rgba(13, 13, 13, 0.85); /* Dark elegant overlay */
+    padding: 40px;
+    border-radius: 20px;
+    max-width: 800px;
+    text-align: center;
+    line-height: 1.8;
+    border: 1px solid rgba(200, 168, 106, 0.3); /* Subtle gold border */
+}
+
+h1 { color: #c8a86a; letter-spacing: 0.1em; font-weight: 400; }
+.joke { font-style: italic; color: #bdd4e7; margin-top: 30px; font-size: 0.9rem; }
+
+/* Mobile Alignment & Scroll Protection */
+@media (min-width: 300px) and (max-width: 690px) {
+    
+    /* 1. STOP HORIZONTAL SCROLLING 
+       Applies only to the root containers to protect page alignment */
+    html, body {
+        width: 100% !important;
+        max-width: 100vw !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow-x: hidden !important; 
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    /* 2. NAVBAR CONTAINER LAYOUT 
+       Logo stays Left, Hamburger stays Right */
+    .navbar-container {
+        display: flex !important;
+        flex-direction: row !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        width: 100% !important;
+        padding: 0 15px !important; /* Standard side breathing room */
+        gap: 0 !important;
+    }
+
+    .telegant-navbar {
+        width: 100% !important;
+        padding: 10px 0 !important;
+        position: relative !important;
+        z-index: 1000 !important;
+    }
+
+    /* 3. HAMBURGER BUTTON 
+       Matches your reference image exactly */
+    .hamburger {
+        display: block !important;
+        background: transparent !important;
+        border: 2px solid #ffffff !important;
+        border-radius: 8px !important;
+        padding: 4px !important;
+        color: #ffffff !important;
+    }
+
+    .navbar-logo {
+        margin: 0 !important;
+    }
+
+    /* 4. THE DROP-DOWN BOX 
+       Standardized "Proper" look for all pages */
+    .navbar-links {
+        display: none !important; 
+        position: absolute !important;
+        top: 100% !important; 
+        right: 15px !important; 
+        background-color: #0d0d0d !important;
+        border: 1px solid #c8a86a !important;
+        border-radius: 12px !important;
+        flex-direction: column !important;
+        width: 180px !important;
+        padding: 15px !important;
+        z-index: 9999 !important;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.8) !important;
+        margin: 0 !important;
+        list-style: none !important;
+    }
+
+    /* Triggered by your existing JavaScript */
+    .navbar-links.show {
+        display: flex !important;
+    }
+
+    .navbar-links li {
+        width: 100% !important;
+        text-align: center !important;
+        margin: 8px 0 !important;
+    }
+
+    .navbar-links a {
+        font-size: 0.85rem !important;
+        letter-spacing: 0.1em !important;
+    }
+
+    /* 5. PRESERVE FORM ALIGNMENT 
+       Ensures main content doesn't break from navbar fixes */
+    main {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 auto !important;
+        padding: 20px 10px !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+    }
+}

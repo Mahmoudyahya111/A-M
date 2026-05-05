@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About TELEGANT</title>
+    <link rel="stylesheet" href="aboutstyle.css">
+    <link rel="icon" type="image/png" href="Tfavco-black.png">
+</head>
+<body>
+    <nav class="telegant-navbar">
+        <div class="navbar-container">
+            <div class="navbar-logo">
+                <img src="Tfavco-w-transparent.png" alt="Telegant Logo" class="logo-icon">
+                <span class="logo-text">TELEGANT<p>DEFINED BY ELEGANCE</p></span>
+            </div>
+            <button class="hamburger" id="menu-btn" aria-label="Toggle Menu">
+                <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+            </button>
+            <ul class="navbar-links" id="nav-menu">
+                <li><a href="index.html">HOME</a></li>
+                <li><a href="shop.html">SHOP</a></li>
+                <li><a href="about.html">ABOUT</a></li>
+                <li><a href="Survey.html">SURVEY</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main>
+        <section class="about-content">
+            <h1>Our Vision</h1>
+            <p>At TELEGANT, we believe that quality should never be compromised by variety. You might notice we offer products that seem unrelated—from high-end Mock Neck T-shirts to precision tech—but there is a method to our elegance.</p>
+            
+            <p>We combine these worlds to ensure we have the right items to accommodate your specific lifestyle needs, directly influenced by the feedback we receive from you. This diversity allows us to maintain a strict standard of high quality across every category we touch.</p>
+
+            <h1>The Name</h1>
+            <p>We chose the name <strong>TELEGANT</strong> to emphasize our core commitment: providing <strong>Elegant</strong> products, services, and quality. Whether you are wearing our fabrics or using our tech, the "Elegance" remains constant.</p>
+            
+            <p class="joke">And let's be honest, we also just really like that the initials are <strong>TE</strong>... because who doesn't love a good cup of Tea to start their day?</p>
+        </section>
+    </main>
+
+   <script>
+    // Ensure the script runs after the HTML is fully loaded
+    window.addEventListener('load', () => {
+        const menuBtn = document.getElementById('menu-btn');
+        const navMenu = document.getElementById('nav-menu');
+
+        if (menuBtn && navMenu) {
+            menuBtn.addEventListener('click', (e) => {
+                e.stopPropagation(); // Stops the click from bubbling to the document
+                navMenu.classList.toggle('show');
+                console.log("Menu toggled"); // Check your console (F12) to see this
+            });
+
+            // Close the box if the user clicks anywhere else[cite: 5]
+            document.addEventListener('click', (e) => {
+                if (!navMenu.contains(e.target) && !menuBtn.contains(e.target)) {
+                    navMenu.classList.remove('show');
+                }
+            });
+        } else {
+            console.error("Menu elements not found. Check your IDs!");
+        }
+    });
+</script>
+</body>
+</html>
