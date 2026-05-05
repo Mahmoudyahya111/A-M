@@ -378,7 +378,6 @@ a:hover{
     margin: 30px 10px;
     display: flex;
     flex-direction: row;
-    gap: 30px;
 }
 
 .product-card{
