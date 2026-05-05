@@ -354,7 +354,7 @@ color: #ffffff;
 
 }
 
-@media (min-width: 300px) and (max-width: 690px) {}
+@media (min-width: 300px) and (max-width: 690px) {
 
 /* =========================================
    UNIVERSAL MOBILE NAVBAR & SCROLL FIX
