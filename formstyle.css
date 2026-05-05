@@ -354,7 +354,7 @@ color: #ffffff;
 
 }
 
-@media (min-width: 300px) and (max-width: 690px) {
+@media (min-width: 300px) and (max-width: 690px) {}
 
 /* =========================================
    UNIVERSAL MOBILE NAVBAR & SCROLL FIX
@@ -529,14 +529,14 @@ section{
 
 
 #skip-btn{
-    font-size: 0.9rem;
+    font-size: 0.7rem;
     border: none;
-    width: 60px;
+    width: 50px;
     height: 17px;
  
      
     text-decoration: none;
-    border-radius: 18px;
+    border-radius: 15px;
     transition: background-color 0.3s ease;
     padding:10px;
     text-align: center;
