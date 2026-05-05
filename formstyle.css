@@ -528,15 +528,14 @@ section{
 #skip-btn{
     font-size: 0.9rem;
     border: none;
-    width: 80px;
-    height: 20px;
-    max-height: 20px;
-     min-height: 20px;
+    width: 60px;
+    height: 17px;
+ 
      
     text-decoration: none;
-    border-radius: 10px;
+    border-radius: 18px;
     transition: background-color 0.3s ease;
-    padding:8px;
+    padding:10px;
     text-align: center;
     
   
@@ -551,13 +550,13 @@ section{
 }
 #submit-btn{
     border: none;
-    padding: 8px;
+    padding: 5px;
     text-decoration: none;
-    font-size: 0.9rem;
-    border-radius: 10px;
+    font-size: 0.7rem;
+    border-radius: 18px;
     transition: background-color 0.3s ease;
-    width: 125px;
-    height: 35px;
+    width: 100px;
+    height: 40px;
     text-align: center;
 
 }
