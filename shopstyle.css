@@ -374,10 +374,11 @@ a:hover{
     }
 
 
-    #products-container{
+ #products-container{
     margin: 30px 10px;
     display: flex;
     flex-direction: row;
+    gap:20px
 }
 
 .product-card{
