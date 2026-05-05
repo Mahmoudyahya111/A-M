@@ -467,7 +467,7 @@ color: #ffffff;
     flex-wrap: wrap;
     justify-content: center;
     align-items: center;
-    gap: 10px;
+    gap: 13px;
     height: 470px;
     width: 70%;
     padding: 20px 20px;
@@ -486,7 +486,7 @@ section{
 }
 
 #clothing-form label{
-    font-size: 1.2rem;
+    font-size: 1.0rem;
     width: 220px;
     text-align: center;
 }
@@ -496,6 +496,7 @@ section{
     height: 25px;
     width: 300px;
     border-radius: 10px;
+    border: 1px solid #c8a86a;
     padding: 5px;
     
 }
@@ -522,6 +523,8 @@ section{
     padding: 5px;
     max-width: 95%;
     min-width: 70%;
+        border: 1px solid #c8a86a;
+
 }
 
 
