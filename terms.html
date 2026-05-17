@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TELEGANT — Terms & Conditions</title>
+  <link rel="stylesheet" href="terms.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="icon" type="image/png" href="Tfavco-black.png">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Saira+Stencil:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+  <link rel="manifest" href="manifest.json">
+</head>
+<body>
+      <nav class="telegant-navbar">
+        
+        <div class="navbar-container">
+            <!-- Logo Section -->
+            <!-- <div class="navbar-logo">
+                <img src="Tfavco-w-transparent.png" alt="Telegant Logo" class="logo-icon">
+                <span class="logo-text">TELEGANT</span>
+            </div> -->
+              <div class="navbar-logo">
+                <!-- Replace 'logo-white.png' with your actual image path -->
+                <img src="Tfavco-w-transparent.png" alt="Telegant Logo" class="logo-icon">
+                <span class="logo-text">TELEGANT<p>DEFINED BY ELEGANCE</p></span>
+            </div>
+             <!-- Icons Section -->
+            <div class="navbar-icons">
+                <!-- search bar <a href="#search" class="icon-link search-icon"> 
+                     Search Icon (SVG or Icon Font) 
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                </a> -->
+                
+
+            <button class="hamburger" id="menu-btn" aria-label="Toggle Menu">
+                <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+            </button>
+            <!-- Navigation Links -->
+            <ul class="navbar-links" id="nav-menu">
+                <li><a href="index.html">HOME</a></li>
+                <li><a href="shop.html">SHOP</a></li>
+                <li><a href="#newin">NEW IN</a></li>
+                <li><a href="Survey.html">SURVEY</a></li> 
+                <li><a href="about.html">ABOUT</a></li>
+                <li><a href="#contact">CONTACT</a></li>
+                <li><a href="terms.html">T&amp;Cs</a></li>
+
+                
+            </ul>
+            <a href="#cart" class="icon-link cart-icon">
+                    <!-- Cart Icon (SVG or Icon Font) -->
+                    <!-- <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+                    <span class="cart-count">2</span> -->
+                </a>
+           
+            </div>
+        </div>
+    </nav>
+
+  <main class="about-main">
+    <div class="about-header">
+      <p class="hero-eyebrow">LEGAL FRAMEWORK</p>
+      <h1>Terms & Conditions</h1>
+    </div>
+
+    <div class="about-grid">
+      <!-- Card 1: Refund Policy (Egypt Regulations) -->
+      <div class="about-card">
+        <h2>Refund & Return Policy</h2>
+        <p>In accordance with <strong>Egyptian Consumer Protection Law No. 181 of 2018</strong>, our policy is designed to protect your elegance and your rights.</p>
+        <p><strong>14-Day "No Reason" Return:</strong> You have the right to return or exchange any item within 14 days of receipt if it is in its original condition and packaging.</p>
+        <p><strong>30-Day Defect Policy:</strong> If a product is defective or does not match the specifications mentioned on our site, you have a full 30-day window for a return or replacement.</p>
+      </div>
+
+      <!-- Card 2: General Terms -->
+      <div class="about-card">
+        <h2>General Conditions</h2>
+        <p>By using TELEGANT, you agree to comply with the laws of the Arab Republic of Egypt. All content on this site is the property of TELEGANT.</p>
+        <p><strong>Privacy:</strong> We handle your data with the same care we put into our fabrics. Your information is never shared with third parties except to fulfill your orders.</p>
+        <p><strong>Governing Law:</strong> Any disputes shall be settled under the exclusive jurisdiction of the Egyptian Courts.</p>
+      </div>
+    </div>
+
+    <!-- Values Grid for Extra Trust -->
+    <div class="about-values">
+      <div class="value-item">
+        <span class="value-icon">⚖️</span>
+        <h3>Law Compliant</h3>
+        <p>Fully regulated under Egypt's Consumer Protection laws.</p>
+      </div>
+      <div class="value-item">
+        <span class="value-icon">🔒</span>
+        <h3>Secure Checkout</h3>
+        <p>Your transactions are protected with high-level encryption.</p>
+      </div>
+      <div class="value-item">
+        <span class="value-icon">🇪🇬</span>
+        <h3>Local Support</h3>
+        <p>Our dedicated team is available across all governorates.</p>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // Navbar toggle logic
+    window.addEventListener('load', () => {
+        const menuBtn = document.getElementById('menu-btn');
+        const navMenu = document.getElementById('nav-menu');
+        menuBtn?.addEventListener('click', (e) => {
+            e.stopPropagation();
+            navMenu.classList.toggle('show');
+        });
+        document.addEventListener('click', (e) => {
+            if (!navMenu.contains(e.target)) navMenu.classList.remove('show');
+        });
+    });
+  </script>
+</body>
+</html>

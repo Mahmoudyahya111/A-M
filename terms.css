@@ -1,0 +1,173 @@
+/* Variables to match your brand palette[cite: 4] */
+:root {
+  --gold: #c8a86a;
+  --white: #ffffff;
+  --card-bg: rgba(13, 13, 13, 0.9);
+  --border-gold: rgba(200, 168, 106, 0.3);
+}
+
+/* Reusing the About Page Layout */
+.about-main { padding: 60px 5%; max-width: 1100px; margin: 0 auto; }
+
+.about-header { text-align: center; margin-bottom: 50px; }
+.hero-eyebrow { color: var(--gold); letter-spacing: 0.2em; font-size: 0.75rem; margin-bottom: 10px; }
+.about-header h1 { font-size: clamp(2rem, 4vw, 3rem); font-weight: 400; color: var(--white); }
+
+.about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 50px; }
+
+.about-card {
+  background-color: #222121; 
+  border: 1px solid var(--border-gold);
+  border-radius: 16px; 
+  padding: 36px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+.about-card h2 { color: var(--gold); font-size: 1.1rem; font-weight: 400; letter-spacing: 0.08em; margin-bottom: 16px; }
+.about-card p { color: rgba(255,255,255,0.7); font-size: 0.9rem; line-height: 1.8; margin-bottom: 14px; }
+.about-card strong { color: var(--white); }
+
+/* Bottom Trust Items */
+.about-values { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+.value-item {
+  text-align: center; padding: 32px 20px;
+  border: 1px solid var(--border-gold); border-radius: 14px;
+  transition: background 0.3s;
+  background-color: #222121;
+}
+.value-item:hover { background-color: rgba(200,168,106,0.06); }
+.value-icon { font-size: 1.4rem; display: block; margin-bottom: 12px; color: #c8a86a;}
+.value-item h3 { font-size: 0.82rem; letter-spacing: 0.12em; color: var(--white); margin-bottom: 8px; }
+.value-item p { font-size: 0.78rem; color: rgba(255,255,255,0.4); line-height: 1.7; }
+
+
+.hamburger {
+    display: none;
+    cursor: pointer;
+    background: transparent;
+    border: 2px solid white;
+    border-radius: 8px;
+    padding: 5px;
+    color: white;
+}
+.telegant-navbar {
+    background-color: #0d0d0d; /* Dark background from palette #0D0D0D */
+    color: #ffffff;
+    font-family: 'Times New Roman', Times, serif; /* Approximate Serif Font */
+    padding: 15px 15px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.navbar-container {
+    max-width: 100%; /* Or preferred max width */
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0 20px;
+        gap: 100px;
+
+}
+
+/* Logo Section */
+.navbar-logo {
+    display: flex;
+    align-items: center;
+    
+}
+
+.logo-icon {
+    height: 30px; /* Adjust height as needed */
+    margin-right: 10px;
+    border-right: #ffffff 1px solid;
+}
+
+.logo-text {
+    display: flex;
+    flex-direction: column;
+    font-size: 1.5rem;
+    letter-spacing: 0.15em;
+    font-weight: 400;
+}
+.logo-text > P {
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    font-weight: 300;
+     margin: 0;
+}
+
+/* Navigation Links */
+.navbar-links {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 40px; /* Space between links */
+}
+
+.navbar-links a {
+    text-decoration: none;
+    color: #ffffff;
+    font-size: 0.85rem;
+    letter-spacing: 0.1em;
+    font-weight: 400;
+    transition: color 0.3s ease;
+}
+
+.navbar-links a:hover {
+    color: #c8a86a; /* Gold color from palette #C8A86A on hover */
+}
+
+/* Icons Section */
+.navbar-icons {
+    height: 100%;
+    display: flex;
+    align-items: flex-end;
+    gap: 20px;
+    order: 1;
+}
+
+.icon-link {
+    color: #ffffff;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    position: relative;
+    transition: color 0.3s ease;
+}
+
+.icon-link:hover {
+    color: #c8a86a; /* Gold color on hover */
+}
+
+/* Cart Notification Bubble */
+.cart-icon {
+    position: relative;
+}
+
+html{
+    background-image:  url(NEBG.png);
+    background-size: 100% 100%;           
+     background-repeat: no-repeat;  
+     background-attachment: fixed; 
+     min-height: 100%; 
+     margin: 0;
+     padding: 0;         
+     font-family: 'Times New Roman', Times, serif;
+     width: 100%;
+     height: 100%;
+     
+
+
+}
+
+/* Responsive Logic[cite: 5] */
+@media (max-width: 800px) {
+  .about-grid { grid-template-columns: 1fr; }
+  .about-values { grid-template-columns: 1fr; }
+}
