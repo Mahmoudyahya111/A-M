@@ -150,17 +150,25 @@ main {
 }
 
 .about-content {
-    background-color: rgba(13, 13, 13, 0.85); /* Dark elegant overlay */
+    background-color: #222121; /* Dark elegant overlay */
     padding: 40px;
     border-radius: 20px;
     max-width: 800px;
     text-align: center;
     line-height: 1.8;
     border: 1px solid rgba(200, 168, 106, 0.3); /* Subtle gold border */
+    transition: ease-in 0.3s ;
+        letter-spacing: 0.1em;
+        color: #ffffff99;
+        font-weight: 600;
+        font-size: large;
+
 }
 
+
+
 h1 { color: #c8a86a; letter-spacing: 0.1em; font-weight: 400; }
-.joke { font-style: italic; color: #c8a96a; margin-top: 30px; font-size: 0.9rem; }
+.joke { font-style: italic; color: #eabe68; margin-top: 30px; font-size: 0.9rem; }
 
 /* Mobile Alignment & Scroll Protection */
 @media (min-width: 300px) and (max-width: 690px) {
