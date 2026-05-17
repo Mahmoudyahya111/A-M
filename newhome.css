@@ -1,0 +1,343 @@
+.hamburger {
+    display: none;
+    cursor: pointer;
+    background: transparent;
+    border: 2px solid white;
+    border-radius: 8px;
+    padding: 5px;
+    color: white;
+}
+.telegant-navbar {
+    background-color: #0d0d0d; /* Dark background from palette #0D0D0D */
+    color: #ffffff;
+    font-family: 'Times New Roman', Times, serif; /* Approximate Serif Font */
+    padding: 15px 15px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.navbar-container {
+    max-width: 100%; /* Or preferred max width */
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0 20px;
+        gap: 100px;
+
+}
+
+/* Logo Section */
+.navbar-logo {
+    display: flex;
+    align-items: center;
+    
+}
+
+.logo-icon {
+    height: 30px; /* Adjust height as needed */
+    margin-right: 10px;
+    border-right: #ffffff 1px solid;
+}
+
+.logo-text {
+    display: flex;
+    flex-direction: column;
+    font-size: 1.5rem;
+    letter-spacing: 0.15em;
+    font-weight: 400;
+}
+.logo-text > P {
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    font-weight: 300;
+     margin: 0;
+}
+
+/* Navigation Links */
+.navbar-links {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 40px; /* Space between links */
+}
+
+.navbar-links a {
+    text-decoration: none;
+    color: #ffffff;
+    font-size: 0.85rem;
+    letter-spacing: 0.1em;
+    font-weight: 400;
+    transition: color 0.3s ease;
+}
+
+.navbar-links a:hover {
+    color: #c8a86a; /* Gold color from palette #C8A86A on hover */
+}
+
+/* Icons Section */
+.navbar-icons {
+    height: 100%;
+    display: flex;
+    align-items: flex-end;
+    gap: 20px;
+    order: 1;
+}
+
+.icon-link {
+    color: #ffffff;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    position: relative;
+    transition: color 0.3s ease;
+}
+
+.icon-link:hover {
+    color: #c8a86a; /* Gold color on hover */
+}
+
+/* Cart Notification Bubble */
+.cart-icon {
+    position: relative;
+}
+
+html{
+    background-image:  url(NEBG.png);
+    background-size: 100% 100%;           
+     background-repeat: no-repeat;  
+     background-attachment: fixed; 
+     min-height: 100%; 
+     margin: 0;
+     padding: 0;         
+     font-family: 'Times New Roman', Times, serif;
+     width: 100%;
+     height: 100%;
+     
+
+
+}
+
+
+
+.title-desc{
+    color: #c8a86a;
+}
+
+h1{
+    color: #ffffff;
+    font-size: clamp(2.4rem, 5vw, 4rem)
+}
+
+h1 > em{
+    color: #c8a86a;
+}
+p{
+    color: #8a8686;
+}
+
+#Title{
+    /* background-color: #ffffff; */
+    margin-left: 0;
+    margin-top: 80px;
+    margin-bottom: 80px;
+    padding: 15px 0 10px 5px;
+    height: 500px;
+    width: 100%;
+    font-size: larger;
+    display: flex;
+    gap: 150px;
+}
+
+.Shop{
+    border: #c8a86a 2px solid;
+    background-color: #c8a86a;
+    text-decoration: none;
+    color: rgb(0, 0, 0);
+    padding: 7px;
+    border-radius: 5px;
+    display: inline-block;
+    
+}
+
+.Submission{
+    background-color: #343232;
+    text-decoration: none;
+    color: rgb(248, 248, 248);
+    padding: 8px;
+    margin-left: 3px;
+    border-radius: 5px;
+        display: inline-block;
+
+
+}
+
+
+.Shop:hover{
+    cursor: pointer;
+    box-shadow: #edcc8a 1px 2px 5px ;
+    background-color: #edcc8a;
+    transform: translateY(-2px);
+}
+
+.Submission:hover{
+    cursor: pointer;
+    box-shadow: #656565 1px 2px 5px ;
+    background-color: #807d7d;
+    transform: translateY(-2px);
+}
+
+#vid-card{
+    height: 800px;
+    
+}
+#prod-video{
+    height: 400px;
+    width: 600px;
+    border-radius: 50px;
+    
+}
+
+#features{
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: 400px;
+}
+
+.feature-card{
+    border: #c8a96a51 1px solid;
+    color: #c8a86a;
+    display: inline;
+    width: 500px;
+    height: 150px;
+    padding: 50px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #222121;
+}
+
+.feature-card h3{
+    color: #ffffff;
+    font-size: 0.9em;
+    letter-spacing: 0.2em;
+}
+
+.feature-card:hover{
+    background-color: #c8a96a46;
+}
+@media (min-width: 300px) and (max-width: 800px) {
+    
+    html, body {
+        width: 100% !important;
+        max-width: 100vw !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow-x: hidden !important; 
+    }
+
+    /* 2. NAVBAR CONTAINER LAYOUT 
+       Logo stays Left, Hamburger stays Right */
+    .navbar-container {
+        display: flex !important;
+        flex-direction: row !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        width: 100% !important;
+        padding: 0 15px !important; /* Standard side breathing room */
+        gap: 0 !important;
+    }
+
+    .telegant-navbar {
+        width: 100% !important;
+        padding: 10px 0 !important;
+        position: relative !important;
+        z-index: 1000 !important;
+    }
+
+    /* 3. HAMBURGER BUTTON 
+       Matches your reference image exactly */
+    .hamburger {
+        display: block !important;
+        background: transparent !important;
+        border: 2px solid #ffffff !important;
+        border-radius: 8px !important;
+        padding: 4px !important;
+        color: #ffffff !important;
+    }
+
+    .navbar-logo {
+        margin: 0 !important;
+    }
+
+    /* 4. THE DROP-DOWN BOX 
+       Standardized "Proper" look for all pages */
+    .navbar-links {
+        display: none !important; 
+        position: absolute !important;
+        top: 100% !important; 
+        right: 15px !important; 
+        background-color: #0d0d0d !important;
+        border: 1px solid #c8a86a !important;
+        border-radius: 12px !important;
+        flex-direction: column !important;
+        width: 180px !important;
+        padding: 15px !important;
+        z-index: 9999 !important;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.8) !important;
+        margin: 0 !important;
+        list-style: none !important;
+    }
+
+    /* Triggered by your existing JavaScript */
+    .navbar-links.show {
+        display: flex !important;
+    }
+
+    .navbar-links li {
+        width: 100% !important;
+        text-align: center !important;
+        margin: 8px 0 !important;
+    }
+
+    .navbar-links a {
+        font-size: 0.85rem !important;
+        letter-spacing: 0.1em !important;
+    }
+
+
+    #Title{
+        margin-top: 50px !important;
+        margin-bottom: 10px !important;
+        padding: 10px 0 10px 5px !important;
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 50px !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        height: 700px!important;
+    }
+    #prod-video{
+    height: 300px;
+    width: 200px;
+    }
+
+    #features{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: fit-content;
+    align-items: center;
+}
+    .feature-card{
+        width: 90% !important;
+        text-align: center !important;
+    }
+
+}
