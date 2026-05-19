@@ -166,6 +166,8 @@ html{
     box-shadow: 0 0.8em 1em #656565;
     transform: translatey(-0.25em);
     background-color: #807d7d;
+    color: #262626;
+    font-weight: 600;
 }
 
 #img-cont{
@@ -400,6 +402,8 @@ cursor: pointer;
     box-shadow: 0 0.8em 1em #656565;
     transform: translatey(-0.25em);
     background-color: #807d7d;
+    color: #262626;
+    font-weight: 600;
 }
 
 #img-cont{
