@@ -233,7 +233,7 @@ p{
     background-color: #c8a96a46;
 }
 
-/*footer*/
+/* FOOTER */
 #contact {
     display: flex;
     flex-direction: column;
@@ -439,9 +439,8 @@ p{
         width: 90% !important;
         text-align: center !important;
     }
-/* FOOTER */
 
-#contact {
+    #contact {
     display: flex;
     flex-direction: column;
     gap: 15px;
@@ -481,12 +480,11 @@ p{
     letter-spacing: 0.15em;
     font-weight: 400;
     color: #ffffff;
-    width: 300px;
+    width: 200px;
     height: 50px;
     gap: 3px;
     padding: 0;
 }
-
 .logo-text > span {
     font-size: 0.7rem;
     letter-spacing: 0.1em;
@@ -494,7 +492,7 @@ p{
     margin: 0;
     color: #ffffff99;}
 
-.logo-text >p{
+    .logo-text >p{
 
     font-size: 0.7rem;
     text-wrap: word-rap;
