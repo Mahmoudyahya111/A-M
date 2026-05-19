@@ -108,29 +108,8 @@
 .cart-icon {
     position: relative;
 }
-/* .cart-count {
-    position: absolute;
-    top: -8px;
-    right: -10px;
-    background-color: #7a1e1e; 
-    color: #ffffff;
-    font-family: sans-serif;
-    font-size: 0.7rem;
-    font-weight: bold;
-    border-radius: 50%;
-    width: 16px;
-    height: 16px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-} */
 
-
-
-
-
-
-html, body {
+html{
     background-image:  url(NEBG.png);
     background-size: 100% 100%;           
      background-repeat: no-repeat;  
@@ -139,35 +118,31 @@ html, body {
      margin: 0;
      padding: 0;         
      font-family: 'Times New Roman', Times, serif;
-     color: #c8a86a;
      width: 100%;
-     overflow-x: hidden;
-     overflow-y: auto;
-     display: flex;
-     flex-direction: column;
-    justify-content: center;
+     height: 100%;
+     
 
-   
 
 }
+
        
 
 #products-container{
-    width: clamp(30rem, 60vw, 80rem);
-    height: 100%;
+    width: 100%;
+    height: 50%;
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    gap: 100px;
+    gap: 50px;
     justify-content: center;
     align-self: center;
-    margin: 30px 10px;
+    margin: 100px 10px;
 }
 
 .product-card{
-     background-color: #c8a96a30;
-    width: 5%;
-    height: auto;
+     background-color: #343232;
+    width: 300px;
+    height: 350px;
     display: flex;
     flex-direction: column;
     flex-wrap: wrap;
@@ -180,97 +155,103 @@ html, body {
     border-radius: 2rem;
     align-items: center;
     transition: 0.25s;
+    border: #2f2f2f solid 3px;
+    color: #ffffff99  ;
 
 }
 
 .product-card:hover{
-    box-shadow: 0 0.5em 0.7em #c8a86a;
+    box-shadow: 0 0.8em 1em #656565;
     transform: translatey(-0.25em);
-    background-color: #57441c;
+    background-color: #807d7d;
 }
 
-img{
-    width: 70%;
+#img-cont{
+    width: 100%;
+    height: 50%;
+    padding: 0;
+    margin-top: 0;
+    background-color: #525151;
+}
+#img-cont>img{
+    width: 150px;
     min-width: 10%;
-    height: 20vh;
+    height: 150px;
     margin: 0;
+    background-color: #525151;
+    padding: 0;
 }
 
 button{
-        background-color: #2f2f2f;
-        border-radius: 1rem;
-        color: #ffffff;
-        letter-spacing: 5px;
-        transition: 0.25s;
-        margin-bottom: 4%;
+       border: #c8a86a 2px solid;
+    background-color: #c8a86a;
+    text-decoration: none;
+    color: rgb(0, 0, 0);
+    padding: 7px;
+    border-radius: 5px;
 }
 
 button:hover{
-background-color: #282a32;
 cursor: pointer;
-box-shadow: 0 0.5em 0.7em  #c8a86a;
-transform: translatey(-0.25em)
+    box-shadow: #edcc8a 1px 2px 5px ;
+    background-color: #edcc8a;
+    transform: translateY(-2px);
+    color: #252525;
 }
 
-/* #foot-nav{
-    display: flex;
-    height: 20%;
-    width: 100% ;
-   background-color: rgba(0, 0, 0, 0.259);
-    padding: 0.5em;
-    margin-bottom: 0%;
-    margin-left: 0;
-    margin-right: 0;
-    margin-top: 1%;
-    justify-content: center;
-    align-items: flex-start;
 
-}
-#foot-nav a{
-    color: #bdd4e7;
-    text-decoration: none;
-    font-weight: bold;
-    letter-spacing: 2px;
-    transition: 0.25s;
-    font-size: clamp(0.6rem, 1.2vw, 1.5rem);
-    display: inline-block;
+/* 1. Hide all pages by default, fix the flex-wrap typo */
+.product-page {
+  display: none;
+  gap: 20px;
+  flex-wrap: wrap; /* Fixed typo from 'flex: wrap' */
 }
 
-#foot-nav a:hover{
-    color: #99c4e7;
-    text-shadow: 0 0.5em 0.7em #BDD4E7;
-    transform: translatey(-0.20em);
+/* 2. Show Page 1 by default when the site loads */
+.product-page:first-of-type {
+  display: flex;
 }
 
-a:hover{
-    color: #99c4e7;
-    text-shadow: 0 0.5em 0.7em #BDD4E7;
-    transform: translatey(-0.30em);
+/* 3. The Magic Trick: If ANY page inside the container becomes active, 
+      immediately hide page 1 so it doesn't overlap */
+#products-container:has(:target) .product-page:first-of-type:not(:target) {
+  display: none;
+}
+/* 3. When ANY page container is targeted, explicitly force it to show */
+.product-page:target{
+  display: flex;
 }
 
-#foot-nav li{
-    color: #bdd4e7;
-    font-weight: bold;
-    letter-spacing: 2px;
-    transition: 0.25s;
-    font-size: clamp(0.6rem, 1.2vw, 1.5rem);
-    display: block;
-    
-}
-#foot-nav li:hover{
-    color: #99c4e7;
-    text-shadow: 0 0.5em 0.7em #BDD4E7;
-    transform: translatey(-0.20em);
+/* 4. If an explicit page is targeted, hide Page 1 if it is NOT the target */
+:target ~ .product-page:first-of-type:not(:target),
+.product-page:target ~ .product-page:first-of-type:not(:target) {
+  display: none;
 }
 
-#email-contact{
-        font-size: clamp(0.4rem, 1vw, 1.2rem);
 
+.pagination ul {
+  margin: 20px 0;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  text-align: center;
+  list-style: none;
 }
-#number-contact{
-        font-size: clamp(0.4rem, 1vw, 1.2rem);
 
-} */
+.pagination a {
+  display: inline-block;
+  padding: 8px 16px;
+  text-decoration: none;
+  background-color: #343232;
+  color: #ffffff99;
+  border-radius: 4px;
+  margin-right: 5px;
+}
+
+.pagination a:hover {
+  background-color: #ddd;
+  color: #343232;
+}
 
 @media (min-width: 300px) and (max-width: 690px) {
 
@@ -375,45 +356,131 @@ a:hover{
 
 
  #products-container{
-    margin: 30px 10px;
+    width: 100%;
+    height: 50%;
     display: flex;
     flex-direction: row;
-    gap:15px
+    flex-wrap: wrap;
+    gap: 50px;
+    justify-content: center;
+    align-self: center;
+    margin: 100px 10px 30px 10px !important;
 }
 
 .product-card{
-     background-color: #c8a96a30;
-    width: 50px;
-    height: auto;
+     background-color: #343232;
+    width: 350px;
+    height: 300px;
     display: flex;
     flex-direction: column;
     flex-wrap: wrap;
     justify-content: center;
     background-size: cover;
     padding: 0px;
-    /* min-height: fit-content;
-    min-width: fit-content; */
+    min-height: fit-content;
+    min-width: fit-content;
     text-align: center;
     border-radius: 2rem;
     align-items: center;
     transition: 0.25s;
+    border: #2f2f2f solid 3px;
+    color: #ffffff99  ;
 
 }
 
 .product-card:hover{
-    box-shadow: 0 0.5em 0.7em #c8a86a;
+    box-shadow: 0 0.8em 1em #656565;
     transform: translatey(-0.25em);
-    background-color: #57441c;
+    background-color: #807d7d;
 }
 
-.product-card img{
-    width: 80px;
+#img-cont{
+    width: 100%;
+    height: 50%;
+    padding: 0;
+    margin-top: 0;
+    background-color: #525151;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 1rem;
+}
+#img-cont>img{
+    width: 150px;
     min-width: 10%;
-    height: 100px;
+    height: 150px;
     margin: 0;
+    padding: 0;
+}
+
+button{
+       border: #c8a86a 2px solid;
+    background-color: #c8a86a;
+    text-decoration: none;
+    color: rgb(0, 0, 0);
+    padding: 7px;
+    border-radius: 5px;
+}
+
+.product-page{
+     display: flex;
+     flex-direction: row;
 }
 
 .product-info{
-    font-size: 0.9em;
+    font-size: 1em;
 } 
+
+/* 1. Hide all pages by default, fix the flex-wrap typo */
+.product-page {
+  display: none;
+  gap: 20px;
+  flex-wrap: wrap; /* Fixed typo from 'flex: wrap' */
+}
+
+/* 2. Show Page 1 by default when the site loads */
+.product-page:first-of-type {
+  display: flex;
+}
+
+/* 3. The Magic Trick: If ANY page inside the container becomes active, 
+      immediately hide page 1 so it doesn't overlap */
+#products-container:has(:target) .product-page:first-of-type:not(:target) {
+  display: none;
+}
+/* 3. When ANY page container is targeted, explicitly force it to show */
+.product-page:target{
+  display: flex;
+}
+
+/* 4. If an explicit page is targeted, hide Page 1 if it is NOT the target */
+:target ~ .product-page:first-of-type:not(:target),
+.product-page:target ~ .product-page:first-of-type:not(:target) {
+  display: none;
+}
+
+
+.pagination ul {
+  margin: 0;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  text-align: center;
+  list-style: none;
+}
+
+.pagination a {
+  display: inline-block;
+  padding: 8px 16px;
+  text-decoration: none;
+  background-color: #343232;
+  color: #ffffff99;
+  border-radius: 4px;
+  margin-right: 5px;
+}
+
+.pagination a:hover {
+  background-color: #ddd;
+  color: #343232;
+}
 }
