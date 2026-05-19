@@ -166,6 +166,7 @@ main {
 }
 
 /*footer*/
+/* FOOTER */
 #contact {
     display: flex;
     flex-direction: column;
@@ -424,7 +425,7 @@ h1 { color: #c8a86a; letter-spacing: 0.1em; font-weight: 400; }
     letter-spacing: 0.15em;
     font-weight: 400;
     color: #ffffff;
-    width: 300px;
+    width: 200px;
     height: 50px;
     gap: 3px;
     padding: 0;
