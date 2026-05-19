@@ -1,522 +1,905 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="A shopping page for TELEGANT store, featuring a variety of high quality mock neck t-shirts in different colors. Browse our elegant/high-quality collection and find the perfect fit for your style.">
-    <title>TELEGANT Store</title>
-    <link rel="stylesheet" href="shopstyle.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="icon" type="image/png" href="Common-Ground-Logo.png">
 
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Saira+Stencil:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
-</head>
 
-<!-- Modal -->
+.hamburger {
+    display: none;
+    cursor: pointer;
+    background: transparent;
+    border: 2px solid white;
+    border-radius: 8px;
+    padding: 5px;
+    color: white;
+}
+.telegant-navbar {
+    background-color: #0d0d0d; /* Dark background from palette #0D0D0D */
+    color: #ffffff;
+    font-family: 'Times New Roman', Times, serif; /* Approximate Serif Font */
+    padding: 15px 15px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
 
-<body>
+.navbar-container {
+    max-width: 100%; /* Or preferred max width */
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0 20px;
+        gap: 100px;
+
+}
+
+/* Logo Section */
+.navbar-logo {
+    display: flex;
+    align-items: center;
     
-    <nav class="telegant-navbar">
-        
-        <div class="navbar-container">
-            <!-- Logo Section -->
-            <!-- <div class="navbar-logo">
-                <img src="Tfavco-w-transparent.png" alt="Telegant Logo" class="logo-icon">
-                <span class="logo-text">TELEGANT</span>
-            </div> -->
-              <div class="navbar-logo">
-                <!-- Replace 'logo-white.png' with your actual image path -->
-                <img src="Tfavco-w-transparent.png" alt="Telegant Logo" class="logo-icon">
-                <span class="logo-text">TELEGANT<p>DEFINED BY ELEGANCE</p></span>
-            </div>
-             <!-- Icons Section -->
-            <div class="navbar-icons">
-                <!-- search bar <a href="#search" class="icon-link search-icon"> 
-                     Search Icon (SVG or Icon Font) 
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                </a> -->
-                
+}
 
-            <button class="hamburger" id="menu-btn" aria-label="Toggle Menu">
-                <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <line x1="3" y1="6" x2="21" y2="6"></line>
-                    <line x1="3" y1="12" x2="21" y2="12"></line>
-                    <line x1="3" y1="18" x2="21" y2="18"></line>
-                </svg>
-            </button>
-            <!-- Navigation Links -->
-            <ul class="navbar-links" id="nav-menu">
-                <li><a href="index.html">HOME</a></li>
-                <li><a href="#newin">NEW IN</a></li>
-                <li><a href="Survey.html">SURVEY</a></li> 
-                <li><a href="about.html">ABOUT</a></li>
-                <li><a href="#contact">CONTACT</a></li>
-                <li><a href="terms.html">T&amp;Cs</a></li>
+.logo-icon {
+    height: 30px; /* Adjust height as needed */
+    margin-right: 10px;
+    border-right: #ffffff 1px solid;
+}
 
-                
-            </ul>
-            <a href="#cart" class="icon-link cart-icon">
-                    <!-- Cart Icon (SVG or Icon Font) -->
-                    <!-- <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
-                    <span class="cart-count">2</span> -->
-                </a>
-           
-            </div>
-        </div>
-    </nav>
+.logo-text {
+    display: flex;
+    flex-direction: column;
+    font-size: 1.5rem;
+    letter-spacing: 0.15em;
+    font-weight: 400;
+}
+.logo-text > P {
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    font-weight: 300;
+     margin: 0;
+}
 
-    <article class="hero-content">
-        <div class="hero-content">
-            
-    <h1>
-        TE-Shop For Men. <br>
-        <em>High-Neck Summer T-shirts That Fits You.</em>
-    </h1>
-        </div>
-</article>
-    <section name="products-container" id="products-container">
+/* Navigation Links */
+.navbar-links {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 40px; /* Space between links */
+}
 
-<div id="page-1" class="product-page">      
-    <div name="product-card" class="product-card"> 
-        <div id="img-cont"><img src="New-navy.png" alt="Navy-Mock-Neck-T-shirt"></div>
-         <div name="product-info" class="product-info"> 
-            <h3> Mock Neck - Navy</h3> 
-            <p> 600 EGP</p>
-            <button name="buy-now">Buy Now</button>
-        </div>
-    </div>
-        
-       <div name="product-card" class="product-card"> 
-            <div id="img-cont"><img src="New-white.png" alt="White-Mock-Neck-T-shirt" ></div>
-            <div name="product-info" class="product-info">
-                <h3> Mock Neck - White</h3> 
-                <p> 600 EGP</p>
-                <button name="buy-now">Buy Now</button>
-            </div>
+.navbar-links a {
+    text-decoration: none;
+    color: #ffffff;
+    font-size: 0.85rem;
+    letter-spacing: 0.1em;
+    font-weight: 400;
+    transition: color 0.3s ease;
+}
 
-        </div>
-        
-        <div name="product-card" class="product-card">
-            <div id="img-cont"><img src="New-navy.png" alt="Navy-Mock-Neck-T-shirt"> </div>
-            <div name="product-info" class="product-info"> 
-                <h3> Mock Neck - Black</h3> 
-                <p> 600 EGP</p>
-                <button name="buy-now">Buy Now</button>
-            </div>
-        </div>  
+.navbar-links a:hover {
+    color: #c8a86a; /* Gold color from palette #C8A86A on hover */
+}
 
-        <div name="product-card" class="product-card">
-             <div id="img-cont"><img src="New-grey.png" alt="Grey-Mock-Neck-T-shirt"> </div>
-            
-             <div name="product-info" class="product-info"> 
-                <h3> Mock Neck - Grey</h3> 
-                <p> 600 EGP</p>
-                <button name="buy-now">Buy Now</button>
-            </div>
+/* Icons Section */
+.navbar-icons {
+    height: 100%;
+    display: flex;
+    align-items: flex-end;
+    gap: 20px;
+    order: 1;
+}
 
-        </div>
-</div>  
-    
-<div id="page-2" class="product-page">      
+.icon-link {
+    color: #ffffff;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    position: relative;
+    transition: color 0.3s ease;
+}
 
-  
-        <div name="product-card" class="product-card">
-            <div id="img-cont"><img src="New-black.png" alt="Black-Mock-Neck-T-shirtk">
-            </div>
-                <div name="product-info" class="product-info"> 
-                     <h3> Mock Neck - Black</h3> 
-                     <p> 600 EGP</p>
-                     <button name="buy-now">Buy Now</button>
-                </div>
+.icon-link:hover {
+    color: #c8a86a; /* Gold color on hover */
+}
 
-        </div>
-        
-      <div name="product-card" class="product-card">
-            <div id="img-cont"><img src="New-red.png" alt="Red-Mock-Neck-T-shirt">
-            </div>
-            <div name="product-info" class="product-info"> 
+/* Cart Notification Bubble */
+.cart-icon {
+    position: relative;
+}
 
-                <h3> Mock Neck - Red</h3> 
-                <p> 600 EGP</p>
-                <button name="buy-now">Buy Now</button>
-
-             </div>
-
-        </div>
-           <div name="product-card" class="product-card">
-            <div id="img-cont"><img src="New-navy.png" alt="Navy-Mock-Neck-T-shirt"></div>
-            <div name="product-info" class="product-info"> 
-                <h3> Mock Neck - Black</h3> 
-                <p> 600 EGP</p>
-                <button name="buy-now">Buy Now</button>
-            </div>
-        </div>
-        <div name="product-card" class="product-card">
-            <div id="img-cont"><img src="New-navy.png" alt="Navy-Mock-Neck-T-shirt"> </div>
-            <div name="product-info" class="product-info"> 
-                <h3> Mock Neck - Black</h3> 
-                <p> 600 EGP</p>
-                <button name="buy-now">Buy Now</button>
-            </div>
-        </div>  
-</div>
-
-<div id="page-3" class="product-page">      
-
-    <div name="product-card" class="product-card">
-         <div id="img-cont"><img src="New-navy.png" alt="Navy-Mock-Neck-T-shirt"></div>
-         <div name="product-info" class="product-info"> 
-            <h3> Mock Neck - Black</h3> 
-            <p> 600 EGP</p>
-            <button name="buy-now">Buy Now</button>
-        </div>
-
-     </div>
-         <div name="product-card" class="product-card">
-            <div id="img-cont"><img src="New-navy.png" alt="Navy-Mock-Neck-T-shirt"></div>
-            <div name="product-info" class="product-info"> 
-                <h3> Mock Neck - Black</h3> 
-                <p> 600 EGP</p>
-                <button name="buy-now">Buy Now</button>
-            </div>
-        </div>
-        <div name="product-card" class="product-card">
-            <div id="img-cont"><img src="New-navy.png" alt="Navy-Mock-Neck-T-shirt"> </div>
-            <div name="product-info" class="product-info"> 
-                <h3> Mock Neck - Black</h3> 
-                <p> 600 EGP</p>
-                <button name="buy-now">Buy Now</button>
-            </div>
-        </div>
-        <div name="product-card" class="product-card">
-            <div id="img-cont"><img src="New-navy.png" alt="Navy-Mock-Neck-T-shirt"> </div>
-            <div name="product-info" class="product-info"> 
-                <h3> Mock Neck - Black</h3> 
-                <p> 600 EGP</p>
-                <button name="buy-now">Buy Now</button>
-            </div>
-        </div>  
-</div>       
+html{
+    background-image:  url(NEBG.png);
+    background-size: 100% 100%;           
+     background-repeat: no-repeat;  
+     background-attachment: fixed; 
+     min-height: 100%; 
+     margin: 0;
+     padding: 0;         
+     font-family: 'Times New Roman', Times, serif;
+     width: 100%;
+     height: 100%;
+     
 
 
-<div id="page-4" class="product-page">
-        
-         <div name="product-card" class="product-card">
-            <div id="img-cont"><img src="New-navy.png" alt="Navy-Mock-Neck-T-shirt"> </div>
-            <div name="product-info" class="product-info"> 
-                <h3> Mock Neck - Black</h3> 
-                <p> 600 EGP</p>
-                <button name="buy-now">Buy Now</button>
-            </div>
-        </div>
-        <div name="product-card" class="product-card">
-            <div id="img-cont"><img src="New-navy.png" alt="Navy-Mock-Neck-T-shirt"> </div>
-            <div name="product-info" class="product-info"> 
-                <h3> Mock Neck - Black</h3> 
-                <p> 600 EGP</p>
-                <button name="buy-now">Buy Now</button>
-            </div>
-        </div>  
+}
 
-      
-         <div name="product-card" class="product-card">
-            <div id="img-cont"><img src="New-navy.png" alt="Navy-Mock-Neck-T-shirt"> </div>
-            <div name="product-info" class="product-info"> 
-                <h3> Mock Neck - Black</h3> 
-                <p> 600 EGP</p>
-                <button name="buy-now">Buy Now</button>
-            </div>
-        </div>
-        <div name="product-card" class="product-card">
-            <div id="img-cont"><img src="New-navy.png" alt="Navy-Mock-Neck-T-shirt"> </div>
-            <div name="product-info" class="product-info"> 
-                <h3> Mock Neck - Black</h3> 
-                <p> 600 EGP</p>
-                <button name="buy-now">Buy Now</button>
-            </div>
-        </div>  
-</div>
+.hero-content{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    text-align: center;
+}
+       h1{
+    color: #ffffff;
+    font-size: clamp(2rem, 4vw, 3rem);
+    text-align: center;
+}
+
+h1 > em{
+    color: #c8a86a;
+}
+
+#products-container{
+    width: 100%;
+    height: 50%;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 50px;
+    justify-content: center;
+    align-self: center;
+    margin: 100px 10px;
+    margin-bottom: 50px;
+}
+
+.product-card{
+     background-color: #343232;
+    width: 300px;
+    height: 350px;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    justify-content: center;
+    background-size: cover;
+    padding: 0px;
+    padding-bottom: 10px;
+    min-height: fit-content;
+    min-width: fit-content;
+    text-align: center;
+    border-radius: 0 0 0 0 ;
+    align-items: center;
+    transition: 0.25s;
+    border: #2f2f2f solid 3px;
+    color: #ffffff99  ;
+
+}
+
+.product-card:first-child{
+     background-color: #343232;
+    width: 300px;
+    height: 350px;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    justify-content: center;
+    background-size: cover;
+    padding: 0px;
+    padding-bottom: 10px;
+    min-height: fit-content;
+    min-width: fit-content;
+    text-align: center;
+    border-radius: 2rem 0 0  2rem ;
+    align-items: center;
+    transition: 0.25s;
+    border: #2f2f2f solid 3px;
+    color: #ffffff99  ;
+
+}
+
+.product-card:last-child{
+     background-color: #343232;
+    width: 300px;
+    height: 350px;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    justify-content: center;
+    background-size: cover;
+    padding: 0px;
+    padding-bottom: 10px;
+    min-height: fit-content;
+    min-width: fit-content;
+    text-align: center;
+    border-radius:0 2rem 2rem 0 ;
+    align-items: center;
+    transition: 0.25s;
+    border: #2f2f2f solid 3px;
+    color: #ffffff99  ;
+
+}
+
+.product-card:hover{
+    box-shadow: 0 0.8em 1em #656565;
+    transform: translatey(-0.25em);
+    background-color: #807d7d;
+    color: #262626;
+    font-weight: 600;
+}
+
+#img-cont{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 200px;
+    padding: 0 0 22px 0;
+    margin-top: 0;
+    background-color: #525151;
+    border-radius: 0 0 0 0;
+}
+
+.product-card:first-child >#img-cont{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 200px;
+    padding: 0 0 22px 0;
+    margin-top: 0;
+    background-color: #525151;
+    border-radius: 2rem 0 0  0;
+}
+
+.product-card:last-child >#img-cont{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 200px;
+    padding: 0 0 22px 0;
+    margin-top: 0;
+    background-color: #525151;
+    border-radius: 0 2rem 0 0 ;
+}
+#img-cont>img{
+    width: 150px;
+    min-width: 10%;
+    height: 150px;
+    margin: 0;
+    background-color: #525151;
+    padding: 0;
+}
+
+button{
+       border: #c8a86a 2px solid;
+    background-color: #c8a86a;
+    text-decoration: none;
+    color: rgb(0, 0, 0);
+    padding: 7px;
+    border-radius: 5px;
+}
+
+button:hover{
+cursor: pointer;
+    box-shadow: #edcc8a 1px 2px 5px ;
+    background-color: #edcc8a;
+    transform: translateY(-2px);
+    color: #252525;
+}
+
+
+/* 1. Hide all pages by default, fix the flex-wrap typo */
+.product-page {
+  display: none;
+  gap: 20px;
+  flex-wrap: wrap; /* Fixed typo from 'flex: wrap' */
+}
+
+/* 2. Show Page 1 by default when the site loads */
+.product-page:first-of-type {
+  display: flex;
+}
+
+/* 3. The Magic Trick: If ANY page inside the container becomes active, 
+      immediately hide page 1 so it doesn't overlap */
+#products-container:has(:target) .product-page:first-of-type:not(:target) {
+  display: none;
+}
+/* 3. When ANY page container is targeted, explicitly force it to show */
+.product-page:target{
+  display: flex;
+}
+
+/* 4. If an explicit page is targeted, hide Page 1 if it is NOT the target */
+:target ~ .product-page:first-of-type:not(:target),
+.product-page:target ~ .product-page:first-of-type:not(:target) {
+  display: none;
+}
+
+.pagination{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    width: 100%;
+    padding: 0%;
+    margin: 0;
+}
+
+.pagination ul {
+  margin: 5px 0;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  text-align: center;
+  list-style: none;
+  width: 100%;
+}
+
+.pagination a {
+  display: inline-block;
+  padding: 8px 16px;
+  text-decoration: none;
+  background-color: #343232;
+  color: #ffffff99;
+  border-radius: 20px;
+  margin: 4px;
+}
+
+.pagination a:hover {
+  background-color: #ddd;
+  color: #343232;
+}
+
+/* FOOTER */
+#contact {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 100%;
+    border-top: #c8a96a94 solid 1px;
+    margin: 0 auto;
+    color: #ffffff99;
+    background-color: #0d0d0d;
+    align-items: center;
+}
+
+.footer-grid{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    width: 90%;
+    height: 200px;
+    padding: 10px;
+    justify-items: end;
+    align-items: normal;
+    flex-wrap: wrap;
+    margin-left: 10px;
+    border-bottom: #c8a86a94 solid 1px;
+}
+
+.footer-brand {
+    display: flex;
+    flex-direction: column;
  
-<div id="page-5" class="product-page">      
+    width: 400px;
+    margin: 10px;
+    height: 100px;
+}
+.logo-text {
+    display: flex;
+    flex-direction: column;
+    font-size: 1.3rem;
+    letter-spacing: 0.15em;
+    font-weight: 400;
+    color: #ffffff;
+    width: 300px;
+    height: 50px;
+    gap: 3px;
+    padding: 0;
+}
 
-        <div name="product-card" class="product-card">
-            <div id="img-cont"><img src="New-navy.png" alt="Navy-Mock-Neck-T-shirt"> </div>
-            <div name="product-info" class="product-info"> 
-                <h3> Mock Neck - Black</h3> 
-                <p> 600 EGP</p>
-                <button name="buy-now">Buy Now</button>
-            </div>
-        </div>  
+.logo-text > span {
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    font-weight: 300;
+    margin: 0;
+    color: #ffffff99;}
 
+.logo-text >p{
+
+    font-size: 0.7rem;
+    text-wrap: word-rap;
+    font-weight: 200;
+    color: #ffffff99;
+}
+
+.footer-col {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    width: 250px;
+    height: 200px;
+    margin: 5px;
+}
+.footer-col h4 {
+    font-size: 0.85rem;
+    letter-spacing: 0.15em;
+    font-weight: 400;
+    color: #c8a86a;
+}
+
+.footer-col a {
+    text-decoration: none;
+    color: #ffffff99;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    font-weight: 300;
+    transition: color 0.3s ease;
+}
+
+
+.footer-bottom {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 10px 0;
+    color: #ffffff99;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    font-weight: 300;
+}
+@media (min-width: 250px) and (max-width: 970px) {
+
+
+/* =========================================
+   UNIVERSAL MOBILE NAVBAR & SCROLL FIX
+   ========================================= */
+/* 1. STOP HORIZONTAL SCROLLING 
+       Applies only to the root containers to protect page alignment */
+   html, body {
+        width: 100% ;
+        max-width: 100vw;
+        margin: 0 ;
+        padding: 0 ;
+;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        flex-wrap: wrap;
         
-         <div name="product-card" class="product-card">
-            <div id="img-cont"><img src="New-navy.png" alt="Navy-Mock-Neck-T-shirt"> </div>
-            <div name="product-info" class="product-info"> 
-                <h3> Mock Neck - Black</h3> 
-                <p> 600 EGP</p>
-                <button name="buy-now">Buy Now</button>
-            </div>
-        </div>
-        <div name="product-card" class="product-card">
-            <div id="img-cont"><img src="New-navy.png" alt="Navy-Mock-Neck-T-shirt"> </div>
-            <div name="product-info" class="product-info"> 
-                <h3> Mock Neck - Black</h3> 
-                <p> 600 EGP</p>
-                <button name="buy-now">Buy Now</button>
-            </div>
-        </div>  
-        <div name="product-card" class="product-card">
-            <div id="img-cont"><img src="New-navy.png" alt="Navy-Mock-Neck-T-shirt"> </div>
-            <div name="product-info" class="product-info"> 
-                <h3> Mock Neck - Black</h3> 
-                <p> 600 EGP</p>
-                <button name="buy-now">Buy Now</button>
-            </div>
-        </div>  
+    }
+.navbar-icons {
+    height: 100%;
+    display: flex;
+    align-items: flex-end;
+    gap: 5px;
+    order: 1;
+}
+    /* 2. NAVBAR CONTAINER LAYOUT 
+       Logo stays Left, Hamburger stays Right */
+    .navbar-container {
+        display: flex !important;
+        flex-direction: row !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        width: 100% ;
+        padding: 0 0px !important; /* Standard side breathing room */
+        gap: 0 !important;
+    }
 
-</div>
+    .telegant-navbar {
+        width: 100% !important;
+        padding: 10px 10px !important;
+        position: relative !important;
+        z-index: 1000 !important;
+    }
 
-<div id="page-6" class="product-page">      
+    /* 3. HAMBURGER BUTTON 
+       Matches your reference image exactly */
+    .hamburger {
+        display: block !important;
+        background: transparent !important;
+        border: 2px solid #ffffff !important;
+        border-radius: 8px !important;
+        padding: 4px !important;
+        color: #ffffff !important;
+    }
 
-         <div name="product-card" class="product-card">
-            <div id="img-cont"><img src="New-navy.png" alt="Navy-Mock-Neck-T-shirt"> </div>
-            <div name="product-info" class="product-info"> 
-                <h3> Mock Neck - Black</h3> 
-                <p> 600 EGP</p>
-                <button name="buy-now">Buy Now</button>
-            </div>
-        </div>
-        <div name="product-card" class="product-card">
-            <div id="img-cont"><img src="New-navy.png" alt="Navy-Mock-Neck-T-shirt"> </div>
-            <div name="product-info" class="product-info"> 
-                <h3> Mock Neck - Black</h3> 
-                <p> 600 EGP</p>
-                <button name="buy-now">Buy Now</button>
-            </div>
-        </div>  
+    .navbar-logo {
+        margin: 0 !important;
+    }
 
-        <div name="product-card" class="product-card">
-            <div id="img-cont"><img src="New-navy.png" alt="Navy-Mock-Neck-T-shirt"> </div>
-            <div name="product-info" class="product-info"> 
-                <h3> Mock Neck - Black</h3> 
-                <p> 600 EGP</p>
-                <button name="buy-now">Buy Now</button>
-            </div>
-        </div>  
+    /* 4. THE DROP-DOWN BOX 
+       Standardized "Proper" look for all pages */
+    .navbar-links {
+        display: none !important; 
+        position: absolute !important;
+        top: 100% !important; 
+        right: 15px !important; 
+        background-color: #0d0d0d !important;
+        border: 1px solid #c8a86a !important;
+        border-radius: 12px !important;
+        flex-direction: column !important;
+        width: 180px !important;
+        padding: 15px !important;
+        z-index: 9999 !important;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.8) !important;
+        margin: 0 !important;
+        list-style: none !important;
+    }
 
-         <div name="product-card" class="product-card">
-            <div id="img-cont"><img src="New-navy.png" alt="Navy-Mock-Neck-T-shirt"> </div>
-            <div name="product-info" class="product-info"> 
-                <h3> Mock Neck - Black</h3> 
-                <p> 600 EGP</p>
-                <button name="buy-now">Buy Now</button>
-            </div>
-        </div>
-</div> 
+    /* Triggered by your existing JavaScript */
+    .navbar-links.show {
+        display: flex !important;
+    }
 
-<div id="page-7" class="product-page">      
+    .navbar-links li {
+        width: 100% !important;
+        text-align: center !important;
+        margin: 8px 0 !important;
+    }
 
+    .navbar-links a {
+        font-size: 0.85rem !important;
+        letter-spacing: 0.1em !important;
+    }
+
+    /* 5. PRESERVE FORM ALIGNMENT 
+       Ensures main content doesn't break from navbar fixes */
+    main {
+         box-sizing: border-box;
+        width: 100 !important;
+        max-width: 100% !important;
+        margin: 0 auto !important;
+        padding: 20px 0px !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+    }
+
+    .hero-content{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    text-align: center;
+}
+
+    h1{
+    color: #ffffff;
+    font-size: clamp(1.5rem, 3.5vw, 2.5rem);
+    text-align: center;
+    width: 100%;
+    padding: 30px 0 0 0 !important;
+}
+
+h1 > em{
+    color: #c8a86a;
+}
+
+
+ #products-container{
+    width: 95%;
+    height: 50%;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 50px;
+    justify-content: center;
+    align-self: center;
+    margin: 100px 10px 30px 10px !important;
+    padding-top: 0 !important;
+}
+
+.product-card{
+     background-color: #343232;
+    width: 340px;
+    height: 350px;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    justify-content: center;
+    background-size: cover;
+    padding-top: 0px;
+    padding-bottom: 10px;
+    min-height: fit-content;
+    min-width: fit-content;
+    text-align: center;
+    border-radius: 0 0 0 0  ;
+    align-items: center;
+    transition: 0.25s;
+    border: #2f2f2f solid 3px;
+    color: #ffffff99  ;
+
+}
+
+
+.product-card:first-child {
+    background-color: #343232;
+    width: 340px;
+    height: 350px;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    justify-content: center;
+    background-size: cover;
+    padding-top: 0px;
+    padding-bottom: 10px;
+    min-height: fit-content;
+    min-width: fit-content;
+    text-align: center;
+    border-radius: 2rem 2rem 0 0 ;
+    align-items: center;
+    transition: 0.25s;
+    border: #2f2f2f solid 3px;
+    color: #ffffff99  ;
     
-        <div name="product-card" class="product-card">
-            <div id="img-cont"><img src="New-navy.png" alt="Navy-Mock-Neck-T-shirt"> </div>
-            <div name="product-info" class="product-info"> 
-                <h3> Mock Neck - Black</h3> 
-                <p> 600 EGP</p>
-                <button name="buy-now">Buy Now</button>
-            </div>
-        </div>  
+}
+.product-card:last-child {
+      background-color: #343232;
+    width: 340px;
+    height: 350px;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    justify-content: center;
+    background-size: cover;
+    padding-top: 0px;
+    padding-bottom: 10px;
+    min-height: fit-content;
+    min-width: fit-content;
+    text-align: center;
+    border-radius: 0 0 2rem 2rem ;
+    align-items: center;
+    transition: 0.25s;
+    border: #2f2f2f solid 3px;
+    color: #ffffff99  ;
+}
 
-        
-         <div name="product-card" class="product-card">
-            <div id="img-cont"><img src="New-navy.png" alt="Navy-Mock-Neck-T-shirt"> </div>
-            <div name="product-info" class="product-info"> 
-                <h3> Mock Neck - Black</h3> 
-                <p> 600 EGP</p>
-                <button name="buy-now">Buy Now</button>
-            </div>
-        </div>
-        <div name="product-card" class="product-card">
-            <div id="img-cont"><img src="New-navy.png" alt="Navy-Mock-Neck-T-shirt"> </div>
-            <div name="product-info" class="product-info"> 
-                <h3> Mock Neck - Black</h3> 
-                <p> 600 EGP</p>
-                <button name="buy-now">Buy Now</button>
-            </div>
-        </div>  
-        <div name="product-card" class="product-card">
-            <div id="img-cont"><img src="New-navy.png" alt="Navy-Mock-Neck-T-shirt"> </div>
-            <div name="product-info" class="product-info"> 
-                <h3> Mock Neck - Black</h3> 
-                <p> 600 EGP</p>
-                <button name="buy-now">Buy Now</button>
-            </div>
-        </div>  
+.product-card:hover{
+    box-shadow: 0 0.8em 1em #656565;
+    transform: translatey(-0.25em);
+    background-color: #807d7d;
+}
 
-</div>
-         <!-- <div name="product-card" class="product-card">
-            <div id="img-cont"><img src="New-navy.png" alt="Navy-Mock-Neck-T-shirt"> </div>
-            <div name="product-info" class="product-info"> 
-                <h3> Mock Neck - Black</h3> 
-                <p> 600 EGP</p>
-                <button name="buy-now">Buy Now</button>
-            </div>
-        </div>  
+#img-cont{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 50%;
+    padding: 0 0 23px 0;
+    margin-top: 0;
+    margin-bottom: 10px;
+    background-color: #525151;   
+    border-radius: 0 0 0 0;
+    transform: translatey(-8px);
+}
 
-        </div>
-         <div name="product-card" class="product-card">
-            <div id="img-cont"><img src="New-navy.png" alt="Navy-Mock-Neck-T-shirt"> </div>
-            <div name="product-info" class="product-info"> 
-                <h3> Mock Neck - Black</h3> 
-                <p> 600 EGP</p>
-                <button name="buy-now">Buy Now</button>
-            </div>
-        </div>
-        <div name="product-card" class="product-card">
-            <div id="img-cont"><img src="New-navy.png" alt="Navy-Mock-Neck-T-shirt"> </div>
-            <div name="product-info" class="product-info"> 
-                <h3> Mock Neck - Black</h3> 
-                <p> 600 EGP</p>
-                <button name="buy-now">Buy Now</button>
-            </div>
-        </div>  
+.product-card:first-child > #img-cont{
+     display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 50%;
+    padding: 0 0 23px 0;
+    margin-top: 0;
+    margin-bottom: 10px;
+    background-color: #525151;   
+    border-radius: 2rem 2rem 0 0;
+    transform: translatey(-8px);
+}
 
-        </div>
-         <div name="product-card" class="product-card">
-            <div id="img-cont"><img src="New-navy.png" alt="Navy-Mock-Neck-T-shirt"> </div>
-            <div name="product-info" class="product-info"> 
-                <h3> Mock Neck - Black</h3> 
-                <p> 600 EGP</p>
-                <button name="buy-now">Buy Now</button>
-            </div>
-        </div>
-        <div name="product-card" class="product-card">
-            <div id="img-cont"><img src="New-navy.png" alt="Navy-Mock-Neck-T-shirt"> </div>
-            <div name="product-info" class="product-info"> 
-                <h3> Mock Neck - Black</h3> 
-                <p> 600 EGP</p>
-                <button name="buy-now">Buy Now</button>
-            </div>
-        </div>  
+.product-card:last-child > #img-cont{
+     display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 50%;
+    padding: 0 0 23px 0;
+    margin-top: 0;
+    margin-bottom: 10px;
+    background-color: #525151;   
+    border-radius: 0 0 0 0;
+    transform: translatey(-8px);
+}
+#img-cont>img{
+    width: 150px;
+    min-width: 10%;
+    height: 150px;
+    margin: 0;
+    padding: 0;
+}
 
-        </div>
-         <div name="product-card" class="product-card">
-            <div id="img-cont"><img src="New-navy.png" alt="Navy-Mock-Neck-T-shirt"> </div>
-            <div name="product-info" class="product-info"> 
-                <h3> Mock Neck - Black</h3> 
-                <p> 600 EGP</p>
-                <button name="buy-now">Buy Now</button>
-            </div>
-        </div>
-        <div name="product-card" class="product-card">
-            <div id="img-cont"><img src="New-navy.png" alt="Navy-Mock-Neck-T-shirt"> </div>
-            <div name="product-info" class="product-info"> 
-                <h3> Mock Neck - Black</h3> 
-                <p> 600 EGP</p>
-                <button name="buy-now">Buy Now</button>
-            </div>
-        </div>  
+button{
+       border: #c8a86a 2px solid;
+    background-color: #c8a86a;
+    text-decoration: none;
+    color: rgb(0, 0, 0);
+    padding: 7px;
+    border-radius: 5px;
+}
 
-        </div>
-         <div name="product-card" class="product-card">
-            <div id="img-cont"><img src="New-navy.png" alt="Navy-Mock-Neck-T-shirt"> </div>
-            <div name="product-info" class="product-info"> 
-                <h3> Mock Neck - Black</h3> 
-                <p> 600 EGP</p>
-                <button name="buy-now">Buy Now</button>
-            </div>
-        </div>
-        <div name="product-card" class="product-card">
-            <div id="img-cont"><img src="New-navy.png" alt="Navy-Mock-Neck-T-shirt"> </div>
-            <div name="product-info" class="product-info"> 
-                <h3> Mock Neck - Black</h3> 
-                <p> 600 EGP</p>
-                <button name="buy-now">Buy Now</button>
-            </div>
-        </div>  
+.product-page{
+     display: flex;
+     flex-direction: row;
+     justify-content: center;
+       display: none;
+  gap: 20px;
+  flex-wrap: wrap; 
+}
+/*
+.product-info{
+    font-size: 1em;
+} 
 
-        </div>
-         <div name="product-card" class="product-card">
-            <div id="img-cont"><img src="New-navy.png" alt="Navy-Mock-Neck-T-shirt"> </div>
-            <div name="product-info" class="product-info"> 
-                <h3> Mock Neck - Black</h3> 
-                <p> 600 EGP</p>
-                <button name="buy-now">Buy Now</button>
-            </div>
-        </div>
-        <div name="product-card" class="product-card">
-            <div id="img-cont"><img src="New-navy.png" alt="Navy-Mock-Neck-T-shirt"> </div>
-            <div name="product-info" class="product-info"> 
-                <h3> Mock Neck - Black</h3> 
-                <p> 600 EGP</p>
-                <button name="buy-now">Buy Now</button>
-            </div>
-        </div>   --> 
+/* 1. Hide all pages by default, fix the flex-wrap typo */
 
-        
-</section>
-  
-<div class="pagination">
-            <ul>
-                <li><a href="#page-1">1</a></li>
-                <li><a href="#page-2">2</a></li>
-                <li><a href="#page-3">3</a></li>
-                <li><a href="#page-4">4</a></li>
-                <li><a href="#page-5">5</a></li>
-                <li><a href="#page-6">6</a></li>
-                <li><a href="#page-7">7</a></li>
-            </ul>
-        </div >
-    <!-- FOOTER -->
-  <footer class="telegant-footer" id="contact">
-    <div class="footer-grid">
-      <div class="footer-brand">
-        <div class="logo-text" >TELEGANT<span>DEFINED BY ELEGANCE</span>
-        <p>Premium T-shirts defined by elegance.</p></div>
-      </div>
-      <div class="footer-col">
-        <h4>NAVIGATE</h4>
-        <a href="shop.html">Shop</a>
-        <a href="survey.html">Survey</a>
-        <a href="about.html">About</a>
-        <a href="track.html">Track Order</a>
-        <a href="terms.html">Terms &amp; Conditions</a>
-      </div>
-      <div class="footer-col">
-        <h4>CONTACT</h4>
-        <a href="mailto:mahmoudyahya66@gmail.com">mahmoudyahya66@gmail.com</a>
-        <a href="tel:+201101632040">+20 110 163 2040</a>
-      </div>
-    </div>
-    <div class="footer-bottom">
-      <span>© 2025 TELEGANT. All rights reserved.</span>
-      <span>Defined by Elegance</span>
-    </div>
-  </footer>
-    <script>
-    // Ensure the script runs after the HTML is fully loaded
-    window.addEventListener('load', () => {
-        const menuBtn = document.getElementById('menu-btn');
-        const navMenu = document.getElementById('nav-menu');
+/* 2. Show Page 1 by default when the site loads */
+.product-page:first-of-type {
+  display: flex;
+}
 
-        if (menuBtn && navMenu) {
-            menuBtn.addEventListener('click', (e) => {
-                e.stopPropagation(); // Stops the click from bubbling to the document
-                navMenu.classList.toggle('show');
-                console.log("Menu toggled"); // Check your console (F12) to see this
-            });
+/* 3. The Magic Trick: If ANY page inside the container becomes active, 
+      immediately hide page 1 so it doesn't overlap */
+#products-container:has(:target) .product-page:first-of-type:not(:target) {
+  display: none;
+}
+/* 3. When ANY page container is targeted, explicitly force it to show */
+.product-page:target{
+  display: flex;
+}
 
-            // Close the box if the user clicks anywhere else[cite: 5]
-            document.addEventListener('click', (e) => {
-                if (!navMenu.contains(e.target) && !menuBtn.contains(e.target)) {
-                    navMenu.classList.remove('show');
-                }
-            });
-        } else {
-            console.error("Menu elements not found. Check your IDs!");
-        }
-    });
-</script>
-    
-</body>
-</html>
+/* 4. If an explicit page is targeted, hide Page 1 if it is NOT the target */
+:target ~ .product-page:first-of-type:not(:target),
+.product-page:target ~ .product-page:first-of-type:not(:target) {
+  display: none;
+}
+
+.pagination{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    width: 100%;
+}
+.pagination ul {
+  margin: 10px;
+  padding: 5px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  text-align: center;
+  list-style: none;
+  width: 100%;
+}
+
+.pagination a {
+  display: inline-block;
+  padding: 6px 14px;
+  text-decoration: none;
+  background-color: #343232;
+  color: #ffffff99;
+  border-radius: 20px;
+  margin: 4px;
+}
+
+.pagination a:hover {
+  background-color: #ddd;
+  color: #343232;
+}
+
+/* FOOTER */
+#contact {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 100%;
+    border-top: #c8a96a94 solid 1px;
+    margin: 0 auto;
+    color: #ffffff99;
+    background-color: #0d0d0d;
+    align-items: center;
+    height: 550px;
+}
+
+.footer-grid{
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: 450px;
+    padding: 10px;
+    align-items: normal;
+    flex-wrap: wrap;
+    margin-left: 0px;
+    border-bottom: #c8a86a94 solid 1px;
+}
+
+.footer-brand {
+    display: flex;
+    flex-direction: column;
+ 
+    width: 200px;
+    margin: 10px;
+    height: 100px;
+}
+.logo-text {
+    display: flex;
+    flex-direction: column;
+    font-size: 1.3rem;
+    letter-spacing: 0.15em;
+    font-weight: 400;
+    color: #ffffff;
+    width: 200px;
+    height: 50px;
+    gap: 3px;
+    padding: 0;
+}
+
+.logo-text > span {
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    font-weight: 300;
+    margin: 0;
+    color: #ffffff99;}
+
+.logo-text >p{
+
+    font-size: 0.7rem;
+    text-wrap: word-rap;
+    font-weight: 200;
+    color: #ffffff99;
+}
+
+.footer-col {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    width: 250px;
+    height: 200px;
+    margin: 5px;
+}
+.footer-col h4 {
+    font-size: 0.85rem;
+    letter-spacing: 0.15em;
+    font-weight: 400;
+    color: #c8a86a;
+}
+
+.footer-col a {
+    text-decoration: none;
+    color: #ffffff99;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    font-weight: 300;
+    transition: color 0.3s ease;
+}
+
+
+.footer-bottom {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 10px 0;
+    color: #ffffff99;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    font-weight: 300;
+}
+
+}
+
