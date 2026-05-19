@@ -14,7 +14,6 @@
     color: #ffffff;
     font-family: 'Times New Roman', Times, serif; /* Approximate Serif Font */
     padding: 15px 15px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
     display: flex;
     flex-direction: column;
     position: relative;
@@ -417,56 +416,35 @@ color: #ffffff;
     letter-spacing: 0.1em;
     font-weight: 300;
 }
-/*
-@media (min-width: 500px) and (max-width: 1700px) {
 
     
-  
-
-}*/
-
-/*
-@media (min-width: 400px) and (max-width: 1700px){
- 
-}*/
-
-/* @media (min-width: 600px) and (max-width: 2000px) {
-
-    body{
-   
-    width: 100%;
-    
-}
-.telegant-navbar {
-    width: 100%;
-   
-}
 
 
-} */
-
-@media (min-width: 300px) and (max-width: 690px) {}
 
 /* =========================================
    UNIVERSAL MOBILE NAVBAR & SCROLL FIX
    ========================================= */
 @media (min-width: 250px) and (max-width: 970px) {
     
-    /* 1. STOP HORIZONTAL SCROLLING 
-       Applies only to the root containers to protect page alignment */
    html, body {
-        width: 100% !important;
-        max-width: 100vw !important;
-        margin: 0 !important;
-        padding: 0 !important;
-        overflow: inherit;
+        width: 100% ;
+        max-width: 100vw;
+        margin: 0 ;
+        padding: 0 ;
+;
         display: flex;
         flex-direction: row;
-        align-items: center !important; 
+        align-items: center;
         flex-wrap: wrap;
-        height: auto !important;
+        
     }
-
+.navbar-icons {
+    height: 100%;
+    display: flex;
+    align-items: flex-end;
+    gap: 5px;
+    order: 1;
+}
     /* 2. NAVBAR CONTAINER LAYOUT 
        Logo stays Left, Hamburger stays Right */
     .navbar-container {
@@ -474,14 +452,14 @@ color: #ffffff;
         flex-direction: row !important;
         justify-content: space-between !important;
         align-items: center !important;
-        width: 100% !important;
-        padding: 0 15px !important; /* Standard side breathing room */
+        width: 100% ;
+        padding: 0 0px !important; /* Standard side breathing room */
         gap: 0 !important;
     }
 
     .telegant-navbar {
         width: 100% !important;
-        padding: 10px 0 !important;
+        padding: 10px 10px !important;
         position: relative !important;
         z-index: 1000 !important;
     }
@@ -539,10 +517,11 @@ color: #ffffff;
     /* 5. PRESERVE FORM ALIGNMENT 
        Ensures main content doesn't break from navbar fixes */
     main {
-        width: 100% !important;
+         box-sizing: border-box;
+        width: 100 !important;
         max-width: 100% !important;
         margin: 0 auto !important;
-        padding: 20px 10px !important;
+        padding: 20px 0px !important;
         display: flex !important;
         flex-direction: column !important;
         align-items: center !important;
@@ -552,7 +531,9 @@ color: #ffffff;
 #surveyform{
     display: flex;
     flex-direction: column;
-    width: 90%;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
 }
 
 #clothing-form{
@@ -565,7 +546,7 @@ color: #ffffff;
     align-items: center;
     gap: 13px;
     height: 470px;
-    width: 70%;
+    width: 80%;
     padding: 20px 20px;
     text-align: center;
     
@@ -660,7 +641,6 @@ section{
 
 }
 /* FOOTER */
-
 #contact {
     display: flex;
     flex-direction: column;
@@ -671,18 +651,19 @@ section{
     color: #ffffff99;
     background-color: #0d0d0d;
     align-items: center;
-    height: 500px;
+    height: 550px;
 }
 
 .footer-grid{
+    box-sizing: border-box;
     display: flex;
     flex-direction: row;
-    width: 90%;
+    width: 100%;
     height: 450px;
-    padding: 20px;
+    padding: 10px;
     align-items: normal;
     flex-wrap: wrap;
-    margin-left: 10px;
+    margin-left: 0px;
     border-bottom: #c8a86a94 solid 1px;
 }
 
@@ -690,7 +671,7 @@ section{
     display: flex;
     flex-direction: column;
  
-    width: 250px;
+    width: 200px;
     margin: 10px;
     height: 100px;
 }
@@ -702,7 +683,7 @@ section{
     font-weight: 400;
     color: #ffffff;
     width: 200px;
-    height: fit-content;
+    height: 50px;
     gap: 3px;
     padding: 0;
 }
@@ -759,8 +740,8 @@ section{
     letter-spacing: 0.1em;
     font-weight: 300;
 }
-}
 
+}
 /*
 @media (max-width: 450px){
 
