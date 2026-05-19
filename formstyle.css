@@ -459,7 +459,7 @@ color: #ffffff;
         max-width: 100vw !important;
         margin: 0 !important;
         padding: 0 !important;
-        overflow-x: hidden !important; 
+        overflow: inherit;
         display: flex;
         flex-direction: row;
         align-items: center !important; 
