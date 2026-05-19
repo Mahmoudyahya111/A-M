@@ -125,6 +125,14 @@ html{
 
 }
 
+.hero-content{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    text-align: center;
+}
        h1{
     color: #ffffff;
     font-size: clamp(2rem, 4vw, 3rem);
@@ -315,6 +323,14 @@ cursor: pointer;
   display: none;
 }
 
+.pagination{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    width: 100%;
+    padding: 0%;
+    margin: 0;
+}
 
 .pagination ul {
   margin: 5px 0;
@@ -323,6 +339,7 @@ cursor: pointer;
   justify-content: center;
   text-align: center;
   list-style: none;
+  width: 100%;
 }
 
 .pagination a {
@@ -340,7 +357,7 @@ cursor: pointer;
   color: #343232;
 }
 
-@media (min-width: 300px) and (max-width: 690px) {
+@media (min-width: 300px) and (max-width: 970px) {
 
 
 /* =========================================
@@ -356,7 +373,7 @@ cursor: pointer;
         overflow-x: hidden !important; 
         display: flex;
         flex-direction: row;
-        align-items: center;
+        align-items: center !important; 
         flex-wrap: wrap;
     }
 
@@ -441,7 +458,17 @@ cursor: pointer;
         align-items: center !important;
     }
 
-           h1{
+
+    .hero-content{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    text-align: center;
+}
+
+    h1{
     color: #ffffff;
     font-size: clamp(1.5rem, 3.5vw, 2.5rem);
     text-align: center;
@@ -602,18 +629,17 @@ button{
 .product-page{
      display: flex;
      flex-direction: row;
+     justify-content: center;
+       display: none;
+  gap: 20px;
+  flex-wrap: wrap; 
 }
-
+/*
 .product-info{
     font-size: 1em;
 } 
 
 /* 1. Hide all pages by default, fix the flex-wrap typo */
-.product-page {
-  display: none;
-  gap: 20px;
-  flex-wrap: wrap; /* Fixed typo from 'flex: wrap' */
-}
 
 /* 2. Show Page 1 by default when the site loads */
 .product-page:first-of-type {
@@ -636,7 +662,12 @@ button{
   display: none;
 }
 
-
+.pagination{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    width: 100%;
+}
 .pagination ul {
   margin: 10px;
   padding: 5px;
@@ -663,3 +694,4 @@ button{
   color: #343232;
 }
 }
+
