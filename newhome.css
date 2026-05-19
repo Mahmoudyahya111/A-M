@@ -440,7 +440,7 @@ p{
         text-align: center !important;
     }
 
-    #contact {
+ #contact {
     display: flex;
     flex-direction: column;
     gap: 15px;
@@ -450,18 +450,19 @@ p{
     color: #ffffff99;
     background-color: #0d0d0d;
     align-items: center;
-    height: 500px;
+    height: 550px;
 }
 
 .footer-grid{
+    box-sizing: border-box;
     display: flex;
     flex-direction: row;
-    width: 90%;
+    width: 100%;
     height: 450px;
-    padding: 20px;
+    padding: 10px;
     align-items: normal;
     flex-wrap: wrap;
-    margin-left: 10px;
+    margin-left: 0px;
     border-bottom: #c8a86a94 solid 1px;
 }
 
@@ -469,7 +470,7 @@ p{
     display: flex;
     flex-direction: column;
  
-    width: 250px;
+    width: 200px;
     margin: 10px;
     height: 100px;
 }
@@ -485,6 +486,7 @@ p{
     gap: 3px;
     padding: 0;
 }
+
 .logo-text > span {
     font-size: 0.7rem;
     letter-spacing: 0.1em;
@@ -492,7 +494,7 @@ p{
     margin: 0;
     color: #ffffff99;}
 
-    .logo-text >p{
+.logo-text >p{
 
     font-size: 0.7rem;
     text-wrap: word-rap;
@@ -537,4 +539,5 @@ p{
     letter-spacing: 0.1em;
     font-weight: 300;
 }
+
 }
