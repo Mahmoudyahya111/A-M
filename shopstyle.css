@@ -379,13 +379,13 @@ cursor: pointer;
 .product-card{
      background-color: #343232;
     width: 340px;
-    height: 300px;
+    height: 350px;
     display: flex;
     flex-direction: column;
     flex-wrap: wrap;
     justify-content: center;
     background-size: cover;
-    padding: 0px;
+    padding-top: 0px;
     padding-bottom: 10px;
     min-height: fit-content;
     min-width: fit-content;
@@ -402,8 +402,6 @@ cursor: pointer;
     box-shadow: 0 0.8em 1em #656565;
     transform: translatey(-0.25em);
     background-color: #807d7d;
-    color: #262626;
-    font-weight: 600;
 }
 
 #img-cont{
@@ -415,9 +413,10 @@ cursor: pointer;
     height: 50%;
     padding: 0 0 23px 0;
     margin-top: 0;
-    background-color: #525151;
-   
+    margin-bottom: 10px;
+    background-color: #525151;   
     border-radius: 2rem 2rem 0 0;
+    transform: translatey(-8px);
 }
 #img-cont>img{
     width: 150px;
@@ -499,7 +498,4 @@ button{
   background-color: #ddd;
   color: #343232;
 }
-
-
-    
 }
