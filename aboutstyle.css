@@ -275,30 +275,37 @@ h1 { color: #c8a86a; letter-spacing: 0.1em; font-weight: 400; }
     
     /* 1. STOP HORIZONTAL SCROLLING 
        Applies only to the root containers to protect page alignment */
-    html, body {
-        width: 100% !important;
-        max-width: 100vw !important;
-        margin: 0 !important;
-        padding: 0 !important;
-         overflow: inherit;
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        flex-wrap: wrap;
-    }
-
-    /* 2. NAVBAR CONTAINER LAYOUT 
-       Logo stays Left, Hamburger stays Right */
-     /* 1. STOP HORIZONTAL SCROLLING 
-       Applies only to the root containers to protect page alignment */
-    html, body {
+    /* html, body {
         width: 100% !important;
         max-width: 100vw !important;
         margin: 0 !important;
         padding: 0 !important;
         overflow-x: hidden !important; 
-    }
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        flex-wrap: wrap;
+    } */
 
+    html, body {
+        width: 100% ;
+        max-width: 100vw;
+        margin: 0 ;
+        padding: 0 ;
+
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        flex-wrap: wrap;
+        
+    }
+.navbar-icons {
+    height: 100%;
+    display: flex;
+    align-items: flex-end;
+    gap: 5px;
+    order: 1;
+}
     /* 2. NAVBAR CONTAINER LAYOUT 
        Logo stays Left, Hamburger stays Right */
     .navbar-container {
@@ -306,14 +313,14 @@ h1 { color: #c8a86a; letter-spacing: 0.1em; font-weight: 400; }
         flex-direction: row !important;
         justify-content: space-between !important;
         align-items: center !important;
-        width: 100% !important;
-        padding: 0 15px !important; /* Standard side breathing room */
+        width: 100% ;
+        padding: 0 0px !important; /* Standard side breathing room */
         gap: 0 !important;
     }
 
     .telegant-navbar {
         width: 100% !important;
-        padding: 10px 0 !important;
+        padding: 10px 10px !important;
         position: relative !important;
         z-index: 1000 !important;
     }
@@ -323,9 +330,9 @@ h1 { color: #c8a86a; letter-spacing: 0.1em; font-weight: 400; }
     .hamburger {
         display: block !important;
         background: transparent !important;
-        border: 2px solid #ffffff !important;
+        border: 1px solid #ffffff !important;
         border-radius: 8px !important;
-        padding: 4px !important;
+        padding: 5px !important;
         color: #ffffff !important;
     }
 
@@ -371,18 +378,33 @@ h1 { color: #c8a86a; letter-spacing: 0.1em; font-weight: 400; }
     /* 5. PRESERVE FORM ALIGNMENT 
        Ensures main content doesn't break from navbar fixes */
     main {
+         box-sizing: border-box;
         width: 100% !important;
         max-width: 100% !important;
         margin: 0 auto !important;
-        padding: 20px 10px !important;
+        padding: 20px 0 !important;
         display: flex !important;
         flex-direction: column !important;
         align-items: center !important;
     }
-    /* 5. PRESERVE FORM ALIGNMENT 
-       Ensures main content doesn't break from navbar fixes */
- 
 
+ 
+.about-content {
+    background-color: #222121; /* Dark elegant overlay */
+    padding: 40px;
+    border-radius: 20px;
+    width: 250px;
+    max-width: 800px;
+    text-align: center;
+    line-height: 1.8;
+    border: 1px solid rgba(200, 168, 106, 0.3); /* Subtle gold border */
+    transition: ease-in 0.3s ;
+        letter-spacing: 0.1em;
+        color: #ffffff99;
+        font-weight: 500;
+        font-size: large;
+
+}
        /* FOOTER */
 
 #contact {
@@ -395,18 +417,19 @@ h1 { color: #c8a86a; letter-spacing: 0.1em; font-weight: 400; }
     color: #ffffff99;
     background-color: #0d0d0d;
     align-items: center;
-    height: 500px;
+    height: 550px;
 }
 
 .footer-grid{
+    box-sizing: border-box;
     display: flex;
     flex-direction: row;
-    width: 90%;
+    width: 100%;
     height: 450px;
-    padding: 20px;
+    padding: 10px;
     align-items: normal;
     flex-wrap: wrap;
-    margin-left: 10px;
+    margin-left: 0px;
     border-bottom: #c8a86a94 solid 1px;
 }
 
@@ -414,7 +437,7 @@ h1 { color: #c8a86a; letter-spacing: 0.1em; font-weight: 400; }
     display: flex;
     flex-direction: column;
  
-    width: 250px;
+    width: 200px;
     margin: 10px;
     height: 100px;
 }
