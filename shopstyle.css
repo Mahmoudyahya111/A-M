@@ -367,9 +367,10 @@ cursor: pointer;
     margin: 100px 10px 30px 10px !important;
 }
 
+
 .product-card{
      background-color: #343232;
-    width: 350px;
+    width: 340px;
     height: 300px;
     display: flex;
     flex-direction: column;
@@ -460,7 +461,6 @@ button{
 }
 
 
-
 .pagination ul {
   margin: 10px;
   padding: 5px;
@@ -474,12 +474,12 @@ button{
 
 .pagination a {
   display: inline-block;
-  padding: 8px 16px;
+  padding: 6px 14px;
   text-decoration: none;
   background-color: #343232;
   color: #ffffff99;
-  border-radius: 4px;
-  margin-right: 5px;
+  border-radius: 20px;
+  margin: 4px;
 }
 
 .pagination a:hover {
