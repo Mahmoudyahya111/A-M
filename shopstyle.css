@@ -357,7 +357,106 @@ cursor: pointer;
   color: #343232;
 }
 
-@media (min-width: 300px) and (max-width: 970px) {
+/* FOOTER */
+#contact {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 100%;
+    border-top: #c8a96a94 solid 1px;
+    margin: 0 auto;
+    color: #ffffff99;
+    background-color: #0d0d0d;
+    align-items: center;
+}
+
+.footer-grid{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    width: 90%;
+    height: 200px;
+    padding: 10px;
+    justify-items: end;
+    align-items: normal;
+    flex-wrap: wrap;
+    margin-left: 10px;
+    border-bottom: #c8a86a94 solid 1px;
+}
+
+.footer-brand {
+    display: flex;
+    flex-direction: column;
+ 
+    width: 400px;
+    margin: 10px;
+    height: 100px;
+}
+.logo-text {
+    display: flex;
+    flex-direction: column;
+    font-size: 1.3rem;
+    letter-spacing: 0.15em;
+    font-weight: 400;
+    color: #ffffff;
+    width: 300px;
+    height: 50px;
+    gap: 3px;
+    padding: 0;
+}
+
+.logo-text > span {
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    font-weight: 300;
+    margin: 0;
+    color: #ffffff99;}
+
+.logo-text >p{
+
+    font-size: 0.7rem;
+    text-wrap: word-rap;
+    font-weight: 200;
+    color: #ffffff99;
+}
+
+.footer-col {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    width: 250px;
+    height: 200px;
+    margin: 5px;
+}
+.footer-col h4 {
+    font-size: 0.85rem;
+    letter-spacing: 0.15em;
+    font-weight: 400;
+    color: #c8a86a;
+}
+
+.footer-col a {
+    text-decoration: none;
+    color: #ffffff99;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    font-weight: 300;
+    transition: color 0.3s ease;
+}
+
+
+.footer-bottom {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 10px 0;
+    color: #ffffff99;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    font-weight: 300;
+}
+@media (min-width: 250px) and (max-width: 970px) {
 
 
 /* =========================================
@@ -692,6 +791,107 @@ button{
 .pagination a:hover {
   background-color: #ddd;
   color: #343232;
+}
+
+/* FOOTER */
+
+#contact {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 100%;
+    border-top: #c8a96a94 solid 1px;
+    margin: 0 auto;
+    color: #ffffff99;
+    background-color: #0d0d0d;
+    align-items: center;
+    height: 500px;
+}
+
+.footer-grid{
+    display: flex;
+    flex-direction: row;
+    width: 90%;
+    height: 450px;
+    padding: 20px;
+    align-items: normal;
+    flex-wrap: wrap;
+    margin-left: 10px;
+    border-bottom: #c8a86a94 solid 1px;
+}
+
+.footer-brand {
+    display: flex;
+    flex-direction: column;
+ 
+    width: 250px;
+    margin: 10px;
+    height: 100px;
+}
+.logo-text {
+    display: flex;
+    flex-direction: column;
+    font-size: 1.3rem;
+    letter-spacing: 0.15em;
+    font-weight: 400;
+    color: #ffffff;
+    width: 300px;
+    height: 50px;
+    gap: 3px;
+    padding: 0;
+}
+
+.logo-text > span {
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    font-weight: 300;
+    margin: 0;
+    color: #ffffff99;}
+
+.logo-text >p{
+
+    font-size: 0.7rem;
+    text-wrap: word-rap;
+    font-weight: 200;
+    color: #ffffff99;
+}
+
+.footer-col {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    width: 250px;
+    height: 200px;
+    margin: 5px;
+}
+.footer-col h4 {
+    font-size: 0.85rem;
+    letter-spacing: 0.15em;
+    font-weight: 400;
+    color: #c8a86a;
+}
+
+.footer-col a {
+    text-decoration: none;
+    color: #ffffff99;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    font-weight: 300;
+    transition: color 0.3s ease;
+}
+
+
+.footer-bottom {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 10px 0;
+    color: #ffffff99;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    font-weight: 300;
 }
 }
 
