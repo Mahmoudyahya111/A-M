@@ -33,6 +33,7 @@
   --accent-contrast:#0d0d0d;
   --overlay:#000000b3;
   --input-bg:#161514;
+  --page-bg-image:url('NEBG.png');
 }
 
 /* ---------- Light theme (elegant cream / gold) ---------- */
@@ -49,13 +50,18 @@
   --accent-contrast:#ffffff;
   --overlay:#231f14b3;
   --input-bg:#ffffff;
+  --page-bg-image:url('NEBG-light.jpg');
 }
 
 *{box-sizing:border-box;}
-html{scroll-behavior:smooth; scroll-padding-top:env(safe-area-inset-top,0px);}
+html{
+  scroll-behavior:smooth; scroll-padding-top:env(safe-area-inset-top,0px);
+  min-height:100%;
+  background:var(--bg) var(--page-bg-image) center top / cover no-repeat;
+}
 body{
   margin:0;
-  background:var(--bg);
+  background:transparent;
   color:var(--text);
   font-family:var(--font-body);
   -webkit-font-smoothing:antialiased;
