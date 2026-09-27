@@ -260,6 +260,81 @@ main{display:block;}
 #skip-btn{color:var(--text-muted); font-size:.85rem; text-decoration:underline; text-underline-offset:3px;}
 #success-msg{max-width:560px; margin:20px auto; border-radius:var(--radius);}
 
+/* ---------- Size-selection modal ---------- */
+.modal-overlay{
+  position:fixed; inset:0; background:var(--overlay); display:none; align-items:center; justify-content:center;
+  z-index:200; padding:20px;
+}
+.modal-overlay.show{display:flex;}
+.modal-box{
+  background:var(--bg-elevated); border:1px solid var(--border); border-radius:var(--radius);
+  max-width:480px; width:100%; max-height:90vh; overflow-y:auto; padding:28px;
+}
+.modal-box h3{margin:0 0 4px; font-size:1.2rem; font-weight:400; color:var(--accent);}
+.modal-box .modal-sub{color:var(--text-muted); font-size:.85rem; margin:0 0 20px;}
+.size-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:18px;}
+.size-option{
+  border:1px solid var(--border); border-radius:var(--radius-sm); padding:10px 6px; text-align:center;
+  cursor:pointer; font-size:.8rem; transition:border-color var(--transition), color var(--transition);
+}
+.size-option strong{display:block; font-size:.95rem; margin-bottom:2px;}
+.size-option.selected{border-color:var(--accent); color:var(--accent);}
+.custom-size-fields{display:none; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-bottom:18px;}
+.custom-size-fields.show{display:grid;}
+.custom-size-fields label{font-size:.72rem; color:var(--text-muted); display:block; margin-bottom:4px;}
+.custom-size-fields input{width:100%; padding:9px 10px; border-radius:var(--radius-sm); border:1px solid var(--border); background:var(--input-bg); color:var(--text);}
+.modal-actions{display:flex; gap:12px; justify-content:flex-end; margin-top:6px;}
+.modal-close{background:none; border:none; color:var(--text-faint); font-size:.85rem; cursor:pointer;}
+
+/* ---------- Cart / checkout page ---------- */
+.cart-layout{max-width:1100px; margin:0 auto; padding:48px 24px 80px; display:grid; grid-template-columns:1.4fr 1fr; gap:36px; align-items:start;}
+.cart-layout h1{font-size:1.7rem; font-weight:400; margin:0 0 22px; grid-column:1/-1;}
+.cart-item{
+  display:grid; grid-template-columns:72px 1fr auto auto; gap:16px; align-items:center;
+  background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-sm); padding:14px; margin-bottom:12px;
+}
+.cart-item img{width:72px; height:72px; object-fit:cover; border-radius:var(--radius-sm);}
+.cart-item .ci-name{font-weight:600; font-size:.92rem;}
+.cart-item .ci-meta{color:var(--text-muted); font-size:.8rem; margin-top:3px;}
+.cart-item .ci-qty{display:flex; align-items:center; gap:8px;}
+.cart-item .ci-qty button{width:26px; height:26px; border-radius:50%; border:1px solid var(--border); background:none; color:var(--text); cursor:pointer;}
+.cart-item .ci-remove{color:var(--text-faint); font-size:.78rem; cursor:pointer; background:none; border:none; text-decoration:underline;}
+.cart-empty{color:var(--text-muted); padding:30px 0;}
+.summary-box{background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); padding:24px; position:sticky; top:90px;}
+.summary-row{display:flex; justify-content:space-between; font-size:.9rem; color:var(--text-muted); margin-bottom:10px;}
+.summary-row.total{color:var(--text); font-weight:700; font-size:1.05rem; border-top:1px solid var(--border); padding-top:12px; margin-top:6px;}
+.checkout-section{grid-column:1/-1; margin-top:8px;}
+.checkout-section h2{font-size:1.1rem; font-weight:600; margin:28px 0 14px;}
+.date-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(110px,1fr)); gap:10px; margin-bottom:8px;}
+.date-option{
+  border:1px solid var(--border); border-radius:var(--radius-sm); padding:10px 8px; text-align:center; cursor:pointer; font-size:.78rem;
+}
+.date-option strong{display:block; font-size:.85rem;}
+.date-option.selected{border-color:var(--accent); color:var(--accent);}
+.date-option.full{opacity:.35; cursor:not-allowed; text-decoration:line-through;}
+.express-row{display:flex; align-items:center; gap:10px; margin:14px 0 0; font-size:.88rem;}
+.helper-text{color:var(--text-faint); font-size:.78rem; margin-top:8px;}
+
+/* ---------- Account / sign-up page ---------- */
+.account-tabs{display:flex; gap:8px; margin-bottom:26px;}
+.account-tabs button{
+  flex:1; padding:11px; border-radius:999px; border:1px solid var(--border); background:none; color:var(--text-muted);
+  font-weight:600; font-size:.85rem; cursor:pointer;
+}
+.account-tabs button.active{background:var(--accent); color:var(--accent-contrast); border-color:var(--accent);}
+.account-panel{display:none;}
+.account-panel.show{display:block;}
+
+/* ---------- Order tracking ---------- */
+.track-result{margin-top:32px;}
+.track-order-id{color:var(--accent); font-weight:700; letter-spacing:.05em;}
+.timeline{display:flex; justify-content:space-between; margin:32px 0; position:relative;}
+.timeline::before{content:''; position:absolute; top:13px; left:0; right:0; height:2px; background:var(--border);}
+.timeline-step{position:relative; text-align:center; flex:1; font-size:.72rem; color:var(--text-faint);}
+.timeline-dot{width:26px; height:26px; border-radius:50%; background:var(--bg-elevated); border:2px solid var(--border); margin:0 auto 8px; display:flex; align-items:center; justify-content:center; font-size:.7rem;}
+.timeline-step.done .timeline-dot{background:var(--accent); border-color:var(--accent); color:var(--accent-contrast);}
+.timeline-step.done{color:var(--text);}
+
 /* ---------- Footer ---------- */
 .telegant-footer{
   background:var(--bg-elevated); border-top:1px solid var(--border); margin-top:40px;
@@ -324,6 +399,14 @@ main{display:block;}
   .footer-bottom{flex-direction:column; text-align:center; justify-content:center;}
   .about-content, .terms-content, .form-wrap{padding-left:18px; padding-right:18px;}
   .radio-row{flex-direction:column;}
+  .cart-layout{grid-template-columns:1fr; padding:32px 16px 60px;}
+  .summary-box{position:static;}
+  .cart-item{grid-template-columns:56px 1fr; grid-template-areas:"img name" "img qty";}
+  .cart-item img{grid-area:img; width:56px; height:56px;}
+  .cart-item .ci-name-wrap{grid-area:name;}
+  .cart-item .ci-qty{grid-area:qty;}
+  .size-grid{grid-template-columns:repeat(3,1fr);}
+  .custom-size-fields{grid-template-columns:1fr 1fr;}
 }
 
 /* ---------- Reduce motion ---------- */
