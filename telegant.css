@@ -33,7 +33,7 @@
   --accent-contrast:#0d0d0d;
   --overlay:#000000b3;
   --input-bg:#161514;
-  --page-bg-image:url('NEBG.png');
+  --page-bg-image:url('MEBG-GOLDEN.png');
 }
 
 /* ---------- Light theme (elegant cream / gold) ---------- */
@@ -50,7 +50,7 @@
   --accent-contrast:#ffffff;
   --overlay:#231f14b3;
   --input-bg:#ffffff;
-  --page-bg-image:url('NEBG-light.jpg');
+  --page-bg-image:url('MEBG-GOLDEN-light.jpg');
 }
 
 *{box-sizing:border-box;}
