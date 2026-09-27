@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Your Cart &amp; Checkout | TELEGANT</title>
+<meta name="description" content="Review your TELEGANT order, choose a delivery date, and pay by cash on delivery or InstaPay.">
+<meta name="robots" content="noindex, follow">
+<link rel="canonical" href="https://mahmoudyahya111.github.io/A-M/cart.html">
+<link rel="stylesheet" href="telegant.css">
+<link rel="icon" type="image/png" href="Tfavco-w-transparent.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<script>
+window.TELEGANT_I18N = {
+  en: {
+    nav_home:"HOME", nav_shop:"SHOP", nav_new:"NEW IN", nav_survey:"SURVEY", nav_about:"ABOUT", nav_contact:"CONTACT", nav_terms:"T&amp;Cs",
+    h1:"Your Cart",
+    empty:"Your cart is empty.", browse:"Browse the Shop",
+    size:"Size", qty:"Qty", remove:"Remove",
+    subtotal:"Subtotal", delivery_fee:"Delivery Fee", total:"Total",
+    delivery_h:"Delivery Date", delivery_help:"Standard delivery starts 2 days from today. Days already near capacity are dimmed.",
+    express_label:"Ship tomorrow instead (Express, +100 EGP)",
+    payment_h:"Payment Method",
+    pm_cod:"Cash on Delivery", pm_instapay:"InstaPay Transfer (pay now)", pm_instapay_delivery:"InstaPay Transfer (pay at delivery)",
+    details_h:"Delivery Details",
+    lbl_name:"Full Name", lbl_phone:"Phone Number", lbl_address:"Full Address", lbl_email:"Email (for order updates)",
+    place_order:"Place Order",
+    orders_count:"orders so far", full_badge:"Full",
+    alert_no_date:"Please choose a delivery date.", alert_fields:"Please fill in all delivery details.",
+    order_placed_h:"Order placed!", order_placed_p:"Your order ID is", order_placed_p2:"Track it anytime from the Track Order page.",
+    foot_tag:"Premium T-shirts, defined by elegance.",
+    foot_nav:"NAVIGATE", foot_contact:"CONTACT",
+    foot_shop:"Shop", foot_survey:"Survey", foot_about:"About", foot_track:"Track Order", foot_terms:"Terms &amp; Conditions",
+    copyright:"© 2025 TELEGANT. All rights reserved.", foot_slogan:"Defined by Elegance"
+  },
+  ar: {
+    nav_home:"الرئيسية", nav_shop:"المتجر", nav_new:"وصل حديثاً", nav_survey:"استطلاع", nav_about:"من نحن", nav_contact:"تواصل معنا", nav_terms:"الشروط والأحكام",
+    h1:"سلة التسوق",
+    empty:"سلتك فارغة.", browse:"تصفح المتجر",
+    size:"المقاس", qty:"الكمية", remove:"إزالة",
+    subtotal:"المجموع الفرعي", delivery_fee:"رسوم التوصيل", total:"الإجمالي",
+    delivery_h:"تاريخ التوصيل", delivery_help:"يبدأ التوصيل العادي بعد يومين من اليوم. الأيام القريبة من الاكتمال تظهر باهتة.",
+    express_label:"التوصيل غداً بدلاً من ذلك (سريع، +100 جنيه)",
+    payment_h:"طريقة الدفع",
+    pm_cod:"الدفع عند الاستلام", pm_instapay:"تحويل إنستاباي (ادفع الآن)", pm_instapay_delivery:"تحويل إنستاباي (ادفع عند التسليم)",
+    details_h:"بيانات التوصيل",
+    lbl_name:"الاسم الكامل", lbl_phone:"رقم الهاتف", lbl_address:"العنوان بالكامل", lbl_email:"البريد الإلكتروني (لتحديثات الطلب)",
+    place_order:"إتمام الطلب",
+    orders_count:"طلب حتى الآن", full_badge:"مكتمل",
+    alert_no_date:"يرجى اختيار تاريخ التوصيل.", alert_fields:"يرجى إدخال جميع بيانات التوصيل.",
+    order_placed_h:"تم تأكيد طلبك!", order_placed_p:"رقم طلبك هو", order_placed_p2:"يمكنك تتبعه في أي وقت من صفحة تتبع الطلب.",
+    foot_tag:"تيشيرتات فاخرة، بلمسة أناقة.",
+    foot_nav:"تصفح", foot_contact:"تواصل",
+    foot_shop:"المتجر", foot_survey:"استطلاع", foot_about:"من نحن", foot_track:"تتبع الطلب", foot_terms:"الشروط والأحكام",
+    copyright:"© 2025 TELEGANT. جميع الحقوق محفوظة.", foot_slogan:"بلمسة أناقة"
+  }
+};
+</script>
+</head>
+<body>
+<nav class="telegant-navbar">
+  <div class="navbar-container">
+    <div class="navbar-logo">
+      <img src="Tfavco-w-transparent.png" alt="TELEGANT logo" class="logo-icon">
+      <span class="logo-text">TELEGANT<p>DEFINED BY ELEGANCE</p></span>
+    </div>
+    <button class="hamburger" id="menu-btn" aria-label="Toggle Menu">
+      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="18" x2="21" y2="18"></line>
+      </svg>
+    </button>
+    <ul class="navbar-links" id="nav-menu">
+      <li><a href="index.html" data-i18n="nav_home">HOME</a></li>
+      <li><a href="shop.html" data-i18n="nav_shop">SHOP</a></li>
+      <li><a href="#newin" data-i18n="nav_new">NEW IN</a></li>
+      <li><a href="Survey.html" data-i18n="nav_survey">SURVEY</a></li>
+      <li><a href="about.html" data-i18n="nav_about">ABOUT</a></li>
+      <li><a href="#contact" data-i18n="nav_contact">CONTACT</a></li>
+      <li><a href="terms.html" data-i18n="nav_terms">T&amp;Cs</a></li>
+    </ul>
+    <div class="navbar-icons">
+      <button class="icon-btn lang-btn" id="lang-toggle" aria-label="Switch language">AR</button>
+      <button class="icon-btn" id="theme-toggle" aria-label="Switch theme">☀</button>
+      <a href="account.html" class="icon-btn" aria-label="Account" style="text-decoration:none;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"></circle><path d="M4 21v-1a8 8 0 0 1 16 0v1"></path></svg>
+      </a>
+      <a href="cart.html" class="icon-link cart-icon active" aria-label="Cart">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+        <span class="cart-count" id="cart-count" style="display:none">0</span>
+      </a>
+    </div>
+  </div>
+</nav>
+
+<main class="cart-layout">
+  <h1 data-i18n="h1">Your Cart</h1>
+
+  <div id="cart-items"></div>
+
+  <aside class="summary-box">
+    <div class="summary-row"><span data-i18n="subtotal">Subtotal</span><span id="sum-subtotal">0 EGP</span></div>
+    <div class="summary-row"><span data-i18n="delivery_fee">Delivery Fee</span><span id="sum-delivery">0 EGP</span></div>
+    <div class="summary-row total"><span data-i18n="total">Total</span><span id="sum-total">0 EGP</span></div>
+  </aside>
+
+  <div class="checkout-section" id="checkout-section">
+    <h2 data-i18n="delivery_h">Delivery Date</h2>
+    <p class="helper-text" data-i18n="delivery_help">Standard delivery starts 2 days from today. Days already near capacity are dimmed.</p>
+    <div class="date-grid" id="date-grid"></div>
+    <label class="express-row">
+      <input type="checkbox" id="express-check">
+      <span data-i18n="express_label">Ship tomorrow instead (Express, +100 EGP)</span>
+    </label>
+
+    <h2 data-i18n="payment_h">Payment Method</h2>
+    <div class="radio-row">
+      <label><input type="radio" name="payment" value="cod" checked> <span data-i18n="pm_cod">Cash on Delivery</span></label>
+      <label><input type="radio" name="payment" value="instapay_now"> <span data-i18n="pm_instapay">InstaPay Transfer (pay now)</span></label>
+      <label><input type="radio" name="payment" value="instapay_delivery"> <span data-i18n="pm_instapay_delivery">InstaPay Transfer (pay at delivery)</span></label>
+    </div>
+
+    <h2 data-i18n="details_h">Delivery Details</h2>
+    <div class="field-group"><label data-i18n="lbl_name">Full Name</label><input type="text" id="cust-name" required></div>
+    <div class="field-group"><label data-i18n="lbl_phone">Phone Number</label><input type="tel" id="cust-phone" required></div>
+    <div class="field-group"><label data-i18n="lbl_address">Full Address</label><input type="text" id="cust-address" required></div>
+    <div class="field-group"><label data-i18n="lbl_email">Email (for order updates)</label><input type="email" id="cust-email"></div>
+
+    <button class="btn-gold" id="place-order-btn" data-i18n="place_order" style="width:100%;">Place Order</button>
+  </div>
+</main>
+
+<footer class="telegant-footer" id="contact">
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <div class="logo-text">TELEGANT<span>DEFINED BY ELEGANCE</span></div>
+      <p data-i18n="foot_tag">Premium T-shirts, defined by elegance.</p>
+    </div>
+    <div class="footer-col">
+      <h4 data-i18n="foot_nav">NAVIGATE</h4>
+      <a href="shop.html" data-i18n="foot_shop">Shop</a>
+      <a href="Survey.html" data-i18n="foot_survey">Survey</a>
+      <a href="about.html" data-i18n="foot_about">About</a>
+      <a href="track.html" data-i18n="foot_track">Track Order</a>
+      <a href="terms.html" data-i18n="foot_terms">Terms &amp; Conditions</a>
+    </div>
+    <div class="footer-col">
+      <h4 data-i18n="foot_contact">CONTACT</h4>
+      <a href="mailto:mahmoudyahya66@gmail.com">mahmoudyahya66@gmail.com</a>
+      <a href="tel:+201101632040">+20 110 163 2040</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span data-i18n="copyright">© 2025 TELEGANT. All rights reserved.</span>
+    <span data-i18n="foot_slogan">Defined by Elegance</span>
+  </div>
+</footer>
+
+<script src="telegant-shop.js"></script>
+<script>
+(function(){
+  const Shop = window.TelegantShop;
+  let selectedDate = null;
+  let expressOn = false;
+
+  function t(){
+    const lang = document.documentElement.getAttribute('lang') || 'en';
+    return window.TELEGANT_I18N[lang] || window.TELEGANT_I18N.en;
+  }
+
+  function renderCart(){
+    const items = Shop.Cart.all();
+    const wrap = document.getElementById('cart-items');
+    const T = t();
+    if (items.length === 0){
+      wrap.innerHTML = '<p class="cart-empty">' + T.empty + ' <a href="shop.html" class="btn-outline">' + T.browse + '</a></p>';
+      document.getElementById('checkout-section').style.display = 'none';
+    } else {
+      document.getElementById('checkout-section').style.display = '';
+      wrap.innerHTML = items.map((it, i) => `
+        <div class="cart-item">
+          <img src="${it.image}" alt="${it.name}">
+          <div class="ci-name-wrap">
+            <div class="ci-name">${it.name}</div>
+            <div class="ci-meta">${T.size}: ${it.size} · ${it.price} EGP</div>
+          </div>
+          <div class="ci-qty">
+            <button data-act="dec" data-i="${i}">−</button>
+            <span>${it.qty}</span>
+            <button data-act="inc" data-i="${i}">+</button>
+          </div>
+          <button class="ci-remove" data-act="remove" data-i="${i}">${T.remove}</button>
+        </div>
+      `).join('');
+      wrap.querySelectorAll('button[data-act]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const i = Number(btn.dataset.i);
+          const items = Shop.Cart.all();
+          if (btn.dataset.act === 'inc') Shop.Cart.setQty(i, items[i].qty + 1);
+          if (btn.dataset.act === 'dec') Shop.Cart.setQty(i, items[i].qty - 1);
+          if (btn.dataset.act === 'remove') Shop.Cart.removeAt(i);
+          renderCart();
+          renderSummary();
+        });
+      });
+    }
+  }
+
+  function deliveryFee(){
+    return expressOn ? Shop.Delivery.EXPRESS_FEE : 0;
+  }
+
+  function renderSummary(){
+    const sub = Shop.Cart.subtotal();
+    const fee = deliveryFee();
+    document.getElementById('sum-subtotal').textContent = sub + ' EGP';
+    document.getElementById('sum-delivery').textContent = fee + ' EGP';
+    document.getElementById('sum-total').textContent = (sub + fee) + ' EGP';
+  }
+
+  function renderDates(){
+    const T = t();
+    const grid = document.getElementById('date-grid');
+    const dates = Shop.Delivery.candidates(10);
+    grid.innerHTML = dates.map(d => `
+      <div class="date-option ${d.full ? 'full' : ''}" data-date="${d.date}">
+        <strong>${d.label}</strong>${d.full ? T.full_badge : d.count + ' ' + T.orders_count}
+      </div>
+    `).join('');
+    grid.querySelectorAll('.date-option').forEach(el => {
+      el.addEventListener('click', () => {
+        if (el.classList.contains('full')) return;
+        selectedDate = el.dataset.date;
+        grid.querySelectorAll('.date-option').forEach(o => o.classList.remove('selected'));
+        el.classList.add('selected');
+      });
+    });
+  }
+
+  document.getElementById('express-check').addEventListener('change', (e) => {
+    expressOn = e.target.checked;
+    document.getElementById('date-grid').style.opacity = expressOn ? .35 : 1;
+    document.getElementById('date-grid').style.pointerEvents = expressOn ? 'none' : 'auto';
+    if (expressOn) selectedDate = Shop.Delivery.expressDate();
+    renderSummary();
+  });
+
+  document.getElementById('place-order-btn').addEventListener('click', () => {
+    const T = t();
+    const date = expressOn ? Shop.Delivery.expressDate() : selectedDate;
+    if (!date){ alert(T.alert_no_date); return; }
+    const name = document.getElementById('cust-name').value.trim();
+    const phone = document.getElementById('cust-phone').value.trim();
+    const address = document.getElementById('cust-address').value.trim();
+    const email = document.getElementById('cust-email').value.trim();
+    if (!name || !phone || !address){ alert(T.alert_fields); return; }
+    const payment = document.querySelector('input[name="payment"]:checked').value;
+
+    const order = Shop.Orders.place({
+      items: Shop.Cart.all(),
+      subtotal: Shop.Cart.subtotal(),
+      deliveryFee: deliveryFee(),
+      total: Shop.Cart.subtotal() + deliveryFee(),
+      deliveryDate: date,
+      express: expressOn,
+      paymentMethod: payment,
+      customer: { name, phone, address, email }
+    });
+
+    alert(T.order_placed_h + '\\n' + T.order_placed_p + ' ' + order.id + '\\n' + T.order_placed_p2);
+    window.location.href = 'track.html?order=' + encodeURIComponent(order.id);
+  });
+
+  renderCart();
+  renderSummary();
+  renderDates();
+})();
+</script>
+
+<script>
+(function(){
+  const root = document.documentElement;
+  const THEME_KEY = 'telegant-theme';
+  const LANG_KEY  = 'telegant-lang';
+  function applyTheme(theme){
+    root.setAttribute('data-theme', theme);
+    localStorage.setItem(THEME_KEY, theme);
+    const btn = document.getElementById('theme-toggle');
+    if(btn) btn.textContent = theme === 'dark' ? '☀' : '☾';
+  }
+  applyTheme(localStorage.getItem(THEME_KEY) || 'dark');
+  function applyLang(lang){
+    const t = window.TELEGANT_I18N && window.TELEGANT_I18N[lang];
+    root.setAttribute('lang', lang);
+    root.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
+    localStorage.setItem(LANG_KEY, lang);
+    const btn = document.getElementById('lang-toggle');
+    if(btn) btn.textContent = lang === 'ar' ? 'EN' : 'AR';
+    if(!t) return;
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const key = el.getAttribute('data-i18n');
+      if(t[key] !== undefined) el.innerHTML = t[key];
+    });
+  }
+  applyLang(localStorage.getItem(LANG_KEY) || 'en');
+  window.addEventListener('load', () => {
+    const menuBtn = document.getElementById('menu-btn');
+    const navMenu = document.getElementById('nav-menu');
+    if (menuBtn && navMenu) {
+      menuBtn.addEventListener('click', (e) => { e.stopPropagation(); navMenu.classList.toggle('show'); });
+      document.addEventListener('click', (e) => {
+        if (!navMenu.contains(e.target) && !menuBtn.contains(e.target)) navMenu.classList.remove('show');
+      });
+      navMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => navMenu.classList.remove('show')));
+    }
+    const themeBtn = document.getElementById('theme-toggle');
+    if(themeBtn) themeBtn.addEventListener('click', () => applyTheme(root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'));
+    const langBtn = document.getElementById('lang-toggle');
+    if(langBtn) langBtn.addEventListener('click', () => applyLang(root.getAttribute('lang') === 'ar' ? 'en' : 'ar'));
+  });
+})();
+</script>
+</body>
+</html>
