@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex"><title>Admin | TELEGANT</title>
+<script>try{var t=localStorage.tg_theme||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');document.documentElement.dataset.theme=t}catch(e){}</script>
+<link rel="stylesheet" href="tg-theme.css">
+<style>
+:root{--ink:#2a2114;--card:rgba(255,252,244,.86);--line:rgba(160,120,40,.3);--gold:#b8892f}
+html[data-tg-theme=dark]{--ink:#f1e9d6;--card:rgba(24,19,12,.86);--line:rgba(232,207,134,.25);--gold:#e8cf86}
+body{margin:0;font:14px/1.5 system-ui,sans-serif;color:var(--ink)}
+header{display:flex;align-items:center;gap:14px;padding:12px 20px;border-bottom:1px solid var(--line);background:var(--card);flex-wrap:wrap}
+header b{font:600 18px Georgia,serif;flex:1}
+nav{display:flex;gap:6px;padding:12px 20px;flex-wrap:wrap}
+button,select,input{font:inherit;color:var(--ink)}
+nav button,.b{padding:7px 12px;border:1px solid var(--line);background:none;border-radius:8px;cursor:pointer}
+nav .on,.b.p{background:var(--gold);color:#16110a;border-color:var(--gold)}
+main{padding:0 20px 40px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:16px;overflow-x:auto}
+table{border-collapse:collapse;width:100%;min-width:620px}
+th,td{text-align:left;padding:8px;border-bottom:1px solid var(--line);vertical-align:top}
+input,select{padding:7px;border:1px solid var(--line);border-radius:6px;background:transparent;margin:0 6px 6px 0}
+td input{width:90px}
+.row{display:flex;flex-wrap:wrap;align-items:center}
+h3{margin:0 0 10px;font:600 16px Georgia,serif}
+.tag{padding:2px 8px;border-radius:99px;border:1px solid var(--line);font-size:12px}
+</style></head><body>
+<header><img src="MEBG-GOLDEN.png" alt="TELEGANT" style="height:44px"><b>Admin</b>
+<span id="who"></span><button class="b" id="th">Light / dark</button><button class="b" id="out">Sign out</button></header>
+<nav id="nav"></nav><main id="v">Loading…</main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="tg-core.js"></script>
+<script>
+const $=s=>document.querySelector(s),sb=TG.sb,ST=['new','confirmed','in production','out for delivery','delivered','cancelled'];
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const tbl=(h,r)=>`<div class="card"><table><tr>${h.map(x=>`<th>${x}</th>`).join('')}</tr>${r.map(x=>`<tr>${x.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('')||`<tr><td colspan="${h.length}">Nothing yet.</td></tr>`}</table></div>`;
+const val=(tr,n)=>tr.querySelector(`[name=${n}]`).value;
+let me;
+
+const TABS={
+ async Analytics(){const{data}=await sb.from('page_stats').select('*').order('views',{ascending:false});
+  return `<p>Last 30 days. "Engaged" = stayed 15s or scrolled. "Left without engaging" = viewed but did neither.</p>`+
+   tbl(['Page','Views','Unique visitors','Engaged','Left without engaging','Clicked out of site'],
+   (data||[]).map(r=>[esc(r.page),r.views,r.visitors,r.engaged,Math.max(r.sessions-r.engaged,0),r.exits]));},
+ async Orders(){const{data}=await sb.from('orders').select('*').order('created_at',{ascending:false}).limit(300);
+  return tbl(['Order','Date','Customer','Phone','Payment','Total','Status'],(data||[]).map(o=>[esc(o.order_number),
+   new Date(o.created_at).toLocaleString(),`${esc(o.customer_name)}<br><small>${esc(o.email||'')}</small>`,esc(o.phone),esc(o.payment_method),
+   esc(o.total)+' EGP',`<select data-st="${o.id}">${ST.map(s=>`<option${s===o.status?' selected':''}>${s}</option>`).join('')}</select>`]));},
+ async Users(){const{data}=await sb.from('profiles').select('*').order('created_at',{ascending:false});
+  return `<div class="card"><h3>Add manufacturer / delivery user</h3><div class="row">
+   <input id="ue" type="email" placeholder="Email"><input id="up" type="text" placeholder="Password (8+)">
+   <select id="ur"><option>manufacturer</option><option>delivery</option></select><button class="b p" id="addU">Add user</button></div></div>`+
+   tbl(['Email','Name','Role','Status','Joined','Actions'],(data||[]).map(u=>[esc(u.email),esc(u.full_name),esc(u.role),`<span class="tag">${esc(u.status)}</span>`,
+   new Date(u.created_at).toLocaleDateString(),u.id===me.id?'(you)':
+   (u.status!=='approved'?`<button class="b" data-ap="${u.id}">Approve</button> `:'')+(u.status==='pending'?`<button class="b" data-rj="${u.id}">Reject</button> `:'')+`<button class="b" data-del="${u.id}">Remove</button>`]));},
+ async Products(){const{data}=await sb.from('products').select('*').order('created_at',{ascending:false});
+  return `<div class="card"><h3>Add product</h3><div class="row"><input id="pn" placeholder="Name (EN)"><input id="pa" placeholder="Name (AR)">
+   <input id="pp" type="number" placeholder="Price EGP"><input id="pi" placeholder="Image URL"><button class="b p" id="addP">Add</button></div></div>`+
+   tbl(['Product','Price','Offer price','Offer label','Offer ends','Actions'],(data||[]).map(p=>[`${esc(p.name_en)}<br><small>${esc(p.name_ar||'')}${p.archived?' · archived':''}</small>`,
+   `<input name="price" type="number" value="${esc(p.price)}">`,`<input name="sale" type="number" value="${esc(p.sale_price??'')}">`,
+   `<input name="label" value="${esc(p.offer_label||'')}">`,`<input name="ends" type="date" value="${esc(p.offer_ends_at||'')}">`,
+   `<span data-pid="${p.id}"><button class="b" data-pu>Save</button> <button class="b" data-pr="${p.archived?0:1}">${p.archived?'Restore':'Archive'}</button></span>`]));},
+ async Reviews(){const{data}=await sb.from('reviews').select('*').order('created_at',{ascending:false});
+  return `<div class="card"><h3>Add review</h3><div class="row"><input id="ra" placeholder="Name"><input id="rr" type="number" min="1" max="5" placeholder="Stars 1-5">
+   <input id="rb" placeholder="Review text" style="min-width:240px"><button class="b p" id="addR">Add</button></div></div>`+
+   tbl(['Type','Author','Rating','Text','Shown on site','Actions'],(data||[]).map(r=>[esc(r.kind),esc(r.author),r.rating||'',esc(r.body),r.visible?'yes':'no',
+   `<button class="b" data-rv="${r.id}|${r.visible?0:1}">${r.visible?'Hide':'Show'}</button> <button class="b" data-rd="${r.id}">Delete</button>`]));}
+};
+
+async function show(n){document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('on',b.textContent===n));
+  $('#v').innerHTML=await TABS[n]();$('#v').dataset.tab=n;}
+const done=(r,n)=>{if(r&&r.error)alert(r.error.message||r.error);show(n||$('#v').dataset.tab)};
+
+$('#v').addEventListener('change',async e=>{const id=e.target.dataset.st;
+  if(id)done(await sb.from('orders').update({status:e.target.value}).eq('id',id));});
+$('#v').addEventListener('click',async e=>{const t=e.target,d=t.dataset;if(!t.closest('button'))return;
+  if(t.id==='addU'){const r=await sb.functions.invoke('admin-users',{body:{action:'create',email:$('#ue').value.trim(),password:$('#up').value,role:$('#ur').value}});
+    return done(r.error||r.data?.error?{error:r.data?.error||r.error.message}:null);}
+  if(d.ap)return done(await sb.from('profiles').update({status:'approved'}).eq('id',d.ap));
+  if(d.rj)return done(await sb.from('profiles').update({status:'rejected'}).eq('id',d.rj));
+  if(d.del&&confirm('Remove this user permanently?')){const r=await sb.functions.invoke('admin-users',{body:{action:'delete',id:d.del}});
+    return done(r.error||r.data?.error?{error:r.data?.error||r.error.message}:null);}
+  if(t.id==='addP')return done(await sb.from('products').insert({name_en:$('#pn').value,name_ar:$('#pa').value||null,price:+$('#pp').value,image_url:$('#pi').value||null}));
+  if('pu' in d){const tr=t.closest('tr'),id=t.parentElement.dataset.pid;
+    return done(await sb.from('products').update({price:+val(tr,'price'),sale_price:val(tr,'sale')===''?null:+val(tr,'sale'),offer_label:val(tr,'label')||null,offer_ends_at:val(tr,'ends')||null}).eq('id',id));}
+  if(d.pr!==undefined)return done(await sb.from('products').update({archived:d.pr==='1'}).eq('id',t.parentElement.dataset.pid));
+  if(t.id==='addR')return done(await sb.from('reviews').insert({kind:'review',author:$('#ra').value,rating:+$('#rr').value||null,body:$('#rb').value,visible:true}));
+  if(d.rv){const[i,v]=d.rv.split('|');return done(await sb.from('reviews').update({visible:v==='1'}).eq('id',i));}
+  if(d.rd&&confirm('Delete this?'))return done(await sb.from('reviews').delete().eq('id',d.rd));});
+
+$('#th').onclick=()=>{const d=document.documentElement,n=d.dataset.theme==='dark'?'light':'dark';d.dataset.theme=n;localStorage.tg_theme=n};
+$('#out').onclick=async()=>{await TG.signOut();location.href='login.html'};
+(async()=>{me=await TG.profile();
+  if(!me||me.role!=='owner'||me.status!=='approved'){location.replace('login.html');return;}
+  $('#who').textContent=me.email;
+  $('#nav').innerHTML=Object.keys(TABS).map(n=>`<button>${n}</button>`).join('');
+  $('#nav').onclick=e=>e.target.tagName==='BUTTON'&&show(e.target.textContent);show('Analytics');})();
+</script></body></html>

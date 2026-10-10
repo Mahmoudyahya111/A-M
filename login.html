@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex"><title>Sign in | TELEGANT</title>
+<script>try{var t=localStorage.tg_theme||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');document.documentElement.dataset.theme=t}catch(e){}</script>
+<link rel="stylesheet" href="tg-theme.css">
+<style>
+:root{--ink:#2a2114;--card:rgba(255,252,244,.85);--line:rgba(160,120,40,.35);--gold:#b8892f;--btn:#2a2114;--btnt:#f6efe0}
+html[data-tg-theme=dark]{--ink:#f1e9d6;--card:rgba(24,19,12,.85);--line:rgba(232,207,134,.28);--gold:#e8cf86;--btn:#e8cf86;--btnt:#16110a}
+body{margin:0;min-height:100vh;display:grid;place-items:center;font:15px/1.5 system-ui,sans-serif;color:var(--ink);padding:20px;box-sizing:border-box}
+.box{width:100%;max-width:400px;background:var(--card);backdrop-filter:blur(10px);border:1px solid var(--line);border-radius:14px;padding:28px}
+.box>img{display:block;margin:0 auto 6px}
+h1{font:600 22px Georgia,serif;text-align:center;margin:4px 0 16px}
+.tabs,.chips{display:flex;gap:6px;margin-bottom:14px}
+.tabs button,.chips button{flex:1;padding:8px 4px;border:1px solid var(--line);background:none;color:var(--ink);border-radius:8px;cursor:pointer;font:inherit;font-size:13px}
+.on{background:var(--gold)!important;color:#16110a!important;border-color:var(--gold)!important}
+input{width:100%;box-sizing:border-box;padding:10px;margin-bottom:10px;border:1px solid var(--line);border-radius:8px;background:transparent;color:var(--ink);font:inherit}
+.go{width:100%;padding:11px;border:0;border-radius:8px;background:var(--btn);color:var(--btnt);font:inherit;font-weight:600;cursor:pointer}
+.msg{min-height:20px;margin:10px 0 0;font-size:13px;text-align:center}
+.lnk{background:none;border:0;color:var(--gold);cursor:pointer;font:inherit;font-size:13px;display:block;margin:10px auto 0}
+small{display:block;opacity:.75;margin:-4px 0 12px;font-size:12px}
+.h{display:none}
+</style></head><body>
+<div class="box">
+  <img src="MEBG-GOLDEN.png" alt="TELEGANT">
+  <h1 id="ttl">Sign in</h1>
+  <div class="tabs" id="tabs"><button data-m="in" class="on">Sign in</button><button data-m="up">Create account</button></div>
+  <div class="chips h" id="chips">
+    <button data-r="customer" class="on">Customer</button><button data-r="manufacturer">Manufacturer</button>
+    <button data-r="delivery">Delivery</button><button data-r="owner">Owner</button>
+  </div>
+  <input id="nm" class="h" placeholder="Full name" autocomplete="name">
+  <input id="em" type="email" placeholder="Email" autocomplete="email">
+  <input id="pw" type="password" placeholder="Password" autocomplete="current-password">
+  <small id="note" class="h"></small>
+  <button class="go" id="go">Sign in</button>
+  <p class="msg" id="msg"></p>
+  <button class="lnk" id="fg">Forgot password / owner: set password</button>
+  <button class="lnk" id="th">Light / dark</button>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="tg-core.js"></script>
+<script>
+const $=s=>document.querySelector(s); let mode='in',role='customer';
+const msg=(t,bad)=>{$('#msg').textContent=t;$('#msg').style.color=bad?'#c0392b':'inherit'};
+function view(m){mode=m;
+  $('#ttl').textContent={in:'Sign in',up:'Create account',reset:'Set new password'}[m];
+  $('#go').textContent={in:'Sign in',up:'Create account',reset:'Save password'}[m];
+  $('#chips').classList.toggle('h',m!=='up'); $('#nm').classList.toggle('h',m!=='up');
+  $('#em').classList.toggle('h',m==='reset'); $('#tabs').classList.toggle('h',m==='reset');
+  $('#fg').classList.toggle('h',m==='reset');
+  $('#pw').autocomplete=m==='in'?'current-password':'new-password';
+  note(); msg('');
+  document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('on',b.dataset.m===m));}
+function note(){const n=$('#note');n.classList.toggle('h',mode!=='up'||role==='customer');
+  n.textContent={manufacturer:'Manufacturer accounts need approval from the owner before you can sign in.',
+   delivery:'Delivery accounts need approval from the owner before you can sign in.',
+   owner:'Owner accounts work only with the owner email.'}[role]||'';}
+$('#tabs').onclick=e=>e.target.dataset.m&&view(e.target.dataset.m);
+$('#chips').onclick=e=>{if(!e.target.dataset.r)return;role=e.target.dataset.r;
+  document.querySelectorAll('#chips button').forEach(b=>b.classList.toggle('on',b===e.target));note();};
+$('#th').onclick=()=>{const d=document.documentElement,n=d.dataset.theme==='dark'?'light':'dark';d.dataset.theme=n;localStorage.tg_theme=n};
+$('#fg').onclick=async()=>{const e=$('#em').value.trim();if(!e)return msg('Enter your email first.',1);
+  const r=await TG.resetPassword(e);r.error?msg(r.error.message,1):msg('Check your email for the password link.');};
+
+$('#go').onclick=async()=>{const e=$('#em').value.trim().toLowerCase(),p=$('#pw').value;msg('');
+  if(mode==='reset'){if(p.length<8)return msg('Use at least 8 characters.',1);
+    const r=await TG.sb.auth.updateUser({password:p});if(r.error)return msg(r.error.message,1);
+    msg('Password saved.');return route();}
+  if(!e||!p)return msg('Enter email and password.',1);
+  if(mode==='up'){
+    if(p.length<8)return msg('Use at least 8 characters.',1);
+    if(role==='owner'&&e!==TG.OWNER)return msg('Owner accounts are only for the owner email.',1);
+    const r=await TG.signUp(e,p,$('#nm').value.trim(),role);if(r.error)return msg(r.error.message,1);
+    return msg(role==='manufacturer'||role==='delivery'
+      ?'Confirm your email, then wait for the owner to approve your account.':'Check your email to confirm your account.');}
+  const r=await TG.signIn(e,p);if(r.error)return msg(r.error.message,1);route();};
+
+async function route(){const p=await TG.profile();
+  if(!p){await TG.signOut();return msg('Account not found.',1);}
+  if(p.status!=='approved'){await TG.signOut();return msg(p.status==='pending'?'Your account is waiting for owner approval.':'This account was not approved.',1);}
+  location.href=p.role==='owner'?'admin.html':'index.html';}
+TG.sb.auth.onAuthStateChange(ev=>{if(ev==='PASSWORD_RECOVERY')view('reset');});
+</script></body></html>
