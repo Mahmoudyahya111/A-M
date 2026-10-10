@@ -33,6 +33,11 @@
     'html[data-tg-theme="light"] .tgcat-back{color:#8a6a1f}' +
     'html[data-tg-theme="light"] .tgcat-t{color:#8a6a1f}html[data-tg-theme="light"] .tgcat-t:hover,html[data-tg-theme="light"] .tgcat-t.on{color:#2a2114}' +
     'html[data-tg-theme="light"] .tgcat-s a{color:rgba(42,33,20,.7)}html[data-tg-theme="light"] .tgcat-s a:hover,html[data-tg-theme="light"] .tgcat-s a.on{color:#8a6a1f}' +
+    /* the option you are on: bright white, bold, glowing gold underline and a ◆ marker */
+    '.tgcat a.on{color:#fff;font-weight:700;background-size:100% 2px;text-shadow:0 0 16px rgba(232,207,134,.7)}' +
+    '.tgcat a.on::before{content:"◆";font-size:.55em;color:#c9a24b;margin-inline-end:.9em;vertical-align:middle;text-shadow:none}' +
+    '.tgcat-t.in{color:#fff}' +
+    'html[data-tg-theme="light"] .tgcat a.on{color:#2a2114;font-weight:700;text-shadow:none}html[data-tg-theme="light"] .tgcat-t.in{color:#2a2114}' +
     'html[lang="ar"] .tgcat a{letter-spacing:0;text-transform:none}';
   document.head.appendChild(st);
 
@@ -53,8 +58,9 @@
   var al = document.createElement('a'); al.href = 'shop.html'; al.textContent = ar ? 'الكل' : 'All'; al.className = 'tgcat-t' + (isCat ? '' : ' on');
   all.appendChild(al); main.appendChild(all);
   tops.forEach(function (t) {
-    var g = document.createElement('div'); g.className = 'tgcat-g'; g.appendChild(link(t, 'tgcat-t'));
+    var g = document.createElement('div'); g.className = 'tgcat-g';
     var kids = C.filter(function (c) { return c.parent_id === t.id; });
+    var ta = link(t, 'tgcat-t'); if (kids.some(function (k) { return k.slug === here; })) ta.className += ' in'; g.appendChild(ta);
     if (kids.length) { var s = document.createElement('div'); s.className = 'tgcat-s'; kids.forEach(function (k) { s.appendChild(link(k, '')); }); g.appendChild(s); }
     main.appendChild(g);
   });
