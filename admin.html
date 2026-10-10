@@ -52,13 +52,15 @@ const TABS={
    tbl(['Email','Name','Role','Status','Joined','Actions'],(data||[]).map(u=>[esc(u.email),esc(u.full_name),esc(u.role),`<span class="tag">${esc(u.status)}</span>`,
    new Date(u.created_at).toLocaleDateString(),u.id===me.id?'(you)':
    (u.status!=='approved'?`<button class="b" data-ap="${u.id}">Approve</button> `:'')+(u.status==='pending'?`<button class="b" data-rj="${u.id}">Reject</button> `:'')+`<button class="b" data-del="${u.id}">Remove</button>`]));},
- async Products(){const{data}=await sb.from('products').select('*').order('created_at',{ascending:false});
+ async Products(){const{data}=await sb.from('products').select('*').order('id');
   return `<div class="card"><h3>Add product</h3><div class="row"><input id="pn" placeholder="Name (EN)"><input id="pa" placeholder="Name (AR)">
-   <input id="pp" type="number" placeholder="Price EGP"><input id="pi" placeholder="Image URL"><button class="b p" id="addP">Add</button></div></div>`+
-   tbl(['Product','Price','Offer price','Offer label','Offer ends','Actions'],(data||[]).map(p=>[`${esc(p.name_en)}<br><small>${esc(p.name_ar||'')}${p.archived?' · archived':''}</small>`,
-   `<input name="price" type="number" value="${esc(p.price)}">`,`<input name="sale" type="number" value="${esc(p.sale_price??'')}">`,
-   `<input name="label" value="${esc(p.offer_label||'')}">`,`<input name="ends" type="date" value="${esc(p.offer_ends_at||'')}">`,
-   `<span data-pid="${p.id}"><button class="b" data-pu>Save</button> <button class="b" data-pr="${p.archived?0:1}">${p.archived?'Restore':'Archive'}</button></span>`]));},
+   <input id="pp" type="number" placeholder="Price EGP"><input id="ps" type="number" min="0" placeholder="Stock"><input id="pi" placeholder="Image URL (or upload after adding)"><button class="b p" id="addP">Add</button></div></div>`+
+   `<p>Pick a new picture and press Save to replace the current one. Offer = fill the offer price (lower than the price), then Save. Remove offer clears it.</p>`+
+   tbl(['Product','Price (EGP)','Stock','Offer','Picture','Actions'],(data||[]).map(p=>[`<b>${esc(p.name_en)}</b>${p.name_ar?`<br><small>${esc(p.name_ar)}</small>`:''}${p.archived?'<br><span class="tag">archived</span>':''}${p.stock<=0?'<br><span class="tag">out of stock</span>':''}`,
+   `<input name="price" type="number" min="0" value="${esc(p.price)}">`,`<input name="stock" type="number" min="0" value="${esc(p.stock)}">`,
+   `<input name="sale" type="number" min="0" placeholder="Offer price" value="${esc(p.sale_price??'')}"><br><input name="label" placeholder="Label e.g. -15%" value="${esc(p.offer_label||'')}"><br><input name="ends" type="date" style="width:140px" value="${esc(p.offer_ends_at||'')}">`,
+   `<img src="${esc(p.image_url||'')}" alt="" style="width:64px;height:64px;object-fit:cover;border-radius:8px;display:block;margin-bottom:6px"><input name="file" type="file" accept="image/*" style="width:150px">`,
+   `<span data-pid="${p.id}"><button class="b p" data-pu>Save</button> <button class="b" data-ro>Remove offer</button> <button class="b" data-pr="${p.archived?0:1}">${p.archived?'Restore':'Archive'}</button></span>`]));},
  async Reviews(){const{data}=await sb.from('reviews').select('*').order('created_at',{ascending:false});
   return `<div class="card"><h3>Add review</h3><div class="row"><input id="ra" placeholder="Name"><input id="rr" type="number" min="1" max="5" placeholder="Stars 1-5">
    <input id="rb" placeholder="Review text" style="min-width:240px"><button class="b p" id="addR">Add</button></div></div>`+
@@ -79,9 +81,17 @@ $('#v').addEventListener('click',async e=>{const t=e.target,d=t.dataset;if(!t.cl
   if(d.rj)return done(await sb.from('profiles').update({status:'rejected'}).eq('id',d.rj));
   if(d.del&&confirm('Remove this user permanently?')){const r=await sb.functions.invoke('admin-users',{body:{action:'delete',id:d.del}});
     return done(r.error||r.data?.error?{error:r.data?.error||r.error.message}:null);}
-  if(t.id==='addP')return done(await sb.from('products').insert({name_en:$('#pn').value,name_ar:$('#pa').value||null,price:+$('#pp').value,image_url:$('#pi').value||null}));
+  if(t.id==='addP')return done(await sb.from('products').insert({name_en:$('#pn').value,name_ar:$('#pa').value||null,price:+$('#pp').value,stock:parseInt($('#ps').value)||0,image_url:$('#pi').value||null}));
   if('pu' in d){const tr=t.closest('tr'),id=t.parentElement.dataset.pid;
-    return done(await sb.from('products').update({price:+val(tr,'price'),sale_price:val(tr,'sale')===''?null:+val(tr,'sale'),offer_label:val(tr,'label')||null,offer_ends_at:val(tr,'ends')||null}).eq('id',id));}
+    const price=+val(tr,'price'),sale=val(tr,'sale')===''?null:+val(tr,'sale');
+    if(sale!==null&&sale>=price)return alert('Offer price must be lower than the normal price.');
+    const upd={price,stock:parseInt(val(tr,'stock'))||0,sale_price:sale,offer_label:sale===null?null:(val(tr,'label')||null),offer_ends_at:sale===null?null:(val(tr,'ends')||null)};
+    const f=tr.querySelector('[name=file]').files[0];
+    if(f){const path=`${id}-${Date.now()}-${f.name.replace(/[^\w.-]/g,'_')}`;
+      const u=await sb.storage.from('product-images').upload(path,f);if(u.error)return alert(u.error.message);
+      upd.image_url=sb.storage.from('product-images').getPublicUrl(path).data.publicUrl;}
+    return done(await sb.from('products').update(upd).eq('id',id));}
+  if('ro' in d)return done(await sb.from('products').update({sale_price:null,offer_label:null,offer_ends_at:null}).eq('id',t.parentElement.dataset.pid));
   if(d.pr!==undefined)return done(await sb.from('products').update({archived:d.pr==='1'}).eq('id',t.parentElement.dataset.pid));
   if(t.id==='addR')return done(await sb.from('reviews').insert({kind:'review',author:$('#ra').value,rating:+$('#rr').value||null,body:$('#rb').value,visible:true}));
   if(d.rv){const[i,v]=d.rv.split('|');return done(await sb.from('reviews').update({visible:v==='1'}).eq('id',i));}
