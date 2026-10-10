@@ -84,6 +84,7 @@ $('#go').onclick=async()=>{const e=$('#em').value.trim().toLowerCase(),p=$('#pw'
 async function route(){const p=await TG.profile();
   if(!p){await TG.signOut();return msg('Account not found.',1);}
   if(p.status!=='approved'){await TG.signOut();return msg(p.status==='pending'?'Your account is waiting for owner approval.':'This account was not approved.',1);}
+  if(p.role==='customer')sessionStorage.tg_welcome=p.full_name||p.email.split('@')[0];
   location.href=p.role==='owner'?'admin.html':(p.role==='manufacturer'||p.role==='delivery')?'staff.html':NEXT;}
 TG.sb.auth.onAuthStateChange(ev=>{if(ev==='PASSWORD_RECOVERY')view('reset');});
 
@@ -93,6 +94,6 @@ TG.sb.auth.onAuthStateChange(ev=>{if(ev==='PASSWORD_RECOVERY')view('reset');});
  const d=document.createElement('div');d.style.textAlign='center';
  d.innerHTML='<h1>Signed in</h1><p><span id="who"></span></p><p id="lk"></p><button class="lnk" id="so">Sign out</button>';
  $('.box').insertBefore(d,$('#th'));$('#who').textContent=p.email+' ('+p.role+')';
- $('#lk').innerHTML=(p.role==='owner'?'<a href="admin.html" style="color:var(--gold)">Open admin dashboard</a><br>':'')+'<a href="track.html" style="color:var(--gold)">Track order</a> &nbsp; <a href="shop.html" style="color:var(--gold)">Shop</a>';
+ $('#lk').innerHTML=(p.role==='owner'?'<a href="admin.html" style="color:var(--gold)">Open admin dashboard</a><br>':'')+'<a href="my-orders.html" style="color:var(--gold)">My orders</a> &nbsp; <a href="shop.html" style="color:var(--gold)">Shop</a>';
  $('#so').onclick=async()=>{await TG.signOut();location.reload()};})();
 </script></body></html>

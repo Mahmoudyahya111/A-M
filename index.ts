@@ -24,7 +24,7 @@ Deno.serve(async (req) => {
     if (!user) throw new Error('Not signed in');
     const { data: me } = await db.from('profiles').select('role,status').eq('id', user.id).single();
     const b = await req.json();
-    const { data: o } = await db.from('orders').select('*').eq('id', b.order_id).single();
+    const { data: o } = await db.from('orders').select('*').eq(b.order_number ? 'order_number' : 'id', b.order_number ?? b.order_id).single();
     if (!o) throw new Error('Order not found');
 
     if (b.action === 'confirm') {                       // customer, right after placing the order

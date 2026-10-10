@@ -31,3 +31,12 @@ html[data-tg-theme="dark"] body::after{background-image:linear-gradient(115deg,t
 img[src*="MEBG-GOLDEN"]{height:clamp(46px,6vw,64px)!important;width:auto!important;max-width:none!important;
  filter:saturate(1.35) contrast(1.08) drop-shadow(0 1px 6px rgba(201,162,75,.55))}
 html[data-tg-theme="dark"] img[src*="MEBG-GOLDEN"]{filter:brightness(0) invert(1) drop-shadow(0 0 8px rgba(255,255,255,.35))}
+
+/* HOMEPAGE: centre the hero (title, description, buttons) on desktop.
+   The video card is commented out, so the 2-column grid is switched to one centred column. */
+@media(min-width:901px){
+ #Title{grid-template-columns:1fr!important;justify-items:center;text-align:center}
+ #Title>div{display:flex;flex-wrap:wrap;justify-content:center;column-gap:14px;max-width:860px}
+ #Title>div>h1,#Title>div>p{flex:0 0 100%;text-align:center;margin-inline:auto}
+ #Title .Shop{margin-inline-end:0!important}
+}

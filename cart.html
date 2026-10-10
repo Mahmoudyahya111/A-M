@@ -8,6 +8,7 @@
 <meta name="robots" content="noindex, follow">
 <link rel="canonical" href="https://mahmoudyahya111.github.io/A-M/cart.html">
 <link rel="stylesheet" href="telegant.css">
+<link rel="stylesheet" href="tg-theme.css">
 <link rel="icon" type="image/png" href="MEBG-GOLDEN.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -159,6 +160,9 @@ window.TELEGANT_I18N = {
 </footer>
 
 <script src="telegant-shop.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="tg-core.js"></script>
+<script src="tg-store.js"></script>
 <script>
 (function(){
   const Shop = window.TelegantShop;
@@ -247,8 +251,10 @@ window.TELEGANT_I18N = {
     renderSummary();
   });
 
-  document.getElementById('place-order-btn').addEventListener('click', () => {
+  document.getElementById('place-order-btn').addEventListener('click', async () => {
     const T = t();
+    const sess = (await TG.sb.auth.getSession()).data.session;
+    if (!sess){ location.href = 'login.html?next=' + encodeURIComponent('cart.html'); return; }
     const date = expressOn ? Shop.Delivery.expressDate() : selectedDate;
     if (!date){ alert(T.alert_no_date); return; }
     const name = document.getElementById('cust-name').value.trim();
@@ -257,25 +263,17 @@ window.TELEGANT_I18N = {
     const email = document.getElementById('cust-email').value.trim();
     if (!name || !phone || !address){ alert(T.alert_fields); return; }
     const payment = document.querySelector('input[name="payment"]:checked').value;
-
-    const order = Shop.Orders.place({
-      items: Shop.Cart.all(),
-      subtotal: Shop.Cart.subtotal(),
-      deliveryFee: deliveryFee(),
-      total: Shop.Cart.subtotal() + deliveryFee(),
-      deliveryDate: date,
-      express: expressOn,
-      paymentMethod: payment,
-      customer: { name, phone, address, email }
-    });
-
-    alert(T.order_placed_h + '\\n' + T.order_placed_p + ' ' + order.id + '\\n' + T.order_placed_p2);
-    window.location.href = 'track.html?order=' + encodeURIComponent(order.id);
+    const btn = document.getElementById('place-order-btn'); btn.disabled = true;
+    try {
+      const num = await TG.placeOrder({ customer_name: name, phone, email: email || sess.user.email, address,
+        payment_method: payment, items: Shop.Cart.all(), express: expressOn, delivery_date: date });
+      Shop.Cart.clear();
+      TG.sb.functions.invoke('swift-action', { body: { action: 'confirm', order_number: num } });
+      TG.thanks(num);
+    } catch (err) { btn.disabled = false; alert(err.message || err); }
   });
 
-  renderCart();
-  renderSummary();
-  renderDates();
+  (window.TG && TG.prepCart ? TG.prepCart() : Promise.resolve()).then(() => { renderCart(); renderSummary(); renderDates(); });
 })();
 </script>
 

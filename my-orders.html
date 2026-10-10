@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex"><title>My orders | TELEGANT</title>
+<script>try{var t=localStorage.getItem('telegant-theme')||'dark';document.documentElement.dataset.theme=t}catch(e){}</script>
+<link rel="stylesheet" href="tg-theme.css">
+<style>
+:root{--ink:#2a2114;--card:rgba(255,252,244,.88);--line:rgba(160,120,40,.3);--gold:#b8892f}
+html[data-tg-theme=dark]{--ink:#f1e9d6;--card:rgba(24,19,12,.88);--line:rgba(232,207,134,.25);--gold:#e8cf86}
+body{margin:0;font:15px/1.5 system-ui,sans-serif;color:var(--ink)}
+header{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line);background:var(--card)}
+header b{font:600 18px Georgia,serif;flex:1}header a{color:var(--gold);text-decoration:none}
+main{max-width:640px;margin:0 auto;padding:16px}
+.sum{display:flex;gap:10px;margin-bottom:14px}.sum div{flex:1;text-align:center;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px}
+.sum b{display:block;font:600 26px Georgia,serif;color:var(--gold)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:14px}
+.card h3{margin:0;font:600 17px Georgia,serif;display:flex;justify-content:space-between;gap:8px}
+.tag{font:12px system-ui;padding:2px 10px;border-radius:99px;border:1px solid var(--gold);color:var(--gold)}
+button.b{margin-top:10px;padding:8px 14px;border:1px solid var(--line);background:none;color:var(--ink);border-radius:8px;cursor:pointer;font:inherit}
+ol{list-style:none;margin:12px 0 0;padding:0}ol li{position:relative;padding:3px 0 3px 30px;opacity:.5}
+ol li::before{content:"";position:absolute;left:5px;top:9px;width:12px;height:12px;border-radius:50%;border:2px solid var(--line)}
+ol li.done{opacity:1}ol li.done::before{background:var(--gold);border-color:var(--gold)}ol li.now{opacity:1;font-weight:700}
+ol li.now::before{background:var(--gold);box-shadow:0 0 0 5px rgba(201,162,75,.3)}
+.code{margin-top:12px;padding:12px;border:2px dashed var(--gold);border-radius:10px;text-align:center}
+.code b{display:block;font:700 30px monospace;letter-spacing:6px;color:var(--gold)}
+.hid{display:none}
+</style></head><body>
+<header><img src="MEBG-GOLDEN.png" alt="TELEGANT" style="height:40px"><b>My orders</b><a href="shop.html">Shop</a><a href="login.html">Account</a></header>
+<main><div class="sum"><div><b id="n1">0</b>orders</div><div><b id="n2">0</b>in progress</div></div><div id="v">Loading…</div></main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="tg-core.js"></script>
+<script>
+const sb=TG.sb,$=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const STEPS=['Order placed','Getting materials','Cutting','Assembling','Product photo','Ready for pickup','On the way to you','Delivered'];
+const IDX={'new':0,'obtaining material':1,'cutting':2,'assembling':3,'adding product photo':4,'ready for pickup':5,'on the way to manufacturer':5,'picked up':6,'on the way to customer':6,'arrived at customer':6,'delivered':7};
+const open=new Set(location.hash?[decodeURIComponent(location.hash.slice(1))]:[]);
+async function load(){
+  const{data:{session}}=await sb.auth.getSession();
+  if(!session){location.replace('login.html?next='+encodeURIComponent('my-orders.html'));return;}
+  const{data:o}=await sb.from('orders').select('*').order('created_at',{ascending:false});
+  const codes={};((await sb.from('order_secrets').select('*')).data||[]).forEach(c=>codes[c.order_id]=c.delivery_code);
+  const list=o||[],act=x=>x.status!=='delivered'&&x.status!=='cancelled';
+  $('#n1').textContent=list.length;$('#n2').textContent=list.filter(act).length;
+  $('#v').innerHTML=list.map(x=>{const i=IDX[x.status],items=(Array.isArray(x.items)?x.items:[]).map(it=>esc(it.name)+' ('+esc(it.size)+') ×'+esc(it.qty)).join('<br>');
+    const show=open.has(x.order_number);
+    return `<div class="card"><h3><span>${esc(x.order_number)}</span><span class="tag">${x.status==='cancelled'?'Cancelled':esc(x.status)}</span></h3>
+     <small>${new Date(x.created_at).toLocaleDateString()} · ${esc(x.total)} EGP · deliver by ${esc(x.delivery_date||'-')}</small><div style="margin-top:6px">${items}</div>
+     ${act(x)?`<button class="b" data-t="${esc(x.order_number)}">${show?'Hide tracking':'Track order'}</button>`:''}
+     <div class="${show&&act(x)?'':'hid'}">${x.product_photo&&i>=4?`<img src="${esc(x.product_photo)}" alt="" style="width:100%;max-height:240px;object-fit:cover;border-radius:10px;margin-top:10px">`:''}
+     <ol>${STEPS.map((s,k)=>`<li class="${k<i||x.status==='delivered'?'done':k===i?'now':''}">${s}</li>`).join('')}</ol>
+     ${x.status==='arrived at customer'&&codes[x.id]?`<div class="code">Your delivery person is here.<br>Give them this code:<b>${esc(codes[x.id])}</b></div>`:''}</div></div>`;}).join('')||'<div class="card">No orders yet. <a href="shop.html" style="color:var(--gold)">Start shopping</a></div>';
+}
+$('#v').addEventListener('click',e=>{const t=e.target.dataset.t;if(!t)return;open.has(t)?open.delete(t):open.add(t);load();});
+load();setInterval(load,20000);
+</script></body></html>
