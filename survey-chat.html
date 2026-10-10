@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex">
+<title>Chat survey | TELEGANT</title>
+<script>try{document.documentElement.dataset.theme=localStorage.getItem('telegant-theme')||'dark'}catch(e){}</script>
+<link rel="stylesheet" href="tg-theme.css">
+<style>
+:root{--ink:#2a2114;--card:rgba(255,252,244,.9);--line:rgba(160,120,40,.35);--gold:#b8892f}
+html[data-tg-theme=dark]{--ink:#f1e9d6;--card:rgba(24,19,12,.9);--line:rgba(232,207,134,.28);--gold:#e8cf86}
+body{margin:0;min-height:100vh;display:grid;place-items:center;font:15px/1.5 system-ui,sans-serif;color:var(--ink);padding:20px;box-sizing:border-box}
+.box{width:100%;max-width:400px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:26px;text-align:center}
+h1{font:600 22px Georgia,serif;margin:8px 0 14px}.st button{background:none;border:0;font-size:34px;color:var(--line);cursor:pointer}.st button.on{color:var(--gold)}
+textarea{width:100%;box-sizing:border-box;min-height:80px;padding:10px;border:1px solid var(--line);border-radius:8px;background:transparent;color:var(--ink);font:inherit;margin:10px 0}
+.go{width:100%;padding:11px;border:0;border-radius:8px;background:var(--gold);color:#16110a;font:inherit;font-weight:700;cursor:pointer}
+</style></head><body>
+<div class="box"><img src="MEBG-GOLDEN.png" alt="TELEGANT"><h1 id="h">How was your chat?</h1><div id="b">
+<div class="st" id="st"></div><textarea id="fb" maxlength="1000" placeholder="Anything we could do better? (optional)"></textarea><button class="go" id="go">Send</button></div><p id="m"></p></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="tg-core.js"></script>
+<script>
+let r=0;const $=s=>document.querySelector(s),id=+new URLSearchParams(location.search).get('c');
+$('#st').innerHTML=[1,2,3,4,5].map(n=>`<button data-n="${n}">★</button>`).join('');
+$('#st').onclick=e=>{if(!e.target.dataset.n)return;r=+e.target.dataset.n;[...$('#st').children].forEach((b,i)=>b.classList.toggle('on',i<r));};
+$('#go').onclick=async()=>{if(!r)return $('#m').textContent='Please pick a star rating.';
+  const s=(await TG.sb.auth.getSession()).data.session;if(!s){location.href='login.html?next='+encodeURIComponent(location.href);return;}
+  const x=await TG.sb.rpc('chat_rate',{p_chat:id,p_rating:r,p_fb:$('#fb').value});
+  if(x.error)return $('#m').textContent=x.error.message;$('#b').style.display='none';$('#h').textContent='Thank you for your feedback!';$('#m').textContent='';};
+</script></body></html>
