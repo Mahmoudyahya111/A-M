@@ -27,6 +27,7 @@ h3{margin:0 0 10px;font:600 16px Georgia,serif}
 <header><img src="MEBG-GOLDEN.png" alt="TELEGANT" style="height:44px"><b>Admin</b>
 <span id="who"></span><button class="b" id="th">Light / dark</button><button class="b" id="out">Sign out</button></header>
 <nav id="nav"></nav><main id="v">Loading…</main>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="tg-core.js"></script>
 <script>
@@ -34,7 +35,10 @@ const $=s=>document.querySelector(s),sb=TG.sb,ST=['new','obtaining material','cu
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const tbl=(h,r)=>`<div class="card"><table><tr>${h.map(x=>`<th>${x}</th>`).join('')}</tr>${r.map(x=>`<tr>${x.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('')||`<tr><td colspan="${h.length}">Nothing yet.</td></tr>`}</table></div>`;
 const val=(tr,n)=>tr.querySelector(`[name=${n}]`).value;
-let me;
+let me;const R=['owner','manufacturer','delivery','support','customer'];
+const fm=n=>Number(n||0).toLocaleString('en-EG',{maximumFractionDigits:0});
+const sum=(a,k)=>(a||[]).reduce((t,r)=>t+Number(r[k]||0),0);
+async function all(t){let o=[],i=0;for(;;){const{data}=await sb.from(t).select('*').order('id').range(i,i+999);o=o.concat(data||[]);if(!data||data.length<1000)return o;i+=1000;}}
 
 const TABS={
  async Analytics(){const{data}=await sb.from('page_stats').select('*').order('views',{ascending:false});
@@ -46,10 +50,10 @@ const TABS={
    new Date(o.created_at).toLocaleString(),`${esc(o.customer_name)}<br><small>${esc(o.email||'')}</small>`,esc(o.phone),esc(o.payment_method),
    esc(o.total)+' EGP',`<select data-st="${o.id}">${ST.map(s=>`<option${s===o.status?' selected':''}>${s}</option>`).join('')}</select>`]));},
  async Users(){const{data}=await sb.from('profiles').select('*').order('created_at',{ascending:false});
-  return `<div class="card"><h3>Add manufacturer / delivery user</h3><div class="row">
+  return `<div class="card"><h3>Add user (manufacturer, delivery, support or another owner)</h3><div class="row">
    <input id="ue" type="email" placeholder="Email"><input id="up" type="text" placeholder="Password (8+)">
-   <select id="ur"><option>manufacturer</option><option>delivery</option></select><button class="b p" id="addU">Add user</button></div></div>`+
-   tbl(['Email','Name','Role','Status','Joined','Actions'],(data||[]).map(u=>[esc(u.email),esc(u.full_name),esc(u.role),`<span class="tag">${esc(u.status)}</span>`,
+   <select id="ur"><option>manufacturer</option><option>delivery</option><option>support</option><option>owner</option></select><button class="b p" id="addU">Add user</button></div></div>`+
+   tbl(['Email','Name','Role','Status','Joined','Actions'],(data||[]).map(u=>[esc(u.email),esc(u.full_name),u.id===me.id?esc(u.role):`<select data-role="${u.id}">${R.map(x=>`<option${x===u.role?' selected':''}>${x}</option>`).join('')}</select>`,`<span class="tag">${esc(u.status)}</span>`,
    new Date(u.created_at).toLocaleDateString(),u.id===me.id?'(you)':
    (u.status!=='approved'?`<button class="b" data-ap="${u.id}">Approve</button> `:'')+(u.status==='pending'?`<button class="b" data-rj="${u.id}">Reject</button> `:'')+`<button class="b" data-del="${u.id}">Remove</button>`]));},
  async Products(){const{data}=await sb.from('products').select('*').order('id');
@@ -61,6 +65,17 @@ const TABS={
    `<input name="sale" type="number" min="0" placeholder="Offer price" value="${esc(p.sale_price??'')}"><br><input name="label" placeholder="Label e.g. -15%" value="${esc(p.offer_label||'')}"><br><input name="ends" type="date" style="width:140px" value="${esc(p.offer_ends_at||'')}">`,
    `<img src="${esc(p.image_url||'')}" alt="" style="width:64px;height:64px;object-fit:cover;border-radius:8px;display:block;margin-bottom:6px"><input name="file" type="file" accept="image/*" style="width:150px">`,
    `<span data-pid="${p.id}"><button class="b p" data-pu>Save</button> <button class="b" data-ro>Remove offer</button> <button class="b" data-pr="${p.archived?0:1}">${p.archived?'Restore':'Archive'}</button></span>`]));},
+ async Accounting(){const[m,l,op]=await Promise.all([sb.from('accounting_monthly').select('*').order('m',{ascending:false}),
+   sb.from('ledger').select('*').order('entry_date',{ascending:false}).limit(200),
+   sb.from('orders').select('id',{count:'exact',head:true}).not('status','in','(delivered,cancelled)')]);
+  const mm=m.data||[],rev=sum(mm,'revenue'),cost=sum(mm,'costs'),k=(t,v)=>`<div class="card" style="flex:1;min-width:150px;margin:0"><small>${t}</small><h3 style="margin:4px 0 0">${v}</h3></div>`;
+  return `<div class="row" style="gap:12px;margin-bottom:16px;align-items:stretch">${k('Revenue (delivered orders)',fm(rev)+' EGP')}${k('Purchases + expenses',fm(cost)+' EGP')}${k('Profit',fm(rev-cost)+' EGP')}${k('Margin',rev?Math.round((rev-cost)/rev*100)+'%':'-')}${k('Orders in progress',op.count??0)}</div>
+   <div class="card"><h3>Add purchase / expense / income</h3><div class="row"><input id="ld" type="date" value="${new Date().toISOString().slice(0,10)}">
+   <select id="lk"><option value="purchase">Purchase (material)</option><option value="expense">Expense</option><option value="other_income">Other income</option></select>
+   <input id="lc" placeholder="Category"><input id="ls" placeholder="Supplier"><input id="lx" placeholder="Description"><input id="la" type="number" min="0" placeholder="Amount EGP"><button class="b p" id="addL">Add</button></div></div>
+   <div class="row" style="gap:8px;margin-bottom:12px"><button class="b" data-xl="sales">Export sales (.xlsx)</button><button class="b" data-xl="ledger">Export purchases/expenses (.xlsx)</button><button class="b" data-xl="monthly">Export monthly summary (.xlsx)</button></div>`+
+   tbl(['Month','Revenue','Costs','Profit'],mm.map(r=>[esc(String(r.m).slice(0,7)),fm(r.revenue),fm(r.costs),fm(r.revenue-r.costs)]))+
+   tbl(['Date','Type','Category','Supplier','Description','Amount',''],(l.data||[]).map(r=>[esc(r.entry_date),esc(r.kind),esc(r.category),esc(r.supplier),esc(r.description),fm(r.amount),`<button class="b" data-ld="${r.id}">Delete</button>`]));},
  async Reviews(){const{data}=await sb.from('reviews').select('*').order('created_at',{ascending:false});
   return `<div class="card"><h3>Add review</h3><div class="row"><input id="ra" placeholder="Name"><input id="rr" type="number" min="1" max="5" placeholder="Stars 1-5">
    <input id="rb" placeholder="Review text" style="min-width:240px"><button class="b p" id="addR">Add</button></div></div>`+
@@ -74,7 +89,17 @@ const done=(r,n)=>{if(r&&r.error)alert(r.error.message||r.error);show(n||$('#v')
 
 $('#v').addEventListener('change',async e=>{const id=e.target.dataset.st;
   if(id)done(await sb.rpc('set_order_status',{p_order:+id,p_status:e.target.value}));});
+$('#v').addEventListener('change',async e=>{const t=e.target;if(!t.dataset.role)return;
+  if(!confirm('Change this user\'s role to '+t.value+'?')){show('Users');return;}
+  done(await sb.from('profiles').update({role:t.value,status:'approved'}).eq('id',t.dataset.role));});
 $('#v').addEventListener('click',async e=>{const t=e.target,d=t.dataset;if(!t.closest('button'))return;
+  if(t.id==='addL')return done(await sb.from('ledger').insert({entry_date:$('#ld').value,kind:$('#lk').value,category:$('#lc').value||null,supplier:$('#ls').value||null,description:$('#lx').value||null,amount:+$('#la').value||0}));
+  if(d.ld&&confirm('Delete this entry?'))return done(await sb.from('ledger').delete().eq('id',d.ld));
+  if(d.xl){let data;
+    if(d.xl==='sales')data=(await all('orders')).map(o=>({Order:o.order_number,Date:o.created_at,Customer:o.customer_name,Phone:o.phone,Email:o.email,Payment:o.payment_method,Total:o.total,Status:o.status}));
+    else if(d.xl==='ledger')data=(await all('ledger')).map(r=>({Date:r.entry_date,Type:r.kind,Category:r.category,Supplier:r.supplier,Description:r.description,Amount:r.amount}));
+    else data=((await sb.from('accounting_monthly').select('*').order('m')).data||[]).map(r=>({Month:String(r.m).slice(0,7),Revenue:r.revenue,Costs:r.costs,Profit:r.revenue-r.costs}));
+    const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(data),d.xl);XLSX.writeFile(wb,'telegant-'+d.xl+'-'+new Date().toISOString().slice(0,10)+'.xlsx');return;}
   if(t.id==='addU'){const r=await sb.functions.invoke('admin-users',{body:{action:'create',email:$('#ue').value.trim(),password:$('#up').value,role:$('#ur').value}});
     return done(r.error||r.data?.error?{error:r.data?.error||r.error.message}:null);}
   if(d.ap)return done(await sb.from('profiles').update({status:'approved'}).eq('id',d.ap));
