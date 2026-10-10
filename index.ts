@@ -6,7 +6,7 @@ const cors = { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers
 const reply = (o: unknown, s = 200) => new Response(JSON.stringify(o), { status: s, headers: { ...cors, 'Content-Type': 'application/json' } });
 const SITE = 'https://mahmoudyahya111.github.io/A-M/';
 
-async function mail(to: string, subject: string, html: string) {
+async function mail(to: string | string[], subject: string, html: string) {
   const user = Deno.env.get('SMTP_USER')!;
   const c = new SMTPClient({ connection: { hostname: 'smtp.gmail.com', port: 465, tls: true, auth: { username: user, password: Deno.env.get('SMTP_PASS')! } } });
   await c.send({ from: `TELEGANT <${user}>`, to, subject, content: 'auto', html });
@@ -24,6 +24,27 @@ Deno.serve(async (req) => {
     if (!user) throw new Error('Not signed in');
     const { data: me } = await db.from('profiles').select('role,status').eq('id', user.id).single();
     const b = await req.json();
+
+    if (b.action === 'chat_new' || b.action === 'chat_close') {       // live chat emails
+      const { data: ch } = await db.from('chats').select('*').eq('id', b.chat_id).single();
+      if (!ch) throw new Error('Chat not found');
+      const staff = ['owner', 'support'].includes(me?.role) && me?.status === 'approved';
+      if (b.action === 'chat_new') {                                  // alert owner + all approved support agents
+        if (ch.user_id !== user.id) throw new Error('Not your chat');
+        if (ch.notified) return reply({ ok: true, skipped: true });
+        const { data: team } = await db.from('profiles').select('email').in('role', ['owner', 'support']).eq('status', 'approved');
+        const to = (team || []).map((t: any) => t.email).filter(Boolean);
+        if (to.length) await mail(to, 'New TELEGANT chat waiting', `<p><b>${esc(ch.customer_name)}</b> started a chat.</p><p><a href="${SITE}chat-admin.html?c=${ch.id}">Open the chat console and take this chat</a></p>`);
+        await db.from('chats').update({ notified: true }).eq('id', ch.id);
+        return reply({ ok: true });
+      }
+      if (ch.user_id !== user.id && !staff) throw new Error('Not allowed');   // chat_close -> survey email
+      if (ch.status !== 'closed') throw new Error('Chat is not closed');
+      if (ch.survey_sent || !ch.customer_email) return reply({ ok: true, skipped: true });
+      await mail(ch.customer_email, 'How was your TELEGANT chat?', `<p>Thanks for chatting with us.</p><p>Please rate your experience: <a href="${SITE}survey-chat.html?c=${ch.id}">take the 20-second survey</a></p>`);
+      await db.from('chats').update({ survey_sent: true }).eq('id', ch.id);
+      return reply({ ok: true });
+    }
     const { data: o } = await db.from('orders').select('*').eq(b.order_number ? 'order_number' : 'id', b.order_number ?? b.order_id).single();
     if (!o) throw new Error('Order not found');
 
