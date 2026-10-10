@@ -30,7 +30,7 @@ h3{margin:0 0 10px;font:600 16px Georgia,serif}
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="tg-core.js"></script>
 <script>
-const $=s=>document.querySelector(s),sb=TG.sb,ST=['new','confirmed','in production','out for delivery','delivered','cancelled'];
+const $=s=>document.querySelector(s),sb=TG.sb,ST=['new','obtaining material','cutting','assembling','adding product photo','ready for pickup','on the way to manufacturer','picked up','on the way to customer','arrived at customer','delivered','cancelled'];
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const tbl=(h,r)=>`<div class="card"><table><tr>${h.map(x=>`<th>${x}</th>`).join('')}</tr>${r.map(x=>`<tr>${x.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('')||`<tr><td colspan="${h.length}">Nothing yet.</td></tr>`}</table></div>`;
 const val=(tr,n)=>tr.querySelector(`[name=${n}]`).value;
@@ -73,7 +73,7 @@ async function show(n){document.querySelectorAll('#nav button').forEach(b=>b.cla
 const done=(r,n)=>{if(r&&r.error)alert(r.error.message||r.error);show(n||$('#v').dataset.tab)};
 
 $('#v').addEventListener('change',async e=>{const id=e.target.dataset.st;
-  if(id)done(await sb.from('orders').update({status:e.target.value}).eq('id',id));});
+  if(id)done(await sb.rpc('set_order_status',{p_order:+id,p_status:e.target.value}));});
 $('#v').addEventListener('click',async e=>{const t=e.target,d=t.dataset;if(!t.closest('button'))return;
   if(t.id==='addU'){const r=await sb.functions.invoke('admin-users',{body:{action:'create',email:$('#ue').value.trim(),password:$('#up').value,role:$('#ur').value}});
     return done(r.error||r.data?.error?{error:r.data?.error||r.error.message}:null);}

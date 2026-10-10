@@ -36,12 +36,16 @@ small{display:block;opacity:.75;margin:-4px 0 12px;font-size:12px}
   <button class="go" id="go">Sign in</button>
   <p class="msg" id="msg"></p>
   <button class="lnk" id="fg">Forgot password / owner: set password</button>
+  <button class="lnk" id="bk">Continue without signing in</button>
   <button class="lnk" id="th">Light / dark</button>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="tg-core.js"></script>
 <script>
 const $=s=>document.querySelector(s); let mode='in',role='customer';
+const NEXT=(()=>{try{const n=new URLSearchParams(location.search).get('next')||document.referrer;const u=new URL(n,location.href);
+  if(u.origin===location.origin&&!/\/(login|account|admin|staff)\.html$/.test(u.pathname))return u.href}catch(e){}return 'index.html'})();
+$('#bk').onclick=()=>location.href=NEXT;
 const msg=(t,bad)=>{$('#msg').textContent=t;$('#msg').style.color=bad?'#c0392b':'inherit'};
 function view(m){mode=m;
   $('#ttl').textContent={in:'Sign in',up:'Create account',reset:'Set new password'}[m];
@@ -79,12 +83,12 @@ $('#go').onclick=async()=>{const e=$('#em').value.trim().toLowerCase(),p=$('#pw'
 async function route(){const p=await TG.profile();
   if(!p){await TG.signOut();return msg('Account not found.',1);}
   if(p.status!=='approved'){await TG.signOut();return msg(p.status==='pending'?'Your account is waiting for owner approval.':'This account was not approved.',1);}
-  location.href=p.role==='owner'?'admin.html':'index.html';}
+  location.href=p.role==='owner'?'admin.html':(p.role==='manufacturer'||p.role==='delivery')?'staff.html':NEXT;}
 TG.sb.auth.onAuthStateChange(ev=>{if(ev==='PASSWORD_RECOVERY')view('reset');});
 
 (async()=>{if(location.hash.includes('type=recovery'))return;
  const p=await TG.profile();if(!p||p.status!=='approved'||mode==='reset')return;
- ['#ttl','#tabs','#chips','#nm','#em','#pw','#note','#go','#msg','#fg'].forEach(s=>$(s).classList.add('h'));
+ ['#ttl','#tabs','#chips','#nm','#em','#pw','#note','#go','#msg','#fg','#bk'].forEach(s=>$(s).classList.add('h'));
  const d=document.createElement('div');d.style.textAlign='center';
  d.innerHTML='<h1>Signed in</h1><p><span id="who"></span></p><p id="lk"></p><button class="lnk" id="so">Sign out</button>';
  $('.box').insertBefore(d,$('#th'));$('#who').textContent=p.email+' ('+p.role+')';
