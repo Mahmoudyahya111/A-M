@@ -3,7 +3,7 @@
    <script src="tg-core.js"></script> */
 (function () {
   if (window.TG) return;
-  var CFG = { url: 'https://YOUR-PROJECT-REF.supabase.co', key: 'YOUR-ANON-PUBLIC-KEY' };
+  var CFG = { url: 'https://vjnaaubbxpqlolvgtweo.supabase.co', key: 'sb_publishable_JOuhaVO8GiMUGKfur_5Thg_4F-jfJtS' };
   var OWNER = 'mahmoudyahya66@gmail.com';
 
   /* ---- theme -> sets <html data-tg-theme="dark|light"> for tg-theme.css ---- */
