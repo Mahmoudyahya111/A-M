@@ -54,9 +54,9 @@ async function conv(){const c=chats.find(x=>x.id===sel);if(!c)return;
   box.innerHTML=m.map(x=>`<div class="m ${x.sender_role==='customer'?'cu':x.sender_role==='staff'?'st':'sy'}">${esc(x.body)}</div>`).join('');box.scrollTop=box.scrollHeight;}
 $('#list').onclick=e=>{const d=e.target.closest('[data-c]');if(!d)return;sel=+d.dataset.c;key='';list();};
 $('#f').onchange=list;
-$('#conv').onclick=async e=>{const i=e.target.id,c=chats.find(x=>x.id===sel);if(!c)return;
+$('#conv').onclick=async e=>{const i=e.target.id,c=chats.find(x=>x.id===sel);if(!c||!['take','snd','tr','cl'].includes(i))return;
   if(i==='take'){if(err(await sb.rpc('chat_claim',{p_chat:c.id})))return;}
-  if(i==='snd'||false){const v=$('#re').value.trim();if(!v)return;$('#re').value='';if(err(await sb.rpc('chat_send',{p_chat:c.id,p_body:v})))return;}
+  if(i==='snd'||false){const v=$('#re').value.trim();if(!v)return;$('#re').value='';if(err(await sb.rpc('chat_send',{p_chat:c.id,p_body:v,p_as:'staff'})))return;}
   if(i==='tr'){if(err(await sb.rpc('chat_transfer',{p_chat:c.id,p_to:$('#to').value})))return;}
   if(i==='cl'&&confirm('Close this chat? The customer gets a survey email.')){if(err(await sb.rpc('chat_close',{p_chat:c.id})))return;sb.functions.invoke('swift-action',{body:{action:'chat_close',chat_id:c.id}});}
   key='';list();};

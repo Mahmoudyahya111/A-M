@@ -52,7 +52,7 @@
   async function send() {
     var i = $('tgc-i'), v = i.value.trim(); if (!v) return; i.value = '';
     try {
-      if (cur) { var r = await sb.rpc('chat_send', { p_chat: cur, p_body: v }); if (r.error) throw r.error; }
+      if (cur) { var r = await sb.rpc('chat_send', { p_chat: cur, p_body: v, p_as: 'customer' }); if (r.error) throw r.error; }
       else { var r2 = await sb.rpc('chat_start', { p_body: v }); if (r2.error) throw r2.error; cur = r2.data; lastN = -1; sb.functions.invoke('swift-action', { body: { action: 'chat_new', chat_id: cur } }); }
     } catch (e) { alert(e.message || e); i.value = v; }
     load();
