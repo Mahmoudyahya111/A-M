@@ -36,6 +36,7 @@ const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 const tbl=(h,r)=>`<div class="card"><table><tr>${h.map(x=>`<th>${x}</th>`).join('')}</tr>${r.map(x=>`<tr>${x.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('')||`<tr><td colspan="${h.length}">Nothing yet.</td></tr>`}</table></div>`;
 const val=(tr,n)=>tr.querySelector(`[name=${n}]`).value;
 let me;const slug=s=>String(s).toLowerCase().trim().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')||('x-'+Date.now());
+const clabel=(c,all)=>{const p=all.find(x=>x.id===c.parent_id);return (p?p.name_en+' › ':'')+c.name_en;};
 const R=['owner','manufacturer','delivery','support','customer'];
 const fm=n=>Number(n||0).toLocaleString('en-EG',{maximumFractionDigits:0});
 const sum=(a,k)=>(a||[]).reduce((t,r)=>t+Number(r[k]||0),0);
@@ -58,7 +59,7 @@ const TABS={
    new Date(u.created_at).toLocaleDateString(),u.id===me.id?'(you)':
    (u.status!=='approved'?`<button class="b" data-ap="${u.id}">Approve</button> `:'')+(u.status==='pending'?`<button class="b" data-rj="${u.id}">Reject</button> `:'')+`<button class="b" data-del="${u.id}">Remove</button>`]));},
  async Products(){const[{data},{data:cats}]=await Promise.all([sb.from('products').select('*').order('id'),sb.from('categories').select('*').order('name_en')]);
-  const co=v=>'<option value="">No category</option>'+(cats||[]).map(c=>`<option value="${c.id}"${String(c.id)===String(v)?' selected':''}>${esc(c.name_en)}</option>`).join('');
+  const co=v=>'<option value="">No category</option>'+(cats||[]).slice().sort((x,y)=>clabel(x,cats).localeCompare(clabel(y,cats))).map(c=>`<option value="${c.id}"${String(c.id)===String(v)?' selected':''}>${esc(clabel(c,cats))}</option>`).join('');
   return `<div class="card"><h3>Add product</h3><div class="row"><input id="pn" placeholder="Name (EN)"><input id="pa" placeholder="Name (AR)">
    <input id="pp" type="number" placeholder="Price EGP"><input id="ps" type="number" min="0" placeholder="Stock"><select id="pc">${co('')}</select><input id="pi" placeholder="Image URL (or upload after adding)"><button class="b p" id="addP">Add</button></div></div>`+
    `<p>Pick a new picture and press Save to replace the current one. Offer = fill the offer price (lower than the price), then Save. Remove offer clears it.</p>`+
@@ -79,8 +80,12 @@ const TABS={
    tbl(['Month','Revenue','Costs','Profit'],mm.map(r=>[esc(String(r.m).slice(0,7)),fm(r.revenue),fm(r.costs),fm(r.revenue-r.costs)]))+
    tbl(['Date','Type','Category','Supplier','Description','Amount',''],(l.data||[]).map(r=>[esc(r.entry_date),esc(r.kind),esc(r.category),esc(r.supplier),esc(r.description),fm(r.amount),`<button class="b" data-ld="${r.id}">Delete</button>`]));},
  async Chat(){return `<div class="card"><h3>Live chat</h3><p>Turn the chat widget on or off, take chats, transfer them, and export transcripts and ratings in the chat console. Support agents sign in there too.</p><a class="b p" href="chat-admin.html" style="text-decoration:none;display:inline-block">Open chat console</a></div>`;},
- async Categories(){const{data}=await sb.from('categories').select('*').order('name_en'),d=data||[],tops=d.filter(c=>!c.parent_id);
-  return `<div class="card"><h3>Add category / sub-category</h3><div class="row"><input id="cn" placeholder="Name (EN) e.g. Summer clothes"><input id="ca" placeholder="Name (AR)"><select id="cp"><option value="">Main category</option>${tops.map(c=>`<option value="${c.id}">Sub-category of: ${esc(c.name_en)}</option>`).join('')}</select><button class="b p" id="addC">Add</button></div></div>`+
+ async Categories(){const[{data},{data:prods}]=await Promise.all([sb.from('categories').select('*').order('name_en'),sb.from('products').select('id,name_en,category_id').order('id')]);
+  const d=data||[],tops=d.filter(c=>!c.parent_id),sorted=d.slice().sort((x,y)=>clabel(x,d).localeCompare(clabel(y,d)));
+  const assign=d.length?`<div class="card"><h3>Put products in a category</h3><div class="row"><select id="ac">${sorted.map(c=>`<option value="${c.id}">${esc(clabel(c,d))}</option>`).join('')}</select></div>
+   <div class="row">${(prods||[]).map(p=>{const c=d.find(x=>x.id===p.category_id);return `<label style="margin:0 16px 8px 0"><input type="checkbox" name="ap" value="${p.id}" style="margin:0 6px 0 0;padding:0;border:0"> ${esc(p.name_en)}${c?` <small>(${esc(clabel(c,d))})</small>`:''}</label>`;}).join('')}</div>
+   <button class="b p" id="assignC">Put selected products in this category</button></div>`:'';
+  return `<div class="card"><h3>Add category / sub-category</h3><div class="row"><input id="cn" placeholder="Name (EN) e.g. Summer clothes"><input id="ca" placeholder="Name (AR)"><select id="cp"><option value="">Main category</option>${tops.map(c=>`<option value="${c.id}">Sub-category of: ${esc(c.name_en)}</option>`).join('')}</select><button class="b p" id="addC">Add</button></div></div>`+assign+
   tbl(['Name','Level','Status','Actions'],d.map(c=>[esc(c.name_en)+(c.name_ar?` <small>${esc(c.name_ar)}</small>`:''),c.parent_id?'Sub of '+esc((d.find(x=>x.id===c.parent_id)||{}).name_en):'Main',`<span class="tag">${c.active?'active':'off'}</span>`,
   `<button class="b" data-ca="${c.id}|${c.active?0:1}">${c.active?'Deactivate':'Activate'}</button> <button class="b" data-cd="${c.id}">Delete</button>`]));},
  async Pages(){const{data}=await sb.from('pages').select('*').order('created_at',{ascending:false});
@@ -124,6 +129,8 @@ $('#v').addEventListener('click',async e=>{const t=e.target,d=t.dataset;if(!t.cl
     let r=await sb.from('products').insert(row);if(r.error&&r.error.code==='23505'){row.slug+='-'+Math.floor(Math.random()*900+100);r=await sb.from('products').insert(row);}
     if(!r.error)await sb.from('pages').insert({slug:'p-'+row.slug,title:nm,kind:'product',target:row.slug});
     return done(r);}
+  if(t.id==='assignC'){const ids=[...document.querySelectorAll('input[name=ap]:checked')].map(x=>+x.value);
+    if(!ids.length)return alert('Tick at least one product.');return done(await sb.from('products').update({category_id:+$('#ac').value}).in('id',ids));}
   if(t.id==='addC'){const nm=$('#cn').value.trim();if(!nm)return alert('Enter a name.');
     const row={name_en:nm,name_ar:$('#ca').value||null,parent_id:$('#cp').value||null,slug:slug(nm)};
     let r=await sb.from('categories').insert(row);if(r.error&&r.error.code==='23505'){row.slug+='-'+Math.floor(Math.random()*900+100);r=await sb.from('categories').insert(row);}
