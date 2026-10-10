@@ -111,4 +111,7 @@
     TG.celebrate({ title: ar ? 'أهلاً بك، ' + n + '!' : 'Welcome, ' + n + '!', text: ar ? 'سعداء بوجودك في TELEGANT.' : 'So glad to have you at TELEGANT.',
       buttons: [{ t: ar ? 'ابدأ التسوق' : 'Start shopping' }], auto: 5200 });
   });
+     if (!/^(admin|staff|login|chat-admin|survey-chat|my-orders)\.html$/.test(page)) {
+       var cs = document.createElement('script'); cs.src = 'tg-chat.js'; cs.defer = true; document.head.appendChild(cs);
+     }
 })();
