@@ -336,7 +336,6 @@ window.TELEGANT_I18N = {
     $('cat-title').textContent = (ar && cat.name_ar) || cat.name_en;
     const ids = [cat.id].concat(C.filter(c => c.parent_id === cat.id && c.active).map(c => c.id));
     list = P.filter(p => ids.includes(p.category_id));
-    $('cat-nav').innerHTML = C.filter(c => live(c) && (c.parent_id === cat.id || c.parent_id === cat.parent_id || (!cat.parent_id && !c.parent_id))).map(c => `<a href="catalog.html?c=${esc(c.slug)}" style="padding:6px 14px;border:1px solid var(--gold,#c9a24b);border-radius:99px;text-decoration:none;color:inherit${c.id === cat.id ? ';background:rgba(201,162,75,.25)' : ''}">${esc((ar && c.name_ar) || c.name_en)}</a>`).join('');
   } else {
     const p = P.find(x => x.slug === ps); if (!p) return gone();
     const cat = C.find(c => c.id === p.category_id); if (cat && !live(cat)) return gone();
@@ -349,5 +348,6 @@ window.TELEGANT_I18N = {
      <button name="buy-now" ${oos ? 'disabled style="opacity:.5"' : ''}>${oos ? (ar ? 'نفد المخزون' : 'Out of stock') : (ar ? 'اشتري الآن' : 'Buy Now')}</button></div></div>`; }).join('');
 })();
 </script>
+<script src="tg-cats.js"></script>
 </body>
 </html>
