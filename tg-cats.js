@@ -9,7 +9,8 @@
   var ok = {}; (r[1].data || []).forEach(function (p) { ok[p.slug] = 1; });
   var C = (r[0].data || []).filter(function (c) { return ok['c-' + c.slug]; });
   var tops = C.filter(function (c) { return !c.parent_id; });
-  if (!tops.length) return;
+  var isCat = !!document.getElementById('cat-grid');
+  if (!tops.length && !isCat) return;
 
   var st = document.createElement('style');
   st.textContent =
@@ -17,15 +18,19 @@
     '.tgcat-rule{display:flex;align-items:center;gap:14px;max-width:520px;margin:0 auto;color:#c9a24b;font-size:9px}' +
     '.tgcat-rule::before,.tgcat-rule::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,transparent,#c9a24b)}' +
     '.tgcat-rule::after{background:linear-gradient(270deg,transparent,#c9a24b)}' +
-    '.tgcat-main{display:flex;flex-wrap:wrap;justify-content:center;gap:22px 56px;margin:26px 0}' +
-    '.tgcat-g{display:flex;flex-direction:column;align-items:center;gap:10px}' +
+    '.tgcat-main{display:flex;flex-wrap:nowrap;gap:22px 56px;margin:26px 0;padding:0 28px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;scroll-snap-type:x proximity;-webkit-mask-image:linear-gradient(90deg,transparent,#000 24px,#000 calc(100% - 24px),transparent);mask-image:linear-gradient(90deg,transparent,#000 24px,#000 calc(100% - 24px),transparent)}' +
+    '.tgcat-main::-webkit-scrollbar{display:none}.tgcat-main>:first-child{margin-inline-start:auto}.tgcat-main>:last-child{margin-inline-end:auto}' +
+    '.tgcat-g{display:flex;flex:0 0 auto;flex-direction:column;align-items:center;gap:10px;scroll-snap-align:center}' +
     '.tgcat a{text-decoration:none;background:linear-gradient(#c9a24b,#c9a24b) bottom center/0 1px no-repeat;transition:background-size .35s,color .25s,opacity .25s}' +
     '.tgcat a:hover,.tgcat a.on{background-size:100% 1px}' +
     '.tgcat-t{font-size:1.02rem;font-weight:500;letter-spacing:.32em;text-transform:uppercase;color:#e8cf86;padding:0 0 7px .32em}' +
-    '.tgcat-s{display:flex;flex-wrap:wrap;justify-content:center}' +
+    '.tgcat-s{display:flex;flex-wrap:nowrap;justify-content:center}' +
+    '.tgcat a{white-space:nowrap}' +
     '.tgcat-s a{font-size:.74rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(241,233,214,.68);padding:0 0 5px .2em}' +
     '.tgcat-s a:hover,.tgcat-s a.on{color:#e8cf86}.tgcat-s a+a{border-inline-start:1px solid rgba(201,162,75,.5);margin-inline-start:16px;padding-inline-start:16px;border-radius:0}' +
     '.tgcat-t:hover,.tgcat-t.on{color:#fff}' +
+    '.tgcat-back{display:inline-block;margin:0 0 20px;font-size:.78rem;letter-spacing:.22em;text-transform:uppercase;color:#e8cf86;padding:0 0 5px .22em}' +
+    'html[data-tg-theme="light"] .tgcat-back{color:#8a6a1f}' +
     'html[data-tg-theme="light"] .tgcat-t{color:#8a6a1f}html[data-tg-theme="light"] .tgcat-t:hover,html[data-tg-theme="light"] .tgcat-t.on{color:#2a2114}' +
     'html[data-tg-theme="light"] .tgcat-s a{color:rgba(42,33,20,.7)}html[data-tg-theme="light"] .tgcat-s a:hover,html[data-tg-theme="light"] .tgcat-s a.on{color:#8a6a1f}' +
     'html[lang="ar"] .tgcat a{letter-spacing:0;text-transform:none}';
@@ -37,8 +42,16 @@
     a.className = cls + (c.slug === here ? ' on' : ''); return a;
   };
   var bar = document.createElement('nav'); bar.className = 'tgcat'; bar.setAttribute('aria-label', ar ? 'الأقسام' : 'Categories');
+  if (isCat) {                                              // way back from a category page
+    var bk = document.createElement('a'); bk.className = 'tgcat-back'; bk.href = 'shop.html';
+    bk.textContent = ar ? 'العودة إلى المتجر ←' : '← Back to shop'; var bw = document.createElement('div'); bw.appendChild(bk); bar.appendChild(bw);
+  }
+  if (!tops.length) { host.insertBefore(bar, host.firstChild); return; }
   var top = document.createElement('div'); top.className = 'tgcat-rule'; top.textContent = '◆'; bar.appendChild(top);
   var main = document.createElement('div'); main.className = 'tgcat-main';
+  var all = document.createElement('div'); all.className = 'tgcat-g';                  // "All" = the full shop
+  var al = document.createElement('a'); al.href = 'shop.html'; al.textContent = ar ? 'الكل' : 'All'; al.className = 'tgcat-t' + (isCat ? '' : ' on');
+  all.appendChild(al); main.appendChild(all);
   tops.forEach(function (t) {
     var g = document.createElement('div'); g.className = 'tgcat-g'; g.appendChild(link(t, 'tgcat-t'));
     var kids = C.filter(function (c) { return c.parent_id === t.id; });
@@ -48,4 +61,5 @@
   bar.appendChild(main);
   var bot = document.createElement('div'); bot.className = 'tgcat-rule'; bot.textContent = '◆'; bar.appendChild(bot);
   host.insertBefore(bar, host.firstChild);
+  try { var cur = bar.querySelector('.on'); if (cur) cur.scrollIntoView({ inline: 'center', block: 'nearest' }); } catch (e) {}
 })();
