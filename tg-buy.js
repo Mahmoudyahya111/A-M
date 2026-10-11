@@ -25,8 +25,10 @@
         a = document.createElement('button'); a.className = 'tg-add'; a.setAttribute('data-i18n', 'add_to_cart');
         a.textContent = ar() ? 'أضف إلى السلة' : 'Add to Cart';
         var cs = getComputedStyle(bn);
-        a.style.cssText = 'width:100%;margin-top:8px;cursor:pointer;background:transparent;border:1px solid #c9a24b;color:#e8cf86;box-sizing:border-box;' +
-          'padding:' + cs.padding + ';border-radius:' + cs.borderRadius + ';font:' + cs.font + ';letter-spacing:' + cs.letterSpacing + ';text-transform:' + cs.textTransform;
+        a.style.cssText = 'width:100%;margin-top:8px;cursor:pointer;background:transparent;border:0;box-shadow:inset 0 0 0 1px #c9a24b;color:#e8cf86;box-sizing:border-box;white-space:nowrap;' +
+  'padding:' + cs.paddingTop + ' 8px ' + cs.paddingBottom + ' 8px' +
+  ';border-radius:' ...
+
         a.onclick = function () { if (bn.disabled) return; bn.click(); TG.mode = 'cart'; label(); };
         bn.insertAdjacentElement('afterend', a);
       }
