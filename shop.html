@@ -348,7 +348,7 @@ window.TELEGANT_I18N = {
       qty: 1
     });
     modal.classList.remove('show');
-    window.location.href = 'cart.html';
+     if (window.TG && TG.afterAdd) TG.afterAdd(); else window.location.href = 'cart.html';  
   });
 
   renderOptions();
