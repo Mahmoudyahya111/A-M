@@ -37,20 +37,47 @@ const tbl=(h,r)=>`<div class="card"><table><tr>${h.map(x=>`<th>${x}</th>`).join(
 const val=(tr,n)=>tr.querySelector(`[name=${n}]`).value;
 let me;const slug=s=>String(s).toLowerCase().trim().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')||('x-'+Date.now());
 const clabel=(c,all)=>{const p=all.find(x=>x.id===c.parent_id);return (p?p.name_en+' › ':'')+c.name_en;};
+const DR={f:new Date(Date.now()-29*864e5).toISOString().slice(0,10),t:new Date().toISOString().slice(0,10)};
+const dur=s=>{s=Math.round(+s||0);return Math.floor(s/3600)+'h '+String(Math.floor(s%3600/60)).padStart(2,'0')+'m'};
+const cairo=t=>t?new Date(t).toLocaleString('en-GB',{timeZone:'Africa/Cairo',day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}):'-';
+const kpi=(t,v)=>`<div class="card" style="flex:1;min-width:150px;margin:0"><small>${t}</small><h3 style="margin:4px 0 0">${v}</h3></div>`;
+const rangeBar=tab=>`<div class="card"><div class="row"><label>From <input id="df" type="date" value="${DR.f}"></label><label>To <input id="dt" type="date" value="${DR.t}"></label><button class="b p" id="applyD" data-tab="${tab}">Show</button></div></div>`;
+const stars=n=>n?'★'.repeat(Math.round(n))+'☆'.repeat(5-Math.round(n))+' '+n:'-';
+const PDOT={available:['#2ecc71','Available'],break:['#f39c12','On break'],offline:['#95a5a6','Offline']};
+const DAYS=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 const R=['owner','manufacturer','delivery','support','customer'];
 const fm=n=>Number(n||0).toLocaleString('en-EG',{maximumFractionDigits:0});
 const sum=(a,k)=>(a||[]).reduce((t,r)=>t+Number(r[k]||0),0);
-async function all(t){let o=[],i=0;for(;;){const{data}=await sb.from(t).select('*').order('id').range(i,i+999);o=o.concat(data||[]);if(!data||data.length<1000)return o;i+=1000;}}
+async function all(t,f){let o=[],i=0;for(;;){let q=sb.from(t).select('*');if(f)q=f(q);const{data}=await q.order('id').range(i,i+999);o=o.concat(data||[]);if(!data||data.length<1000)return o;i+=1000;}}
+const PM={cod:'Cash on delivery',instapay_now:'InstaPay - paid now',instapay_delivery:'InstaPay - pay at delivery'};
+const SR={f:'',t:''};
+const itemParts=a=>(Array.isArray(a)?a:[]).map(x=>{const d=x.sizeDetail||{},sz=(x.size==='Custom'||d.label==='Custom')?`Custom (chest ${d.chest}, length ${d.length}, shoulder ${d.shoulder} cm)`:(x.size||'');return `${x.qty||1} x ${x.name||x.color||'item'}${sz?' / '+sz:''} @ ${fm(x.price)}`;});
+async function statement(){const[os,ls]=await Promise.all([all('orders',q=>q.eq('status','delivered')),all('ledger')]),rows=[];
+  os.forEach(o=>rows.push({date:String(o.delivered_at||o.created_at).slice(0,10),ref:o.order_number,type:'Order',desc:`${o.customer_name||''} - ${itemParts(o.items).join('; ')}${o.express?' - express +'+fm(o.delivery_fee):''} - ${PM[o.payment_method]||o.payment_method}`,debit:0,credit:+o.total||0}));
+  ls.forEach(l=>{const out=l.kind!=='other_income';rows.push({date:String(l.entry_date),ref:'LDG-'+l.id,type:l.kind==='purchase'?'Purchase':l.kind==='expense'?'Expense':'Other income',desc:[l.category,l.supplier,l.description].filter(Boolean).join(' - '),debit:out?+l.amount:0,credit:out?0:+l.amount});});
+  rows.sort((x,y)=>x.date.localeCompare(y.date)||x.ref.localeCompare(y.ref));let b=0;rows.forEach(r=>{b+=r.credit-r.debit;r.bal=b;});return rows;}
+async function stmtSection(){const rows=await statement(),f=SR.f,t=SR.t,before=f?rows.filter(r=>r.date<f):[],open=before.length?before[before.length-1].bal:0,
+  v=rows.filter(r=>(!f||r.date>=f)&&(!t||r.date<=t)),inn=sum(v,'credit'),out=sum(v,'debit'),close=v.length?v[v.length-1].bal:open;
+  return `<div class="card"><h3>Statement</h3><p><small>Money in = completed (delivered) orders. Money out = purchases and expenses. Balance runs like a bank statement.</small></p>
+   <div class="row"><label>From <input id="sf" type="date" value="${esc(f)}"></label><label>To <input id="stt" type="date" value="${esc(t)}"></label><button class="b p" id="applyS">Show</button><button class="b" id="clearS">All time</button></div>
+   <p>Opening balance <b>${fm(open)}</b> &nbsp;·&nbsp; Money in <b>${fm(inn)}</b> &nbsp;·&nbsp; Money out <b>${fm(out)}</b> &nbsp;·&nbsp; Closing balance <b>${fm(close)} EGP</b></p></div>`+
+   tbl(['Date','Reference','Type','Description','Money out','Money in','Balance'],v.map(r=>[esc(r.date),esc(r.ref),esc(r.type),esc(r.desc),r.debit?fm(r.debit):'',r.credit?fm(r.credit):'',fm(r.bal)]));}
 
 const TABS={
  async Analytics(){const{data}=await sb.from('page_stats').select('*').order('views',{ascending:false});
   return `<p>Last 30 days. "Engaged" = stayed 15s or scrolled. "Left without engaging" = viewed but did neither.</p>`+
    tbl(['Page','Views','Unique visitors','Engaged','Left without engaging','Clicked out of site'],
    (data||[]).map(r=>[esc(r.page),r.views,r.visitors,r.engaged,Math.max(r.sessions-r.engaged,0),r.exits]));},
- async Orders(){const{data}=await sb.from('orders').select('*').order('created_at',{ascending:false}).limit(300);
-  return tbl(['Order','Date','Customer','Phone','Payment','Total','Status'],(data||[]).map(o=>[esc(o.order_number),
-   new Date(o.created_at).toLocaleString(),`${esc(o.customer_name)}<br><small>${esc(o.email||'')}</small>`,esc(o.phone),esc(o.payment_method),
-   esc(o.total)+' EGP',`<select data-st="${o.id}">${ST.map(s=>`<option${s===o.status?' selected':''}>${s}</option>`).join('')}</select>`]));},
+ async Orders(){const[{data},ip]=await Promise.all([sb.from('orders').select('*').order('created_at',{ascending:false}).limit(300),sb.from('site_settings').select('value').eq('key','instapay').maybeSingle()]);
+  const ipCard=`<div class="card"><h3>InstaPay account shown to customers</h3><div class="row"><input id="ipv" style="min-width:260px" placeholder="your InstaPay address or phone" value="${esc((ip.data&&ip.data.value&&ip.data.value.handle)||'')}"><button class="b p" id="saveIP">Save</button></div></div>`;
+  return ipCard+tbl(['Order','Customer','Items','Shipping','Payment','Total','Status'],(data||[]).map(o=>{const aw=o.payment_status==='awaiting';
+   return [`<b>${esc(o.order_number)}</b><br><small>${new Date(o.created_at).toLocaleString()}<br>Deliver by ${esc(o.delivery_date||'-')}</small>`,
+   `${esc(o.customer_name)}<br><small>${esc(o.phone)}<br>${esc(o.email||'')}<br>${esc(o.address||'')}</small>`,
+   itemParts(o.items).map(esc).join('<br>')||'-',
+   o.express?`<span class="tag">Express</span><br><small>+${fm(o.delivery_fee)} EGP</small>`:'Standard<br><small>no fee</small>',
+   esc(PM[o.payment_method]||o.payment_method)+'<br>'+(aw?`<span class="tag" style="border-color:#c0392b;color:#c0392b">Pending payment confirmation</span><br><small>Transfer ref: <b>${esc(o.payment_ref||'-')}</b></small><br>${o.payment_proof?`<button class="b" data-pf="${esc(o.payment_proof)}">View transfer proof</button> `:''}<button class="b p" data-cp="${o.id}">Confirm payment received</button>`:o.payment_status==='received'?'<span class="tag">Payment received</span>'+(o.payment_ref?`<br><small>Ref: ${esc(o.payment_ref)}</small>`:''):'<small>Collected on delivery</small>'),
+   `<b>${fm(o.total)} EGP</b><br><small>items ${fm(o.subtotal??o.total)}${+o.delivery_fee?' + shipping '+fm(o.delivery_fee):''}</small>`,
+   `<select data-st="${o.id}"${aw?' data-aw="1"':''}>${ST.map(s=>`<option${s===o.status?' selected':''}>${s}</option>`).join('')}</select>`+(aw?'<br><small>On hold: manufacturer cannot see it until payment is confirmed</small>':'')];}));},
  async Users(){const{data}=await sb.from('profiles').select('*').order('created_at',{ascending:false});
   return `<div class="card"><h3>Add user (manufacturer, delivery, support or another owner)</h3><div class="row">
    <input id="ue" type="email" placeholder="Email"><input id="up" type="text" placeholder="Password (8+)">
@@ -72,14 +99,14 @@ const TABS={
    sb.from('ledger').select('*').order('entry_date',{ascending:false}).limit(200),
    sb.from('orders').select('id',{count:'exact',head:true}).not('status','in','(delivered,cancelled)')]);
   const mm=m.data||[],rev=sum(mm,'revenue'),cost=sum(mm,'costs'),k=(t,v)=>`<div class="card" style="flex:1;min-width:150px;margin:0"><small>${t}</small><h3 style="margin:4px 0 0">${v}</h3></div>`;
+  const stmtHtml=await stmtSection();
   return `<div class="row" style="gap:12px;margin-bottom:16px;align-items:stretch">${k('Revenue (delivered orders)',fm(rev)+' EGP')}${k('Purchases + expenses',fm(cost)+' EGP')}${k('Profit',fm(rev-cost)+' EGP')}${k('Margin',rev?Math.round((rev-cost)/rev*100)+'%':'-')}${k('Orders in progress',op.count??0)}</div>
    <div class="card"><h3>Add purchase / expense / income</h3><div class="row"><input id="ld" type="date" value="${new Date().toISOString().slice(0,10)}">
    <select id="lk"><option value="purchase">Purchase (material)</option><option value="expense">Expense</option><option value="other_income">Other income</option></select>
    <input id="lc" placeholder="Category"><input id="ls" placeholder="Supplier"><input id="lx" placeholder="Description"><input id="la" type="number" min="0" placeholder="Amount EGP"><button class="b p" id="addL">Add</button></div></div>
-   <div class="row" style="gap:8px;margin-bottom:12px"><button class="b" data-xl="sales">Export sales (.xlsx)</button><button class="b" data-xl="ledger">Export purchases/expenses (.xlsx)</button><button class="b" data-xl="monthly">Export monthly summary (.xlsx)</button></div>`+
+   <div class="row" style="gap:8px;margin-bottom:12px"><button class="b p" data-xl="statement">Export statement (.xlsx)</button><button class="b" data-xl="sales">Export orders (.xlsx)</button><button class="b" data-xl="ledger">Export purchases/expenses (.xlsx)</button><button class="b" data-xl="monthly">Export monthly summary (.xlsx)</button></div>`+stmtHtml+
    tbl(['Month','Revenue','Costs','Profit'],mm.map(r=>[esc(String(r.m).slice(0,7)),fm(r.revenue),fm(r.costs),fm(r.revenue-r.costs)]))+
    tbl(['Date','Type','Category','Supplier','Description','Amount',''],(l.data||[]).map(r=>[esc(r.entry_date),esc(r.kind),esc(r.category),esc(r.supplier),esc(r.description),fm(r.amount),`<button class="b" data-ld="${r.id}">Delete</button>`]));},
- async Chat(){return `<div class="card"><h3>Live chat</h3><p>Turn the chat widget on or off, take chats, transfer them, and export transcripts and ratings in the chat console. Support agents sign in there too.</p><a class="b p" href="chat-admin.html" style="text-decoration:none;display:inline-block">Open chat console</a></div>`;},
  async Categories(){const[{data},{data:prods}]=await Promise.all([sb.from('categories').select('*').order('name_en'),sb.from('products').select('id,name_en,category_id').order('id')]);
   const d=data||[],tops=d.filter(c=>!c.parent_id),sorted=d.slice().sort((x,y)=>clabel(x,d).localeCompare(clabel(y,d)));
   const assign=d.length?`<div class="card"><h3>Put products in a category</h3><div class="row"><select id="ac">${sorted.map(c=>`<option value="${c.id}">${esc(clabel(c,d))}</option>`).join('')}</select></div>
@@ -94,6 +121,28 @@ const TABS={
    <p>Category pages use the shop template and product pages use the product template. They are created automatically when you add a category or a product.</p>`+
   tbl(['Title','Type','Link','Status','Actions'],(data||[]).map(p=>[esc(p.title),esc(p.kind),`<a href="${esc(url(p))}" target="_blank" style="color:var(--gold)">${esc(url(p))}</a>`,`<span class="tag">${p.published?'published':'hidden'}</span>`,
   `<button class="b" data-pg="${p.id}|${p.published?0:1}">${p.published?'Unpublish':'Publish'}</button>`+(p.kind==='custom'?` <button class="b" data-pgd="${p.id}">Delete</button>`:'')]));},
+ async Chat(){const[a1,b1]=await Promise.all([sb.from('site_settings').select('value').eq('key','chat_enabled').maybeSingle(),sb.from('site_settings').select('value').eq('key','chat_schedule').maybeSingle()]);
+  const on=!!(a1.data&&a1.data.value.on),sc=(b1.data&&b1.data.value)||{mode:'always',days:{}};
+  return `<div class="card"><h3>Live chat</h3><p>Master switch: when OFF the chat never shows. When ON it follows the opening hours below (Cairo time).</p>
+   <div class="row"><button class="b ${on?'p':''}" id="chatSw" data-on="${on?1:0}">Chat widget: ${on?'ON':'OFF'}</button>
+   <select id="schMode"><option value="always"${sc.mode!=='schedule'?' selected':''}>Always open (when ON)</option><option value="schedule"${sc.mode==='schedule'?' selected':''}>Only during opening hours</option></select>
+   <a class="b" href="chat-admin.html" style="text-decoration:none;color:var(--ink)">Open support console</a></div></div>
+   <div class="card"><h3>Opening hours</h3><table style="min-width:420px"><tr><th>Day</th><th>Open</th><th>From</th><th>To</th></tr>${DAYS.map((n,i)=>{const d=(sc.days||{})[i]||{on:i!==5,from:'10:00',to:'18:00'};
+   return `<tr><td>${n}</td><td><input type="checkbox" data-day="${i}" ${d.on?'checked':''} style="width:auto;padding:0;border:0"></td><td><input type="time" data-from="${i}" value="${d.from||'10:00'}"></td><td><input type="time" data-to="${i}" value="${d.to||'18:00'}"></td></tr>`}).join('')}</table>
+   <p><button class="b p" id="saveSch">Save opening hours</button></p></div>`;},
+ async Satisfaction(){const r=await sb.rpc('csat_report',{p_from:DR.f,p_to:DR.t});if(r.error)return rangeBar('Satisfaction')+`<div class="card">${esc(r.error.message)}</div>`;
+  const d=r.data,mx=Math.max(1,...[1,2,3,4,5].map(n=>+((d.dist||{})[n])||0)),
+   bars=[5,4,3,2,1].map(n=>{const c=+((d.dist||{})[n])||0;return `<div class="row" style="gap:8px;flex-wrap:nowrap"><span style="width:34px">${n} ★</span><div style="flex:1;background:var(--line);border-radius:6px;height:12px"><div style="width:${c/mx*100}%;background:var(--gold);height:12px;border-radius:6px"></div></div><span style="width:34px;text-align:right">${c}</span></div>`}).join('');
+  return rangeBar('Satisfaction')+`<div class="row" style="gap:12px;margin-bottom:16px;align-items:stretch">${kpi('Average rating',d.avg_rating?d.avg_rating+' / 5':'-')}${kpi('Survey response rate',d.closed?Math.round(d.rated/d.closed*100)+'%':'-')}${kpi('Chats',d.total)}${kpi('Avg first response',d.avg_frt?dur(d.avg_frt):'-')}${kpi('Avg chat length',d.avg_dur?dur(d.avg_dur):'-')}</div>
+   <div class="card"><h3>Rating distribution</h3>${bars}</div><p><button class="b" data-xr="csat">Export (.xlsx)</button></p>`+
+   tbl(['Agent','Chats','Rated','Avg rating','Avg first response'],(d.by_agent||[]).map(x=>[esc(x.name),x.chats,x.rated,stars(x.avg),x.frt?dur(x.frt):'-']))+
+   tbl(['Day','Chats','Avg rating'],(d.by_day||[]).map(x=>[esc(x.day),x.chats,stars(x.avg)]))+
+   tbl(['Chat no.','Customer','Rating','Comment','Handled by','Closed'],(d.recent||[]).map(x=>[esc(x.code),esc(x.customer),stars(x.rating),esc(x.feedback||''),esc(x.agent||''),cairo(x.at)]));},
+ async Agents(){const r=await sb.rpc('agent_report',{p_from:DR.f,p_to:DR.t});if(r.error)return rangeBar('Agents')+`<div class="card">${esc(r.error.message)}</div>`;const d=r.data;
+  return rangeBar('Agents')+`<p><button class="b" data-xr="agents">Export (.xlsx)</button></p>`+
+   tbl(['Agent','Now','First login','Last logout','Online','Available','On break','Breaks','Chats','Avg rating'],(d.agents||[]).map(x=>[esc(x.name)+` <small>${esc(x.role)}</small>`,`<span style="color:${PDOT[x.status][0]}">●</span> ${PDOT[x.status][1]}`,cairo(x.first_login),cairo(x.last_logout),dur(x.online_s),dur(x.available_s),dur(x.break_s),x.breaks,x.chats,stars(x.avg_rating)]))+
+   tbl(['Agent','Break started','Break ended','Length'],(d.breaks||[]).map(x=>[esc(x.name),cairo(x.start),x.end?cairo(x.end):'still on break',dur(x.secs)]))+
+   tbl(['Agent','Logged in','Logged out','Length'],(d.logins||[]).map(x=>[esc(x.name),cairo(x.in),x.out?cairo(x.out):'online now',dur(x.secs)]));},
  async Reviews(){const{data}=await sb.from('reviews').select('*').order('created_at',{ascending:false});
   return `<div class="card"><h3>Add review</h3><div class="row"><input id="ra" placeholder="Name"><input id="rr" type="number" min="1" max="5" placeholder="Stars 1-5">
    <input id="rb" placeholder="Review text" style="min-width:240px"><button class="b p" id="addR">Add</button></div></div>`+
@@ -106,15 +155,41 @@ async function show(n){document.querySelectorAll('#nav button').forEach(b=>b.cla
 const done=(r,n)=>{if(r&&r.error)alert(r.error.message||r.error);show(n||$('#v').dataset.tab)};
 
 $('#v').addEventListener('change',async e=>{const id=e.target.dataset.st;
-  if(id)done(await sb.rpc('set_order_status',{p_order:+id,p_status:e.target.value}));});
+  if(id){if(e.target.dataset.aw&&!confirm('Payment is not confirmed yet. Move this order anyway?')){show('Orders');return;}const r=await sb.rpc('set_order_status',{p_order:+id,p_status:e.target.value});if(!r.error)sb.functions.invoke('swift-action',{body:{action:'status',order_id:+id}});done(r);}});
 $('#v').addEventListener('change',async e=>{const t=e.target;if(!t.dataset.role)return;
   if(!confirm('Change this user\'s role to '+t.value+'?')){show('Users');return;}
   done(await sb.from('profiles').update({role:t.value,status:'approved'}).eq('id',t.dataset.role));});
 $('#v').addEventListener('click',async e=>{const t=e.target,d=t.dataset;if(!t.closest('button'))return;
+  if(t.id==='applyD'){DR.f=$('#df').value;DR.t=$('#dt').value;return show(d.tab);}
+  if(t.id==='chatSw'){const r=await sb.from('site_settings').upsert({key:'chat_enabled',value:{on:d.on!=='1'}});if(r.error)return alert(r.error.message);return show('Chat');}
+  if(t.id==='saveSch'){const days={};DAYS.forEach((n,i)=>{days[i]={on:document.querySelector(`[data-day="${i}"]`).checked,from:document.querySelector(`[data-from="${i}"]`).value||'10:00',to:document.querySelector(`[data-to="${i}"]`).value||'18:00'};});
+    const r=await sb.from('site_settings').upsert({key:'chat_schedule',value:{mode:$('#schMode').value,days}});if(r.error)return alert(r.error.message);alert('Opening hours saved.');return;}
+  if(d.xr){const wb=XLSX.utils.book_new(),f='telegant-'+d.xr+'-'+new Date().toISOString().slice(0,10)+'.xlsx';
+    if(d.xr==='csat'){const x=(await sb.rpc('csat_report',{p_from:DR.f,p_to:DR.t})).data;
+      XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet([{Chats:x.total,Closed:x.closed,Rated:x.rated,'Average rating':x.avg_rating,'Avg first response (s)':x.avg_frt,'Avg chat length (s)':x.avg_dur}]),'Summary');
+      XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet((x.by_agent||[]).map(a=>({Agent:a.name,Chats:a.chats,Rated:a.rated,'Avg rating':a.avg,'Avg first response (s)':a.frt}))),'By agent');
+      XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet((x.by_day||[]).map(a=>({Day:a.day,Chats:a.chats,'Avg rating':a.avg}))),'By day');
+      XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet((x.recent||[]).map(a=>({'Chat no.':a.code,Customer:a.customer,Rating:a.rating,Comment:a.feedback,Agent:a.agent,Closed:a.at}))),'Comments');}
+    else{const x=(await sb.rpc('agent_report',{p_from:DR.f,p_to:DR.t})).data;
+      XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet((x.agents||[]).map(a=>({Agent:a.name,Role:a.role,'Now':a.status,'First login':a.first_login,'Last logout':a.last_logout,'Online (min)':Math.round(a.online_s/60),'Available (min)':Math.round(a.available_s/60),'On break (min)':Math.round(a.break_s/60),Breaks:a.breaks,Chats:a.chats,'Avg rating':a.avg_rating}))),'Agents');
+      XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet((x.breaks||[]).map(a=>({Agent:a.name,'Break started':a.start,'Break ended':a.end,'Minutes':Math.round(a.secs/60)}))),'Breaks');
+      XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet((x.logins||[]).map(a=>({Agent:a.name,'Logged in':a.in,'Logged out':a.out,'Minutes':Math.round(a.secs/60)}))),'Logins');}
+    XLSX.writeFile(wb,f);return;}
+  if(t.id==='saveIP'){const r=await sb.from('site_settings').upsert({key:'instapay',value:{handle:$('#ipv').value.trim()}});if(r.error)return alert(r.error.message);return alert('Saved. Customers will see this account when they choose InstaPay.');}
+  if(d.pf){const r=await sb.storage.from('payment-proofs').createSignedUrl(d.pf,120);if(r.error)return alert(r.error.message);window.open(r.data.signedUrl,'_blank');return;}
+  if(t.id==='applyS'){SR.f=$('#sf').value;SR.t=$('#stt').value;return show('Accounting');}
+  if(t.id==='clearS'){SR.f=SR.t='';return show('Accounting');}
+  if(d.cp&&confirm('Confirm that the InstaPay transfer for this order has arrived? The manufacturer will then see the order.')){const r=await sb.rpc('confirm_payment',{p_order:+d.cp});if(!r.error)sb.functions.invoke('swift-action',{body:{action:'payment',order_id:+d.cp}});return done(r);}
+  if(d.xl==='statement'){const rows=await statement(),os=await all('orders',q=>q.eq('status','delivered')),ls=await all('ledger'),wb=XLSX.utils.book_new(),items=[];
+    XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(rows.map(r=>({Date:r.date,Reference:r.ref,Type:r.type,Description:r.desc,'Money out':r.debit||'','Money in':r.credit||'',Balance:r.bal}))),'Statement');
+    os.forEach(o=>(Array.isArray(o.items)?o.items:[]).forEach(x=>{const dd=x.sizeDetail||{};items.push({Order:o.order_number,Delivered:String(o.delivered_at||o.created_at).slice(0,10),Customer:o.customer_name,Phone:o.phone,Item:x.name||x.color,Size:x.size==='Custom'?`Custom chest ${dd.chest} / length ${dd.length} / shoulder ${dd.shoulder}`:x.size,Qty:x.qty,'Unit price':x.price,'Line total':(x.qty||1)*(x.price||0),'Express fee (order)':o.delivery_fee,'Payment method':PM[o.payment_method]||o.payment_method,'Order total':o.total});}));
+    XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(items),'Order details');
+    XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(ls.map(l=>({Date:l.entry_date,Type:l.kind,Category:l.category,Supplier:l.supplier,Description:l.description,Amount:l.amount}))),'Purchases & expenses');
+    XLSX.writeFile(wb,'telegant-statement-'+new Date().toISOString().slice(0,10)+'.xlsx');return;}
   if(t.id==='addL')return done(await sb.from('ledger').insert({entry_date:$('#ld').value,kind:$('#lk').value,category:$('#lc').value||null,supplier:$('#ls').value||null,description:$('#lx').value||null,amount:+$('#la').value||0}));
   if(d.ld&&confirm('Delete this entry?'))return done(await sb.from('ledger').delete().eq('id',d.ld));
   if(d.xl){let data;
-    if(d.xl==='sales')data=(await all('orders')).map(o=>({Order:o.order_number,Date:o.created_at,Customer:o.customer_name,Phone:o.phone,Email:o.email,Payment:o.payment_method,Total:o.total,Status:o.status}));
+    if(d.xl==='sales')data=(await all('orders')).map(o=>({Order:o.order_number,Placed:o.created_at,Delivered:o.delivered_at||'',Customer:o.customer_name,Phone:o.phone,Email:o.email,Address:o.address,Items:itemParts(o.items).join('; '),Subtotal:o.subtotal,Express:o.express?'Yes':'No','Delivery fee':o.delivery_fee,Total:o.total,'Payment method':PM[o.payment_method]||o.payment_method,'Payment status':o.payment_status,Status:o.status}));
     else if(d.xl==='ledger')data=(await all('ledger')).map(r=>({Date:r.entry_date,Type:r.kind,Category:r.category,Supplier:r.supplier,Description:r.description,Amount:r.amount}));
     else data=((await sb.from('accounting_monthly').select('*').order('m')).data||[]).map(r=>({Month:String(r.m).slice(0,7),Revenue:r.revenue,Costs:r.costs,Profit:r.revenue-r.costs}));
     const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(data),d.xl);XLSX.writeFile(wb,'telegant-'+d.xl+'-'+new Date().toISOString().slice(0,10)+'.xlsx');return;}

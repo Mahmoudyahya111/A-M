@@ -53,9 +53,9 @@
       }
     } catch (e) { /* keep page working with what it has */ }
   };
-  TG.thanks = function (num) {
+  TG.thanks = function (num, pending) {
     TG.celebrate({ title: ar() ? 'شكراً لطلبك!' : 'Thank you for your order!',
-      text: (ar() ? 'رقم طلبك ' : 'Your order number is ') + num + (ar() ? '. أرسلنا لك رسالة تأكيد على بريدك.' : '. A confirmation email is on its way.'),
+      text: (ar() ? 'رقم طلبك ' : 'Your order number is ') + num + (ar() ? '. أرسلنا لك رسالة تأكيد على بريدك.' : '. A confirmation email is on its way.') + (pending ? (ar() ? ' سنؤكد التحويل ثم نبدأ التصنيع.' : ' We will confirm your InstaPay transfer, then start making your order.') : ''),
       buttons: [{ t: ar() ? 'تتبع طلبي' : 'Track my order', href: 'my-orders.html' }, { t: ar() ? 'متابعة التسوق' : 'Keep shopping', href: 'shop.html' }] });
   };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', syncShop); else syncShop();

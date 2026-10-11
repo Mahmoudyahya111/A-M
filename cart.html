@@ -122,6 +122,12 @@ window.TELEGANT_I18N = {
       <label><input type="radio" name="payment" value="instapay_now"> <span data-i18n="pm_instapay">InstaPay Transfer (pay now)</span></label>
       <label><input type="radio" name="payment" value="instapay_delivery"> <span data-i18n="pm_instapay_delivery">InstaPay Transfer (pay at delivery)</span></label>
     </div>
+    <div id="ip-box" style="display:none;margin:12px 0 18px;padding:16px;border:1px solid var(--accent,#c9a24b);border-radius:12px">
+      <p id="ip-text" style="margin:0 0 12px"></p>
+      <div class="field-group"><label id="ip-lbl-ref"></label><input type="text" id="ip-ref" maxlength="60"></div>
+      <div class="field-group"><label id="ip-lbl-file"></label><input type="file" id="ip-file" accept="image/*"></div>
+      <small id="ip-note"></small>
+    </div>
 
     <h2 data-i18n="details_h">Delivery Details</h2>
     <div class="field-group"><label data-i18n="lbl_name">Full Name</label><input type="text" id="cust-name" required></div>
@@ -251,6 +257,23 @@ window.TELEGANT_I18N = {
     renderSummary();
   });
 
+  /* InstaPay (pay now): ask for the transfer reference first */
+  let ipHandle = '';
+  TG.sb.from('site_settings').select('value').eq('key', 'instapay').maybeSingle().then(r => { ipHandle = (r.data && r.data.value && r.data.value.handle) || ''; fillIP(); });
+  function fillIP(){
+    const ar = document.documentElement.lang === 'ar', total = Shop.Cart.subtotal() + (expressOn ? Shop.Delivery.EXPRESS_FEE : 0);
+    const who = ipHandle || (ar ? '(سيتم إرسال بيانات الحساب – تواصل معنا)' : '(account details coming – please contact us)');
+    document.getElementById('ip-text').textContent = ar
+      ? 'من فضلك حوّل ' + total + ' جنيه عبر إنستاباي إلى: ' + who + ' ثم اكتب رقم العملية هنا.'
+      : 'Please transfer ' + total + ' EGP by InstaPay to: ' + who + ', then enter the transfer reference below.';
+    document.getElementById('ip-lbl-ref').textContent = ar ? 'رقم عملية التحويل (مطلوب)' : 'Transfer reference number (required)';
+    document.getElementById('ip-lbl-file').textContent = ar ? 'صورة التحويل (اختياري)' : 'Screenshot of the transfer (optional)';
+    document.getElementById('ip-note').textContent = ar ? 'سنبدأ تصنيع طلبك بعد تأكيد وصول المبلغ.' : 'We start making your order once we confirm the money arrived.';
+  }
+  function toggleIP(){ const on = document.querySelector('input[name="payment"]:checked').value === 'instapay_now'; document.getElementById('ip-box').style.display = on ? 'block' : 'none'; if (on) fillIP(); }
+  document.querySelectorAll('input[name="payment"]').forEach(r => r.addEventListener('change', toggleIP));
+  document.getElementById('express-check').addEventListener('change', () => { if (document.getElementById('ip-box').style.display !== 'none') fillIP(); });
+
   document.getElementById('place-order-btn').addEventListener('click', async () => {
     const T = t();
     const sess = (await TG.sb.auth.getSession()).data.session;
@@ -263,13 +286,24 @@ window.TELEGANT_I18N = {
     const email = document.getElementById('cust-email').value.trim();
     if (!name || !phone || !address){ alert(T.alert_fields); return; }
     const payment = document.querySelector('input[name="payment"]:checked').value;
+    const ar = document.documentElement.lang === 'ar';
+    let payRef = null, payProof = null;
+    if (payment === 'instapay_now'){
+      payRef = document.getElementById('ip-ref').value.trim();
+      if (!payRef){ alert(ar ? 'من فضلك اكتب رقم عملية التحويل أولاً.' : 'Please enter your InstaPay transfer reference number first.'); return; }
+    }
     const btn = document.getElementById('place-order-btn'); btn.disabled = true;
     try {
+      const pf = document.getElementById('ip-file').files[0];
+      if (payment === 'instapay_now' && pf){
+        const path = sess.user.id + '/' + Date.now() + '-' + pf.name.replace(/[^\w.-]/g, '_');
+        const up = await TG.sb.storage.from('payment-proofs').upload(path, pf); if (up.error) throw up.error; payProof = path;
+      }
       const num = await TG.placeOrder({ customer_name: name, phone, email: email || sess.user.email, address,
-        payment_method: payment, items: Shop.Cart.all(), express: expressOn, delivery_date: date });
+        payment_method: payment, payment_ref: payRef, payment_proof: payProof, items: Shop.Cart.all(), express: expressOn, delivery_date: date });
       Shop.Cart.clear();
       TG.sb.functions.invoke('swift-action', { body: { action: 'confirm', order_number: num } });
-      TG.thanks(num);
+      TG.thanks(num, payment === 'instapay_now');
     } catch (err) { btn.disabled = false; alert(err.message || err); }
   });
 

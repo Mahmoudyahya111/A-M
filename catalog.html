@@ -61,6 +61,15 @@ window.TELEGANT_I18N = {
   }
 };
 </script>
+<style>
+/* category / product pages: centred title and centred product grid */
+.hero-content{text-align:center}
+#cat-grid{display:flex;flex-wrap:wrap;justify-content:center;gap:22px}
+#cat-grid .product-card{flex:0 0 calc((100% - 66px)/4)}
+@media(max-width:1024px){#cat-grid .product-card{flex-basis:calc((100% - 44px)/3)}}
+@media(max-width:820px){#cat-grid .product-card{flex-basis:calc((100% - 22px)/2)}}
+@media(max-width:560px){#cat-grid{gap:14px}#cat-grid .product-card{flex-basis:calc((100% - 14px)/2)}}
+</style>
 </head>
 <body>
 <nav class="telegant-navbar">
@@ -303,7 +312,7 @@ window.TELEGANT_I18N = {
       qty: 1
     });
     modal.classList.remove('show');
-    window.location.href = 'cart.html';
+    if (window.TG && TG.afterAdd) TG.afterAdd(); else window.location.href = 'cart.html';
   });
 
   renderOptions();
@@ -349,5 +358,6 @@ window.TELEGANT_I18N = {
 })();
 </script>
 <script src="tg-cats.js"></script>
+<script src="tg-buy.js"></script>
 </body>
 </html>

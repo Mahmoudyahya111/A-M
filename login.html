@@ -14,6 +14,8 @@ h1{font:600 22px Georgia,serif;text-align:center;margin:4px 0 16px}
 .tabs,.chips{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
 .tabs button,.chips button{flex:1;padding:8px 4px;border:1px solid var(--line);background:none;color:var(--ink);border-radius:8px;cursor:pointer;font:inherit;font-size:13px}
 .on{background:var(--gold)!important;color:#16110a!important;border-color:var(--gold)!important}
+
+.pwrap{position:relative}.pwrap input{padding-inline-end:64px}.pwrap button{position:absolute;inset-inline-end:8px;top:6px;background:none;border:0;color:var(--gold);cursor:pointer;font:inherit;font-size:13px;padding:4px 6px}
 input{width:100%;box-sizing:border-box;padding:10px;margin-bottom:10px;border:1px solid var(--line);border-radius:8px;background:transparent;color:var(--ink);font:inherit}
 .go{width:100%;padding:11px;border:0;border-radius:8px;background:var(--btn);color:var(--btnt);font:inherit;font-weight:600;cursor:pointer}
 .msg{min-height:20px;margin:10px 0 0;font-size:13px;text-align:center}
@@ -31,7 +33,7 @@ small{display:block;opacity:.75;margin:-4px 0 12px;font-size:12px}
   </div>
   <input id="nm" class="h" placeholder="Full name" autocomplete="name">
   <input id="em" type="email" placeholder="Email" autocomplete="email">
-  <input id="pw" type="password" placeholder="Password" autocomplete="current-password">
+  <div class="pwrap"><input id="pw" type="password" placeholder="Password" autocomplete="current-password"><button type="button" id="eye" aria-label="Show password">Show</button></div>
   <small id="note" class="h"></small>
   <button class="go" id="go">Sign in</button>
   <p class="msg" id="msg"></p>
@@ -46,6 +48,7 @@ const $=s=>document.querySelector(s); let mode='in',role='customer';
 const NEXT=(()=>{try{const n=new URLSearchParams(location.search).get('next')||document.referrer;const u=new URL(n,location.href);
   if(u.origin===location.origin&&!/\/(login|account|admin|staff)\.html$/.test(u.pathname))return u.href}catch(e){}return 'index.html'})();
 $('#bk').onclick=()=>location.href=NEXT;
+$('#eye').onclick=()=>{const p=$('#pw'),s=p.type==='password';p.type=s?'text':'password';$('#eye').textContent=s?'Hide':'Show';$('#eye').setAttribute('aria-label',s?'Hide password':'Show password');};
 const msg=(t,bad)=>{$('#msg').textContent=t;$('#msg').style.color=bad?'#c0392b':'inherit'};
 function view(m){mode=m;
   $('#ttl').textContent={in:'Sign in',up:'Create account',reset:'Set new password'}[m];
@@ -90,7 +93,7 @@ TG.sb.auth.onAuthStateChange(ev=>{if(ev==='PASSWORD_RECOVERY')view('reset');});
 
 (async()=>{if(location.hash.includes('type=recovery'))return;
  const p=await TG.profile();if(!p||p.status!=='approved'||mode==='reset')return;
- ['#ttl','#tabs','#chips','#nm','#em','#pw','#note','#go','#msg','#fg','#bk'].forEach(s=>$(s).classList.add('h'));
+ ['#ttl','#tabs','#chips','#nm','#em','.pwrap','#note','#go','#msg','#fg','#bk'].forEach(s=>$(s).classList.add('h'));
  const d=document.createElement('div');d.style.textAlign='center';
  d.innerHTML='<h1>Signed in</h1><p><span id="who"></span></p><p id="lk"></p><button class="lnk" id="so">Sign out</button>';
  $('.box').insertBefore(d,$('#th'));$('#who').textContent=p.email+' ('+p.role+')';

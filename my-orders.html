@@ -44,8 +44,8 @@ async function load(){
   $('#n1').textContent=list.length;$('#n2').textContent=list.filter(act).length;
   $('#v').innerHTML=list.map(x=>{const i=IDX[x.status],items=(Array.isArray(x.items)?x.items:[]).map(it=>esc(it.name)+' ('+esc(it.size)+') ×'+esc(it.qty)).join('<br>');
     const show=open.has(x.order_number);
-    return `<div class="card"><h3><span>${esc(x.order_number)}</span><span class="tag">${x.status==='cancelled'?'Cancelled':esc(x.status)}</span></h3>
-     <small>${new Date(x.created_at).toLocaleDateString()} · ${esc(x.total)} EGP · deliver by ${esc(x.delivery_date||'-')}</small><div style="margin-top:6px">${items}</div>
+    return `<div class="card"><h3><span>${esc(x.order_number)}</span><span class="tag">${x.status==='cancelled'?'Cancelled':x.payment_status==='awaiting'?'Pending payment confirmation':esc(x.status)}</span></h3>
+     <small>${new Date(x.created_at).toLocaleDateString()} · ${esc(x.total)} EGP · deliver by ${esc(x.delivery_date||'-')}</small><div style="margin-top:6px">${items}</div>${x.payment_status==='awaiting'?'<p style="margin:8px 0 0"><span class="tag">Awaiting payment confirmation</span><br><small>We start making your order as soon as we confirm your InstaPay transfer.</small></p>':''}
      ${act(x)?`<button class="b" data-t="${esc(x.order_number)}">${show?'Hide tracking':'Track order'}</button>`:''}
      <div class="${show&&act(x)?'':'hid'}">${x.product_photo&&i>=4?`<img src="${esc(x.product_photo)}" alt="" style="width:100%;max-height:240px;object-fit:cover;border-radius:10px;margin-top:10px">`:''}
      <ol>${STEPS.map((s,k)=>`<li class="${k<i||x.status==='delivered'?'done':k===i?'now':''}">${s}</li>`).join('')}</ol>
