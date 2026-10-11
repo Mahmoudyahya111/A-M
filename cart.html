@@ -351,7 +351,10 @@ window.TELEGANT_I18N = {
     if(themeBtn) themeBtn.addEventListener('click', () => applyTheme(root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'));
     const langBtn = document.getElementById('lang-toggle');
     if(langBtn) langBtn.addEventListener('click', () => applyLang(root.getAttribute('lang') === 'ar' ? 'en' : 'ar'));
+         if (window.TG && TG.afterAdd) TG.afterAdd(); else window.location.href = 'cart.html';
   });
+  <script src="tg-cats.js"></script>
+       <script src="tg-buy.js"></script>
 })();
 </script>
 </body>
