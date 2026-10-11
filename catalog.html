@@ -331,9 +331,18 @@ window.TELEGANT_I18N = {
   const pr = await sb.from('pages').select('*').eq('slug', cp ? cp : (cs ? 'c-' + cs : 'p-' + ps)).maybeSingle();
   if (!pr.data) return gone();
   document.title = pr.data.title + ' | TELEGANT';
-  if (cp) {                                                // plain text page
-    $('cat-title').textContent = pr.data.title;
-    (pr.data.content || '').split(/\n+/).forEach(t => { const p = document.createElement('p'); p.style.cssText = 'max-width:680px;margin:0 auto 12px;text-align:center'; p.textContent = t; $('cat-grid').parentNode.insertBefore(p, $('cat-msg')); });
+  if (cp) {                                                 // text pages: about / terms / blank
+    const T = pr.data.template || 'text', ttl = (ar && pr.data.title_ar) || pr.data.title;
+    $('cat-title').textContent = ttl; document.title = ttl + ' | TELEGANT';
+    let secs = [];
+    try { const j = JSON.parse(pr.data.content || ''); secs = (j && j.sections) || []; } catch (e) { secs = (pr.data.content || '').split(/\n+/).map(t => ({ h: '', p: t })); }
+    const end = $('cat-msg'), host = end.parentNode;
+    secs.forEach((s, i) => {
+      const w = document.createElement('div'); w.style.cssText = 'max-width:' + (T === 'terms' ? '780px' : '680px') + ';margin:0 auto 28px;text-align:' + (T === 'terms' ? 'start' : 'center');
+      if (s.h) { const h = document.createElement('h2'); h.textContent = (T === 'terms' ? (i + 1) + '. ' : '') + s.h; h.style.cssText = 'margin:0 0 8px;color:#c9a24b;font-weight:600;letter-spacing:.04em'; w.appendChild(h); }
+      (s.p || '').split(/\n+/).forEach(t => { if (!t) return; const p = document.createElement('p'); p.textContent = t; p.style.cssText = 'margin:0 0 10px;line-height:1.75'; w.appendChild(p); });
+      host.insertBefore(w, end);
+    });
     return;
   }
   const [cats, prods] = await Promise.all([sb.from('categories').select('*'), sb.from('products').select('*')]);

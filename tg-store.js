@@ -51,7 +51,34 @@
         if (n && !n.value && p && p.full_name) n.value = p.full_name;
         if (m && !m.value) m.value = s.user.email;
       }
+      await TG.addrPicker();
     } catch (e) { /* keep page working with what it has */ }
+  };
+  /* checkout: offer the customer's saved addresses (from earlier orders) or a new one */
+  TG.addrPicker = async function () {
+    var h2 = document.querySelector('[data-i18n="details_h"]'), nI = document.getElementById('cust-name'), pI = document.getElementById('cust-phone'), aI = document.getElementById('cust-address');
+    if (!h2 || !nI || !pI || !aI || document.getElementById('addr-pick')) return;
+    var s = (await sb.auth.getSession()).data.session; if (!s) return;
+    var q = await sb.from('orders').select('customer_name,phone,address,created_at').order('created_at', { ascending: false }).limit(40);
+    var seen = {}, list = [];
+    (q.data || []).forEach(function (o) { var k = String(o.address || '').toLowerCase().replace(/\s+/g, ' ').trim(); if (k && !seen[k] && list.length < 3) { seen[k] = 1; list.push(o); } });
+    if (!list.length) return;
+    var groups = [nI, pI, aI].map(function (i) { return i.closest('.field-group') || i.parentNode; });
+    var box = document.createElement('div'); box.id = 'addr-pick'; box.className = 'field-group';
+    var lab = document.createElement('label'); lab.textContent = ar() ? 'التوصيل إلى' : 'Deliver to'; box.appendChild(lab);
+    var row = function (val, text, on) {
+      var l = document.createElement('label'); l.style.cssText = 'display:block;margin:8px 0;cursor:pointer;font-weight:400';
+      var r = document.createElement('input'); r.type = 'radio'; r.name = 'addrsel'; r.value = val; r.checked = on; r.style.cssText = 'width:auto;margin-inline-end:8px';
+      l.appendChild(r); l.appendChild(document.createTextNode(text)); box.appendChild(l); return r;
+    };
+    var apply = function () {
+      var v = document.querySelector('input[name="addrsel"]:checked').value, isNew = v === 'new';
+      if (!isNew) { var o = list[+v]; nI.value = o.customer_name || nI.value; pI.value = o.phone || ''; aI.value = o.address || ''; } else { pI.value = ''; aI.value = ''; }
+      groups.forEach(function (g) { g.style.display = isNew ? '' : 'none'; });
+    };
+    list.forEach(function (o, i) { row(String(i), (o.address || '') + (o.phone ? ' · ' + o.phone : ''), i === 0); });
+    row('new', ar() ? 'استخدم عنواناً جديداً' : 'Use a new address', false);
+    box.addEventListener('change', apply); h2.insertAdjacentElement('afterend', box); apply();
   };
   TG.thanks = function (num, pending) {
     TG.celebrate({ title: ar() ? 'شكراً لطلبك!' : 'Thank you for your order!',
