@@ -46,7 +46,7 @@ function render(){
   ).join('')||'<div class="card">No orders right now.</div>';}
 const fail=e=>alert(e.message||e);
 $('#v').addEventListener('change',async e=>{const t=e.target;
-  if(t.dataset.st){const r=await sb.rpc('set_order_status',{p_order:+t.dataset.st,p_status:t.value});if(r.error)fail(r.error);load();}
+  if(t.dataset.st){const r=await sb.rpc('set_order_status',{p_order:+t.dataset.st,p_status:t.value});if(r.error)fail(r.error);else sb.functions.invoke('swift-action',{body:{action:'status',order_id:+t.dataset.st}});load();}
   if(t.dataset.ph&&t.files[0]){const f=t.files[0],path=`${t.dataset.ph}-${Date.now()}-${f.name.replace(/[^\w.-]/g,'_')}`;
     const u=await sb.storage.from('order-photos').upload(path,f);if(u.error)return fail(u.error);
     const r=await sb.rpc('set_order_photo',{p_order:+t.dataset.ph,p_url:sb.storage.from('order-photos').getPublicUrl(path).data.publicUrl});if(r.error)fail(r.error);load();}});
@@ -54,7 +54,7 @@ $('#v').addEventListener('click',async e=>{const d=e.target.dataset;
   if(d.arr){e.target.disabled=true;const r=await sb.functions.invoke('swift-action',{body:{action:'code',order_id:+d.arr}});
     const er=r.data?.error||r.error?.message;if(er)fail(er);else alert(r.data.emailed?'Code sent to the customer by email.':'Customer has no email on file – ask the owner.');load();}
   if(d.cf){const r=await sb.rpc('confirm_delivery',{p_order:+d.cf,p_code:$('#c'+d.cf).value});
-    if(r.error)return fail(r.error);alert({ok:'Delivered ✔',wrong:'Wrong code.',locked:'Too many wrong tries – contact the owner.'}[r.data]);load();}});
+    if(r.error)return fail(r.error);if(r.data==='ok')sb.functions.invoke('swift-action',{body:{action:'status',order_id:+d.cf}});alert({ok:'Delivered ✔',wrong:'Wrong code.',locked:'Too many wrong tries – contact the owner.'}[r.data]);load();}});
 $('#th').onclick=()=>{const d=document.documentElement,n=d.dataset.theme==='dark'?'light':'dark';d.dataset.theme=n;localStorage.tg_theme=n};
 $('#out').onclick=async()=>{await TG.signOut();location.href='login.html'};
 (async()=>{me=await TG.profile();

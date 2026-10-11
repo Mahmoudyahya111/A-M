@@ -1,14 +1,22 @@
 /* TELEGANT live chat widget – loaded automatically by tg-core.js. Shows only when the owner turns chat ON. */
 (function () {
   var TG = window.TG; if (!TG || TG.chatOn) return; TG.chatOn = 1;
+  if (!TG.navOn && document.querySelector('.navbar-links')) { var ns = document.createElement('script'); ns.src = 'tg-nav.js'; ns.defer = true; document.head.appendChild(ns); }
   var sb = TG.sb, ar = document.documentElement.lang === 'ar', cur = null, timer = null, note = false, lastN = -1;
-  var L = ar ? { t: 'تحدث معنا', ph: 'اكتب رسالتك…', send: 'إرسال', end: 'إنهاء المحادثة', wait: 'نرد عليك خلال لحظات…', w: 'تتحدث مع ', login: 'سجّل الدخول للدردشة معنا', lb: 'تسجيل الدخول', ended: 'انتهت المحادثة. أرسلنا لك استبياناً قصيراً على بريدك.', first: 'اكتب رسالتك وسيرد عليك أحد أفراد الفريق.', conf: 'إنهاء المحادثة؟' }
-    : { t: 'Chat with us', ph: 'Type your message…', send: 'Send', end: 'End chat', wait: 'Waiting for an agent…', w: 'You are chatting with ', login: 'Please sign in to chat with us', lb: 'Sign in', ended: 'Chat ended. We emailed you a short survey.', first: 'Write your message and a team member will reply.', conf: 'End this chat?' };
+  var L = ar ? { t: 'تحدث معنا', ph: 'اكتب رسالتك…', send: 'إرسال', end: 'إنهاء المحادثة', wait: 'نرد عليك خلال لحظات…', w: 'تتحدث مع ', login: 'سجّل الدخول للدردشة معنا', lb: 'تسجيل الدخول', ended: 'انتهت المحادثة. أرسلنا لك استبياناً قصيراً على بريدك.', first: 'اكتب رسالتك وسيرد عليك أحد أفراد الفريق.', conf: 'إنهاء المحادثة؟', busy: 'فريقنا مشغول حالياً. اترك رسالتك وسنرد عليك في أقرب وقت.' }
+    : { t: 'Chat with us', ph: 'Type your message…', send: 'Send', end: 'End chat', wait: 'Waiting for an agent…', w: 'You are chatting with ', login: 'Please sign in to chat with us', lb: 'Sign in', ended: 'Chat ended. We emailed you a short survey.', first: 'Write your message and a team member will reply.', conf: 'End this chat?', busy: 'Our team is busy right now. Leave your message and we will reply as soon as we can.' };
   var $ = function (i) { return document.getElementById(i); };
 
-  sb.from('site_settings').select('value').eq('key', 'chat_enabled').maybeSingle().then(function (r) {
-    if (r.data && r.data.value && r.data.value.on) mount();
-  });
+  var agents = 0;
+  function check() {                                   // chat shows only when ON and inside the opening hours
+    sb.rpc('chat_open_state').then(function (r) {
+      var o = !!(r.data && r.data.open); agents = r.data ? r.data.agents : 0;
+      if (o && !document.getElementById('tgc-btn')) mount();
+      var b = document.getElementById('tgc-btn'); if (b) b.style.display = (o || cur) ? '' : 'none';
+      if (!o && !cur) { var x = document.getElementById('tgc-box'); if (x) x.style.display = 'none'; }
+    });
+  }
+  check(); setInterval(check, 60000);
 
   function mount() {
     var st = document.createElement('style');
@@ -39,15 +47,15 @@
     }
     var q = (await sb.from('chats').select('*').eq('user_id', s.user.id).order('id', { ascending: false }).limit(1)).data, c = q && q[0];
     if (c && c.status === 'closed') { if (cur === c.id) note = true; cur = null; c = null; lastN = -1; }
-    if (!c) { m.innerHTML = ''; m.appendChild(bubble('tgc-y', note ? L.ended : L.first)); $('tgc-s').textContent = ''; return; }
-    cur = c.id; note = false;
+    if (!c) { m.innerHTML = ''; m.appendChild(bubble('tgc-y', note ? L.ended : L.first)); if (!note && agents === 0) m.appendChild(bubble('tgc-y', L.busy)); document.querySelector('#tgc-box .h span').textContent = L.t; $('tgc-s').textContent = ''; return; }
+    cur = c.id; note = false; document.querySelector('#tgc-box .h span').textContent = L.t + ' · ' + c.code;
     var msgs = (await sb.from('chat_messages').select('*').eq('chat_id', c.id).order('id')).data || [];
     if (msgs.length !== lastN) {
       lastN = msgs.length; m.innerHTML = '';
       msgs.forEach(function (x) { m.appendChild(bubble(x.sender_role === 'customer' ? 'tgc-c' : x.sender_role === 'system' ? 'tgc-y' : 'tgc-a', x.body)); });
       m.scrollTop = m.scrollHeight;
     }
-    $('tgc-s').textContent = c.status === 'claimed' ? L.w + (c.claimed_name || '') : L.wait;
+    $('tgc-s').textContent = c.status === 'claimed' ? L.w + (c.claimed_name || '') : (agents === 0 ? L.busy : L.wait);
   }
   async function send() {
     var i = $('tgc-i'), v = i.value.trim(); if (!v) return; i.value = '';

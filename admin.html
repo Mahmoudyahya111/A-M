@@ -36,6 +36,12 @@ const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 const tbl=(h,r)=>`<div class="card"><table><tr>${h.map(x=>`<th>${x}</th>`).join('')}</tr>${r.map(x=>`<tr>${x.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('')||`<tr><td colspan="${h.length}">Nothing yet.</td></tr>`}</table></div>`;
 const val=(tr,n)=>tr.querySelector(`[name=${n}]`).value;
 let me;const slug=s=>String(s).toLowerCase().trim().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')||('x-'+Date.now());
+let PF='',PE=null;
+const safeJSON=s=>{try{return JSON.parse(s)}catch(e){return null}};
+const secHtml=(h,p)=>`<div class="sec card" style="margin:0 0 10px"><input class="gsh" placeholder="Section heading" value="${esc(h)}" style="width:100%"><textarea class="gsb" placeholder="Section text" style="width:100%;min-height:70px;margin:6px 0;padding:7px;border:1px solid var(--line);border-radius:6px;background:transparent;color:var(--ink);font:inherit">${esc(p)}</textarea><button class="b" data-rmsec="1">Remove section</button></div>`;
+async function upImg(f,pre){const path=pre+'-'+Date.now()+'-'+f.name.replace(/[^\w.-]/g,'_'),u=await sb.storage.from('product-images').upload(path,f);if(u.error)throw u.error;return sb.storage.from('product-images').getPublicUrl(path).data.publicUrl;}
+function pgToggle(){const s=$('#pgT');if(!s)return;document.querySelectorAll('.pgf').forEach(e=>e.style.display=e.dataset.for.split(' ').includes(s.value)?'':'none');
+  document.querySelectorAll('.pgn').forEach(e=>e.style.display=(s.value==='product'&&$('#gps')&&$('#gps').value==='')?'':'none');}
 const clabel=(c,all)=>{const p=all.find(x=>x.id===c.parent_id);return (p?p.name_en+' › ':'')+c.name_en;};
 const DR={f:new Date(Date.now()-29*864e5).toISOString().slice(0,10),t:new Date().toISOString().slice(0,10)};
 const dur=s=>{s=Math.round(+s||0);return Math.floor(s/3600)+'h '+String(Math.floor(s%3600/60)).padStart(2,'0')+'m'};
@@ -79,18 +85,21 @@ const TABS={
    `<b>${fm(o.total)} EGP</b><br><small>items ${fm(o.subtotal??o.total)}${+o.delivery_fee?' + shipping '+fm(o.delivery_fee):''}</small>`,
    `<select data-st="${o.id}"${aw?' data-aw="1"':''}>${ST.map(s=>`<option${s===o.status?' selected':''}>${s}</option>`).join('')}</select>`+(aw?'<br><small>On hold: manufacturer cannot see it until payment is confirmed</small>':'')];}));},
  async Users(){const{data}=await sb.from('profiles').select('*').order('created_at',{ascending:false});
-  return `<div class="card"><h3>Add user (manufacturer, delivery, support or another owner)</h3><div class="row">
+  return `<div id="adrBox"></div><div class="card"><h3>Add user (manufacturer, delivery, support or another owner)</h3><div class="row">
    <input id="ue" type="email" placeholder="Email"><input id="up" type="text" placeholder="Password (8+)">
    <select id="ur"><option>manufacturer</option><option>delivery</option><option>support</option><option>owner</option></select><button class="b p" id="addU">Add user</button></div></div>`+
-   tbl(['Email','Name','Role','Status','Joined','Actions'],(data||[]).map(u=>[esc(u.email),esc(u.full_name),u.id===me.id?esc(u.role):`<select data-role="${u.id}">${R.map(x=>`<option${x===u.role?' selected':''}>${x}</option>`).join('')}</select>`,`<span class="tag">${esc(u.status)}</span>`,
-   new Date(u.created_at).toLocaleDateString(),u.id===me.id?'(you)':
-   (u.status!=='approved'?`<button class="b" data-ap="${u.id}">Approve</button> `:'')+(u.status==='pending'?`<button class="b" data-rj="${u.id}">Reject</button> `:'')+`<button class="b" data-del="${u.id}">Remove</button>`]));},
+   tbl(['Email','Name','Role','Status','Joined','Actions'],(data||[]).map(u=>[esc(u.email),
+    `<input data-nm="${u.id}" value="${esc(u.full_name||'')}" placeholder="Add name" style="width:150px">`,
+    u.id===me.id?esc(u.role):`<select data-role="${u.id}">${R.map(x=>`<option${x===u.role?' selected':''}>${x}</option>`).join('')}</select>`,
+    `<span class="tag">${esc(u.status)}</span>`,new Date(u.created_at).toLocaleDateString(),
+    (u.id===me.id?'(you) ':'')+(u.id!==me.id&&u.status!=='approved'?`<button class="b" data-ap="${u.id}">Approve</button> `:'')+(u.id!==me.id&&u.status==='pending'?`<button class="b" data-rj="${u.id}">Reject</button> `:'')+
+    `<button class="b" data-rs="${esc(u.email)}">Send password reset</button> <button class="b" data-ad="${u.id}" data-who="${esc(u.full_name||u.email)}">Saved addresses</button>`+(u.id!==me.id?` <button class="b" data-del="${u.id}">Remove</button>`:'')]));},
  async Products(){const[{data},{data:cats}]=await Promise.all([sb.from('products').select('*').order('id'),sb.from('categories').select('*').order('name_en')]);
   const co=v=>'<option value="">No category</option>'+(cats||[]).slice().sort((x,y)=>clabel(x,cats).localeCompare(clabel(y,cats))).map(c=>`<option value="${c.id}"${String(c.id)===String(v)?' selected':''}>${esc(clabel(c,cats))}</option>`).join('');
-  return `<div class="card"><h3>Add product</h3><div class="row"><input id="pn" placeholder="Name (EN)"><input id="pa" placeholder="Name (AR)">
-   <input id="pp" type="number" placeholder="Price EGP"><input id="ps" type="number" min="0" placeholder="Stock"><select id="pc">${co('')}</select><input id="pi" placeholder="Image URL (or upload after adding)"><button class="b p" id="addP">Add</button></div></div>`+
+  return `<div class="card"><div class="row"><label>Show products in <select id="pfil"><option value="">All categories</option>${(cats||[]).slice().sort((x,y)=>clabel(x,cats).localeCompare(clabel(y,cats))).map(c=>`<option value="${c.id}"${String(c.id)===PF?' selected':''}>${esc(clabel(c,cats))}</option>`).join('')}</select></label></div></div><div class="card"><h3>Add product</h3><div class="row"><input id="pn" placeholder="Name (EN)"><input id="pa" placeholder="Name (AR)">
+   <input id="pp" type="number" placeholder="Price EGP"><input id="ps" type="number" min="0" placeholder="Stock"><select id="pc">${co(PF)}</select><input id="pi" placeholder="Image URL (or upload after adding)"><button class="b p" id="addP">Add</button></div></div>`+
    `<p>Pick a new picture and press Save to replace the current one. Offer = fill the offer price (lower than the price), then Save. Remove offer clears it.</p>`+
-   tbl(['Product','Category','Price (EGP)','Stock','Offer','Picture','Actions'],(data||[]).map(p=>[`<b>${esc(p.name_en)}</b>${p.name_ar?`<br><small>${esc(p.name_ar)}</small>`:''}${p.archived?'<br><span class="tag">archived</span>':''}${p.stock<=0?'<br><span class="tag">out of stock</span>':''}`,
+   tbl(['Product','Category','Price (EGP)','Stock','Offer','Picture','Actions'],(data||[]).filter(p=>!PF||String(p.category_id)===PF).map(p=>[`<b>${esc(p.name_en)}</b>${p.name_ar?`<br><small>${esc(p.name_ar)}</small>`:''}${p.archived?'<br><span class="tag">archived</span>':''}${p.stock<=0?'<br><span class="tag">out of stock</span>':''}`,
    `<select name="cat">${co(p.category_id)}</select>`,`<input name="price" type="number" min="0" value="${esc(p.price)}">`,`<input name="stock" type="number" min="0" value="${esc(p.stock)}">`,
    `<input name="sale" type="number" min="0" placeholder="Offer price" value="${esc(p.sale_price??'')}"><br><input name="label" placeholder="Label e.g. -15%" value="${esc(p.offer_label||'')}"><br><input name="ends" type="date" style="width:140px" value="${esc(p.offer_ends_at||'')}">`,
    `<img src="${esc(p.image_url||'')}" alt="" style="width:64px;height:64px;object-fit:cover;border-radius:8px;display:block;margin-bottom:6px"><input name="file" type="file" accept="image/*" style="width:150px">`,
@@ -115,34 +124,23 @@ const TABS={
   return `<div class="card"><h3>Add category / sub-category</h3><div class="row"><input id="cn" placeholder="Name (EN) e.g. Summer clothes"><input id="ca" placeholder="Name (AR)"><select id="cp"><option value="">Main category</option>${tops.map(c=>`<option value="${c.id}">Sub-category of: ${esc(c.name_en)}</option>`).join('')}</select><button class="b p" id="addC">Add</button></div></div>`+assign+
   tbl(['Name','Level','Status','Actions'],d.map(c=>[esc(c.name_en)+(c.name_ar?` <small>${esc(c.name_ar)}</small>`:''),c.parent_id?'Sub of '+esc((d.find(x=>x.id===c.parent_id)||{}).name_en):'Main',`<span class="tag">${c.active?'active':'off'}</span>`,
   `<button class="b" data-ca="${c.id}|${c.active?0:1}">${c.active?'Deactivate':'Activate'}</button> <button class="b" data-cd="${c.id}">Delete</button>`]));},
- async Pages(){const{data}=await sb.from('pages').select('*').order('created_at',{ascending:false});
+ async Pages(){const[{data},{data:cats},{data:prods}]=await Promise.all([sb.from('pages').select('*').order('created_at',{ascending:false}),sb.from('categories').select('*').order('name_en'),sb.from('products').select('id,name_en,slug').order('name_en')]);
+  const pages=data||[],ed=PE?pages.find(p=>p.id===PE):null,cj=ed&&ed.content?safeJSON(ed.content):null,secs=(cj&&cj.sections)||[{h:'',p:''}];
   const url=p=>p.kind==='category'?'catalog.html?c='+p.target:p.kind==='product'?'catalog.html?p='+p.target:'catalog.html?page='+p.slug;
-  return `<div class="card"><h3>Add a text page</h3><div class="row"><input id="gt" placeholder="Page title"><textarea id="gc" placeholder="Page text" style="min-width:260px;min-height:60px;margin:0 6px 6px 0;padding:7px;border:1px solid var(--line);border-radius:6px;background:transparent;color:var(--ink);font:inherit"></textarea><button class="b p" id="addPg">Add page</button></div></div>
-   <p>Category pages use the shop template and product pages use the product template. They are created automatically when you add a category or a product.</p>`+
-  tbl(['Title','Type','Link','Status','Actions'],(data||[]).map(p=>[esc(p.title),esc(p.kind),`<a href="${esc(url(p))}" target="_blank" style="color:var(--gold)">${esc(url(p))}</a>`,`<span class="tag">${p.published?'published':'hidden'}</span>`,
-  `<button class="b" data-pg="${p.id}|${p.published?0:1}">${p.published?'Unpublish':'Publish'}</button>`+(p.kind==='custom'?` <button class="b" data-pgd="${p.id}">Delete</button>`:'')]));},
- async Chat(){const[a1,b1]=await Promise.all([sb.from('site_settings').select('value').eq('key','chat_enabled').maybeSingle(),sb.from('site_settings').select('value').eq('key','chat_schedule').maybeSingle()]);
-  const on=!!(a1.data&&a1.data.value.on),sc=(b1.data&&b1.data.value)||{mode:'always',days:{}};
-  return `<div class="card"><h3>Live chat</h3><p>Master switch: when OFF the chat never shows. When ON it follows the opening hours below (Cairo time).</p>
-   <div class="row"><button class="b ${on?'p':''}" id="chatSw" data-on="${on?1:0}">Chat widget: ${on?'ON':'OFF'}</button>
-   <select id="schMode"><option value="always"${sc.mode!=='schedule'?' selected':''}>Always open (when ON)</option><option value="schedule"${sc.mode==='schedule'?' selected':''}>Only during opening hours</option></select>
-   <a class="b" href="chat-admin.html" style="text-decoration:none;color:var(--ink)">Open support console</a></div></div>
-   <div class="card"><h3>Opening hours</h3><table style="min-width:420px"><tr><th>Day</th><th>Open</th><th>From</th><th>To</th></tr>${DAYS.map((n,i)=>{const d=(sc.days||{})[i]||{on:i!==5,from:'10:00',to:'18:00'};
-   return `<tr><td>${n}</td><td><input type="checkbox" data-day="${i}" ${d.on?'checked':''} style="width:auto;padding:0;border:0"></td><td><input type="time" data-from="${i}" value="${d.from||'10:00'}"></td><td><input type="time" data-to="${i}" value="${d.to||'18:00'}"></td></tr>`}).join('')}</table>
-   <p><button class="b p" id="saveSch">Save opening hours</button></p></div>`;},
- async Satisfaction(){const r=await sb.rpc('csat_report',{p_from:DR.f,p_to:DR.t});if(r.error)return rangeBar('Satisfaction')+`<div class="card">${esc(r.error.message)}</div>`;
-  const d=r.data,mx=Math.max(1,...[1,2,3,4,5].map(n=>+((d.dist||{})[n])||0)),
-   bars=[5,4,3,2,1].map(n=>{const c=+((d.dist||{})[n])||0;return `<div class="row" style="gap:8px;flex-wrap:nowrap"><span style="width:34px">${n} ★</span><div style="flex:1;background:var(--line);border-radius:6px;height:12px"><div style="width:${c/mx*100}%;background:var(--gold);height:12px;border-radius:6px"></div></div><span style="width:34px;text-align:right">${c}</span></div>`}).join('');
-  return rangeBar('Satisfaction')+`<div class="row" style="gap:12px;margin-bottom:16px;align-items:stretch">${kpi('Average rating',d.avg_rating?d.avg_rating+' / 5':'-')}${kpi('Survey response rate',d.closed?Math.round(d.rated/d.closed*100)+'%':'-')}${kpi('Chats',d.total)}${kpi('Avg first response',d.avg_frt?dur(d.avg_frt):'-')}${kpi('Avg chat length',d.avg_dur?dur(d.avg_dur):'-')}</div>
-   <div class="card"><h3>Rating distribution</h3>${bars}</div><p><button class="b" data-xr="csat">Export (.xlsx)</button></p>`+
-   tbl(['Agent','Chats','Rated','Avg rating','Avg first response'],(d.by_agent||[]).map(x=>[esc(x.name),x.chats,x.rated,stars(x.avg),x.frt?dur(x.frt):'-']))+
-   tbl(['Day','Chats','Avg rating'],(d.by_day||[]).map(x=>[esc(x.day),x.chats,stars(x.avg)]))+
-   tbl(['Chat no.','Customer','Rating','Comment','Handled by','Closed'],(d.recent||[]).map(x=>[esc(x.code),esc(x.customer),stars(x.rating),esc(x.feedback||''),esc(x.agent||''),cairo(x.at)]));},
- async Agents(){const r=await sb.rpc('agent_report',{p_from:DR.f,p_to:DR.t});if(r.error)return rangeBar('Agents')+`<div class="card">${esc(r.error.message)}</div>`;const d=r.data;
-  return rangeBar('Agents')+`<p><button class="b" data-xr="agents">Export (.xlsx)</button></p>`+
-   tbl(['Agent','Now','First login','Last logout','Online','Available','On break','Breaks','Chats','Avg rating'],(d.agents||[]).map(x=>[esc(x.name)+` <small>${esc(x.role)}</small>`,`<span style="color:${PDOT[x.status][0]}">●</span> ${PDOT[x.status][1]}`,cairo(x.first_login),cairo(x.last_logout),dur(x.online_s),dur(x.available_s),dur(x.break_s),x.breaks,x.chats,stars(x.avg_rating)]))+
-   tbl(['Agent','Break started','Break ended','Length'],(d.breaks||[]).map(x=>[esc(x.name),cairo(x.start),x.end?cairo(x.end):'still on break',dur(x.secs)]))+
-   tbl(['Agent','Logged in','Logged out','Length'],(d.logins||[]).map(x=>[esc(x.name),cairo(x.in),x.out?cairo(x.out):'online now',dur(x.secs)]));},
+  const co=(cats||[]).slice().sort((x,y)=>clabel(x,cats).localeCompare(clabel(y,cats))).map(c=>`<option value="${c.id}">${esc(clabel(c,cats))}</option>`).join('');
+  return `<div class="card"><h3>${ed?'Edit page':'Add a page'}</h3>
+   <div class="row"><select id="pgT"${ed?' disabled':''}>${[['shop','Shop page (product listing)'],['product','Product page (single product)'],['about','About-style page'],['terms','Terms & conditions-style page'],['text','Blank text page']].map(([v,n])=>`<option value="${v}"${(ed?ed.template:'shop')===v?' selected':''}>${n}</option>`).join('')}</select>
+    <input id="gt" placeholder="Page title" value="${esc(ed?ed.title:'')}"><input id="gta" placeholder="Title in Arabic (optional)" value="${esc(ed?ed.title_ar||'':'')}"></div>
+   <div class="row"><label><input type="checkbox" id="gm" style="width:auto;padding:0;border:0"${ed?(ed.in_menu?' checked':''):' checked'}> Show in the website menu</label></div>
+   <div class="pgf" data-for="shop"><div class="row"><select id="gpar"><option value="">Main category</option>${(cats||[]).filter(c=>!c.parent_id).map(c=>`<option value="${c.id}">Sub-category of: ${esc(c.name_en)}</option>`).join('')}</select></div><small>Creates a category and a shop-style page for it. Next you add the products (price, stock, picture).</small></div>
+   <div class="pgf" data-for="product"><div class="row"><select id="gps"><option value="">➕ New product</option>${(prods||[]).map(p=>`<option value="${p.id}">${esc(p.name_en)}</option>`).join('')}</select></div>
+    <div class="row pgn"><input id="gpp" type="number" min="0" placeholder="Price EGP"><input id="gpst" type="number" min="0" placeholder="Stock"><select id="gpc"><option value="">No category</option>${co}</select><input id="gpi" type="file" accept="image/*" style="width:210px"></div></div>
+   <div class="pgf" data-for="about terms text"><div id="gsec">${secs.map(s=>secHtml(s.h,s.p)).join('')}</div><button class="b" id="addSec">+ Add section</button></div>
+   <p><button class="b p" id="savePage">${ed?'Save changes':'Create page'}</button>${ed?' <button class="b" id="cancelEd">Cancel</button>':''}</p></div>`+
+   tbl(['Title','Template','Link','Menu','Status','Actions'],pages.map(p=>[esc(p.title),esc(p.template||p.kind),`<a href="${esc(url(p))}" target="_blank" style="color:var(--gold)">${esc(url(p))}</a>`,
+    `<button class="b" data-pm="${p.id}|${p.in_menu?0:1}">${p.in_menu?'In menu ✓':'Add to menu'}</button>`,`<span class="tag">${p.published?'published':'hidden'}</span>`,
+    `<button class="b" data-pg="${p.id}|${p.published?0:1}">${p.published?'Unpublish':'Publish'}</button>`+(p.kind==='custom'?` <button class="b" data-pe="${p.id}">Edit</button>`:'')+
+    (p.kind==='category'&&(cats||[]).find(c=>c.slug===p.target)?` <button class="b" data-pc="${(cats||[]).find(c=>c.slug===p.target).id}">Manage products</button>`:'')+` <button class="b" data-pgd="${p.id}">Delete</button>`]));},
  async Reviews(){const{data}=await sb.from('reviews').select('*').order('created_at',{ascending:false});
   return `<div class="card"><h3>Add review</h3><div class="row"><input id="ra" placeholder="Name"><input id="rr" type="number" min="1" max="5" placeholder="Stars 1-5">
    <input id="rb" placeholder="Review text" style="min-width:240px"><button class="b p" id="addR">Add</button></div></div>`+
@@ -151,7 +149,7 @@ const TABS={
 };
 
 async function show(n){document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('on',b.textContent===n));
-  $('#v').innerHTML=await TABS[n]();$('#v').dataset.tab=n;}
+  $('#v').innerHTML=await TABS[n]();$('#v').dataset.tab=n;if(n==='Pages')pgToggle();}
 const done=(r,n)=>{if(r&&r.error)alert(r.error.message||r.error);show(n||$('#v').dataset.tab)};
 
 $('#v').addEventListener('change',async e=>{const id=e.target.dataset.st;
@@ -159,6 +157,10 @@ $('#v').addEventListener('change',async e=>{const id=e.target.dataset.st;
 $('#v').addEventListener('change',async e=>{const t=e.target;if(!t.dataset.role)return;
   if(!confirm('Change this user\'s role to '+t.value+'?')){show('Users');return;}
   done(await sb.from('profiles').update({role:t.value,status:'approved'}).eq('id',t.dataset.role));});
+$('#v').addEventListener('change',async e=>{const t=e.target;
+  if(t.id==='pgT'||t.id==='gps')pgToggle();
+  if(t.id==='pfil'){PF=t.value;show('Products');}
+  if(t.dataset.nm){const r=await sb.from('profiles').update({full_name:t.value.trim()}).eq('id',t.dataset.nm);if(r.error)alert(r.error.message);}});
 $('#v').addEventListener('click',async e=>{const t=e.target,d=t.dataset;if(!t.closest('button'))return;
   if(t.id==='applyD'){DR.f=$('#df').value;DR.t=$('#dt').value;return show(d.tab);}
   if(t.id==='chatSw'){const r=await sb.from('site_settings').upsert({key:'chat_enabled',value:{on:d.on!=='1'}});if(r.error)return alert(r.error.message);return show('Chat');}
@@ -215,8 +217,35 @@ $('#v').addEventListener('click',async e=>{const t=e.target,d=t.dataset;if(!t.cl
   if(d.cd&&confirm('Delete this category (and its sub-categories)? Products stay, but lose the category.')){
     const c=(await sb.from('categories').select('slug').eq('id',d.cd).single()).data;const r=await sb.from('categories').delete().eq('id',d.cd);
     if(!r.error&&c)await sb.from('pages').delete().eq('slug','c-'+c.slug);return done(r);}
-  if(t.id==='addPg'){const ti=$('#gt').value.trim();if(!ti)return alert('Enter a title.');
-    return done(await sb.from('pages').insert({slug:slug(ti),title:ti,kind:'custom',content:$('#gc').value}));}
+  if(t.id==='addSec'){$('#gsec').insertAdjacentHTML('beforeend',secHtml('',''));return;}
+  if(d.rmsec){t.closest('.sec').remove();return;}
+  if(t.id==='cancelEd'){PE=null;return show('Pages');}
+  if(d.pe){PE=+d.pe;return show('Pages');}
+  if(d.pc){PF=String(d.pc);return show('Products');}
+  if(d.pm){const[i,v]=d.pm.split('|');return done(await sb.from('pages').update({in_menu:v==='1'}).eq('id',i));}
+  if(t.id==='savePage'){const T=$('#pgT').value,ti=$('#gt').value.trim(),row={title:ti,title_ar:$('#gta').value.trim()||null,template:T,in_menu:$('#gm').checked,published:true};
+    if(!ti)return alert('Enter a page title.');t.disabled=true;
+    try{
+      if(PE){const secs=[...document.querySelectorAll('#gsec .sec')].map(s=>({h:s.querySelector('.gsh').value.trim(),p:s.querySelector('.gsb').value.trim()})).filter(s=>s.h||s.p);
+        const r=await sb.from('pages').update({title:ti,title_ar:row.title_ar,in_menu:row.in_menu,content:JSON.stringify({sections:secs})}).eq('id',PE);if(r.error)throw r.error;PE=null;alert('Page saved.');return show('Pages');}
+      if(T==='shop'){const cr={name_en:ti,name_ar:row.title_ar,parent_id:$('#gpar').value||null,slug:slug(ti)};
+        let r=await sb.from('categories').insert(cr).select().single();if(r.error&&r.error.code==='23505'){cr.slug+='-'+Math.floor(Math.random()*900+100);r=await sb.from('categories').insert(cr).select().single();}if(r.error)throw r.error;
+        Object.assign(row,{kind:'category',target:r.data.slug,slug:'c-'+r.data.slug});const g=await sb.from('pages').insert(row);if(g.error)throw g.error;
+        if(confirm('Page created. Add products to it now?')){PF=String(r.data.id);return show('Products');}return show('Pages');}
+      if(T==='product'){let pr;const sid=$('#gps').value;
+        if(sid){pr=(await sb.from('products').select('*').eq('id',+sid).single()).data;}
+        else{if(!$('#gpp').value)throw new Error('Enter a price for the new product.');const f=$('#gpi').files[0],prod={name_en:ti,name_ar:row.title_ar,price:+$('#gpp').value,stock:parseInt($('#gpst').value)||0,category_id:$('#gpc').value||null,slug:slug(ti),image_url:f?await upImg(f,'new'):null};
+          let r=await sb.from('products').insert(prod).select().single();if(r.error&&r.error.code==='23505'){prod.slug+='-'+Math.floor(Math.random()*900+100);r=await sb.from('products').insert(prod).select().single();}if(r.error)throw r.error;pr=r.data;}
+        Object.assign(row,{kind:'product',target:pr.slug,slug:'p-'+pr.slug});const g=await sb.from('pages').insert(row);if(g.error)throw g.error;alert('Product page created.');return show('Pages');}
+      const secs=[...document.querySelectorAll('#gsec .sec')].map(s=>({h:s.querySelector('.gsh').value.trim(),p:s.querySelector('.gsb').value.trim()})).filter(s=>s.h||s.p);
+      Object.assign(row,{kind:'custom',slug:slug(ti),content:JSON.stringify({sections:secs})});const g=await sb.from('pages').insert(row);if(g.error)throw g.error;alert('Page created.');return show('Pages');
+    }catch(e){alert(e.code==='23505'?'A page with this name already exists.':(e.message||e));}finally{t.disabled=false;}return;}
+  if(d.rs&&confirm('Send a password reset email to '+d.rs+'?')){const r=await sb.auth.resetPasswordForEmail(d.rs,{redirectTo:new URL('login.html',location.href).href});return alert(r.error?r.error.message:'Reset link sent to '+d.rs+'.');}
+  if(d.ad){const r=await sb.from('orders').select('customer_name,phone,address,created_at,order_number').eq('user_id',d.ad).order('created_at',{ascending:false}),seen={},L=[];
+    (r.data||[]).forEach(o=>{const k=String(o.address||'').toLowerCase().replace(/\\s+/g,' ').trim()+'|'+o.phone;if(!seen[k]){seen[k]={o,n:0};L.push(seen[k]);}seen[k].n++;});
+    $('#adrBox').innerHTML=`<div class="card"><h3>Saved addresses - ${esc(d.who)}</h3>`+(L.length?L.map(x=>`<p style="margin:8px 0"><b>${esc(x.o.address)}</b><br><small>${esc(x.o.customer_name)} · ${esc(x.o.phone)} · ${x.n} order${x.n>1?'s':''} · last used ${new Date(x.o.created_at).toLocaleDateString()}</small></p>`).join(''):'<p>No orders yet, so no saved address.</p>')+`<button class="b" data-closeadr="1">Close</button></div>`;
+    window.scrollTo({top:0,behavior:'smooth'});return;}
+  if(d.closeadr){$('#adrBox').innerHTML='';return;}
   if(d.pg){const[i,v]=d.pg.split('|');return done(await sb.from('pages').update({published:v==='1'}).eq('id',i));}
   if(d.pgd&&confirm('Delete this page?'))return done(await sb.from('pages').delete().eq('id',d.pgd));
   if('pu' in d){const tr=t.closest('tr'),id=t.parentElement.dataset.pid;

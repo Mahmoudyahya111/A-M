@@ -1,78 +1,103 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="robots" content="noindex"><title>Chat console | TELEGANT</title>
+<meta name="robots" content="noindex"><title>Support console | TELEGANT</title>
 <script>try{var t=localStorage.tg_theme||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');document.documentElement.dataset.theme=t}catch(e){}</script>
 <link rel="stylesheet" href="tg-theme.css">
 <style>
-:root{--ink:#2a2114;--card:rgba(255,252,244,.9);--line:rgba(160,120,40,.3);--gold:#b8892f}
-html[data-tg-theme=dark]{--ink:#f1e9d6;--card:rgba(24,19,12,.9);--line:rgba(232,207,134,.25);--gold:#e8cf86}
-body{margin:0;font:14px/1.5 system-ui,sans-serif;color:var(--ink)}
-header{display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid var(--line);background:var(--card);flex-wrap:wrap}
-header b{font:600 18px Georgia,serif;flex:1}
+:root{--ink:#2a2114;--card:rgba(255,252,244,.92);--line:rgba(160,120,40,.28);--gold:#b8892f;--mut:rgba(42,33,20,.6)}
+html[data-tg-theme=dark]{--ink:#f1e9d6;--card:rgba(22,17,10,.92);--line:rgba(232,207,134,.2);--gold:#e8cf86;--mut:rgba(241,233,214,.6)}
+*{box-sizing:border-box}body{margin:0;font:14px/1.5 system-ui,-apple-system,Segoe UI,sans-serif;color:var(--ink)}
 button,select,input{font:inherit;color:var(--ink)}
-.b{padding:7px 12px;border:1px solid var(--line);background:none;border-radius:8px;cursor:pointer}.p{background:var(--gold);color:#16110a;border-color:var(--gold);font-weight:600}
-main{display:grid;grid-template-columns:300px 1fr;gap:14px;padding:14px;max-width:1100px;margin:0 auto}
-@media(max-width:760px){main{grid-template-columns:1fr}}
-.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px}
-#list{max-height:70vh;overflow-y:auto}#list div{padding:8px;border-bottom:1px solid var(--line);cursor:pointer}#list div.on{background:rgba(201,162,75,.18)}
-.tag{font-size:11px;padding:1px 8px;border-radius:99px;border:1px solid var(--gold);color:var(--gold)}
-#msgs{height:52vh;overflow-y:auto;display:flex;flex-direction:column;gap:6px;padding:6px}
-.m{max-width:75%;padding:7px 11px;border-radius:12px;word-break:break-word}.cu{align-self:flex-start;background:rgba(160,120,40,.2)}.st{align-self:flex-end;background:var(--gold);color:#16110a}.sy{align-self:center;font-size:12px;opacity:.7}
-input,select{padding:8px;border:1px solid var(--line);border-radius:8px;background:transparent}
-.row{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;align-items:center}.row input[type=text]{flex:1;min-width:160px}
+header{display:flex;align-items:center;gap:12px;padding:10px 18px;background:var(--card);border-bottom:1px solid var(--line);flex-wrap:wrap}
+header .t{font:600 17px Georgia,serif;flex:1;white-space:nowrap}
+.b{padding:7px 13px;border:1px solid var(--line);background:none;border-radius:8px;cursor:pointer}.b:hover{border-color:var(--gold)}
+.p{background:var(--gold);color:#16110a;border-color:var(--gold);font-weight:600}
+select,input[type=text]{padding:7px 10px;border:1px solid var(--line);border-radius:8px;background:transparent}
+.pres{display:flex;align-items:center;gap:6px;padding:2px 8px;border:1px solid var(--line);border-radius:99px}.pres select{border:0;padding:5px 2px}
+main{display:grid;grid-template-columns:340px 1fr;gap:16px;padding:16px 18px;max-width:1240px;margin:0 auto;height:calc(100vh - 66px)}
+@media(max-width:820px){main{grid-template-columns:1fr;height:auto}}
+.pane{background:var(--card);border:1px solid var(--line);border-radius:14px;display:flex;flex-direction:column;min-height:0;overflow:hidden}
+.tabs{display:flex;gap:4px;padding:10px 10px 0}.tabs button{flex:1;padding:7px 4px;border:0;border-bottom:2px solid transparent;background:none;cursor:pointer;color:var(--mut)}
+.tabs button.on{color:var(--ink);border-color:var(--gold);font-weight:600}
+.sr{margin:10px;width:calc(100% - 20px)}
+#list{overflow-y:auto;flex:1}
+.it{padding:11px 14px;border-top:1px solid var(--line);cursor:pointer}.it:hover,.it.on{background:rgba(201,162,75,.14)}
+.it .r{display:flex;justify-content:space-between;gap:8px}.it small{color:var(--mut)}
+.tag{font-size:11px;padding:1px 9px;border-radius:99px;border:1px solid var(--gold);color:var(--gold);white-space:nowrap}
+.tag.cl{border-color:var(--line);color:var(--mut)}
+.ch{padding:14px 18px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+#msgs{flex:1;overflow-y:auto;padding:16px 18px;display:flex;flex-direction:column;gap:8px;min-height:240px}
+.m{max-width:72%;padding:8px 13px;border-radius:14px;word-break:break-word}.cu{align-self:flex-start;background:rgba(160,120,40,.18)}.st{align-self:flex-end;background:var(--gold);color:#16110a}
+.sy{align-self:center;font-size:12px;color:var(--mut)}.m small{display:block;opacity:.65;font-size:11px;margin-top:2px}
+.ft{padding:12px 18px;border-top:1px solid var(--line)}.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.row+.row{margin-top:8px}.row input[type=text]{flex:1;min-width:160px}
+.empty{margin:auto;color:var(--mut);text-align:center}
 </style></head><body>
-<header><img src="MEBG-GOLDEN.png" alt="TELEGANT" style="height:40px"><b>Chat console</b>
-<button class="b" id="tg" style="display:none"></button><button class="b" id="xl" style="display:none">Export (.xlsx)</button>
-<a class="b" id="ad" href="admin.html" style="display:none;text-decoration:none;color:var(--ink)">Admin</a>
+<header><img src="MEBG-GOLDEN.png" alt="TELEGANT" style="height:38px"><span class="t">Support console</span>
+<span class="pres"><span id="pd">●</span><select id="ps"><option value="available">Available</option><option value="break">On break</option><option value="offline">Offline</option></select></span>
+<input type="text" id="al" maxlength="30" placeholder="Name customers see" style="width:170px" title="This is the only name customers see. Your email is never shown.">
+<button class="b" id="tg" style="display:none"></button><button class="b" id="xl" style="display:none">Export</button><a class="b" id="ad" href="admin.html" style="display:none;text-decoration:none;color:var(--ink)">Dashboards</a>
 <button class="b" id="th">Light / dark</button><button class="b" id="out">Sign out</button></header>
-<main><div class="card"><select id="f"><option value="active">Active chats</option><option value="mine">Mine</option><option value="closed">Closed</option><option value="all">All</option></select><div id="list"></div></div>
-<div class="card" id="conv">Pick a chat on the left.</div></main>
+<main><div class="pane"><div class="tabs" id="tabs"></div><input type="text" class="sr" id="sq" placeholder="Search chat number or customer"><div id="list"></div></div>
+<div class="pane" id="conv"><div class="empty">Select a chat to start</div></div></main>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="tg-core.js"></script>
 <script>
 const sb=TG.sb,$=s=>document.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-let me,chats=[],sel=+new URLSearchParams(location.search).get('c')||null,staff=[],key='',chatOn=false;
+const DOT={available:'#2ecc71',break:'#f39c12',offline:'#95a5a6'};
+let me,chats=[],sel=+new URLSearchParams(location.search).get('c')||null,staff=[],key='',filt='active',q='',pres='offline',chatOn=false;
 const err=r=>{if(r&&r.error){alert(r.error.message);return true;}};
+const ago=t=>{const s=(Date.now()-new Date(t))/1000;return s<60?'now':s<3600?Math.floor(s/60)+'m':s<86400?Math.floor(s/3600)+'h':new Date(t).toLocaleDateString()};
+
+async function loadPres(){const r=await sb.from('agent_presence').select('status').eq('user_id',me.id).maybeSingle();pres=(r.data&&r.data.status)||'offline';$('#ps').value=pres;$('#pd').style.color=DOT[pres];}
+$('#ps').onchange=async()=>{err(await sb.rpc('set_presence',{p:$('#ps').value}));loadPres();};
+$('#al').onchange=async()=>{if(!err(await sb.rpc('set_my_alias',{p:$('#al').value})))$('#al').blur();};
 async function setChatBtn(){const r=await sb.from('site_settings').select('value').eq('key','chat_enabled').maybeSingle();chatOn=!!(r.data&&r.data.value.on);$('#tg').textContent='Chat widget: '+(chatOn?'ON':'OFF');$('#tg').classList.toggle('p',chatOn);}
-async function list(){chats=(await sb.from('chats').select('*').order('id',{ascending:false}).limit(300)).data||[];
-  const f=$('#f').value,v=chats.filter(c=>f==='all'||(f==='active'&&c.status!=='closed')||(f==='closed'&&c.status==='closed')||(f==='mine'&&c.claimed_by===me.id));
-  $('#list').innerHTML=v.map(c=>`<div data-c="${c.id}" class="${c.id===sel?'on':''}"><b>#${c.id} ${esc(c.customer_name)}</b> <span class="tag">${c.status==='claimed'?esc(c.claimed_name):c.status}</span><br><small>${new Date(c.created_at).toLocaleString()}${c.rating?' · '+'★'.repeat(c.rating):''}</small></div>`).join('')||'<small>No chats.</small>';
+
+const F={active:c=>c.status!=='closed',mine:c=>c.claimed_by===me.id&&c.status!=='closed',closed:c=>c.status==='closed',all:()=>true};
+function tabs(){$('#tabs').innerHTML=[['active','Active'],['mine','Mine'],['closed','Closed'],['all','All']].map(([k,n])=>`<button data-f="${k}" class="${k===filt?'on':''}">${n} (${chats.filter(F[k]).length})</button>`).join('');}
+async function list(){chats=(await sb.from('chats').select('*').order('id',{ascending:false}).limit(300)).data||[];tabs();
+  const v=chats.filter(F[filt]).filter(c=>!q||(c.code+' '+c.customer_name).toLowerCase().includes(q));
+  $('#list').innerHTML=v.map(c=>`<div class="it ${c.id===sel?'on':''}" data-c="${c.id}"><div class="r"><b>${esc(c.code)}</b><span class="tag ${c.status==='closed'?'cl':''}">${c.status==='claimed'?esc(c.claimed_name):c.status==='open'?'Waiting':'Closed'}</span></div>
+   <div>${esc(c.customer_name)}</div><small>${ago(c.created_at)} ago${c.rating?' · '+'★'.repeat(c.rating):''}</small></div>`).join('')||'<div class="empty" style="padding:30px">No chats here.</div>';
   if(sel)await conv();}
-async function conv(){const c=chats.find(x=>x.id===sel);if(!c)return;
-  const k=c.id+c.status+c.claimed_by;
-  if(k!==key){key=k;const mine=c.claimed_by===me.id,open=c.status!=='closed';
-    $('#conv').innerHTML=`<b>#${c.id} ${esc(c.customer_name)}</b> <small>${esc(c.customer_email||'')}</small> <span class="tag">${c.status==='claimed'?'taken by '+esc(c.claimed_name):c.status}</span>
-     <div id="msgs"></div>`+(c.status==='open'?`<button class="b p" id="take">Take this chat</button>`:
-     c.status==='closed'?`<p>Closed ${c.closed_at?new Date(c.closed_at).toLocaleString():''}. Rating: ${c.rating?'★'.repeat(c.rating):'not yet'}${c.feedback?' – '+esc(c.feedback):''}</p>`:
-     mine?`<div class="row"><input type="text" id="re" placeholder="Reply…" maxlength="500"><button class="b p" id="snd">Send</button></div>
-       <div class="row"><select id="to">${staff.filter(s=>s.id!==me.id).map(s=>`<option value="${s.id}">${esc(s.name)}</option>`).join('')}</select><button class="b" id="tr">Transfer</button><button class="b" id="cl">Close chat</button></div>`:
-     `<p>Only ${esc(c.claimed_name)} can reply to this chat.</p>`+(me.role==='owner'?`<button class="b" id="take">Take over</button> <button class="b" id="cl">Close chat</button>`:''));}
+async function conv(){const c=chats.find(x=>x.id===sel);if(!c)return;const k=c.id+c.status+c.claimed_by+pres;
+  if(k!==key){key=k;const mine=c.claimed_by===me.id;
+    $('#conv').innerHTML=`<div class="ch"><div><b style="font-size:16px">${esc(c.code)}</b> · ${esc(c.customer_name)}<br><small style="color:var(--mut)">${esc(c.customer_email||'')} · started ${new Date(c.created_at).toLocaleString()}</small></div>
+     <span class="tag ${c.status==='closed'?'cl':''}">${c.status==='claimed'?'Handled by '+esc(c.claimed_name):c.status==='open'?'Waiting for an agent':'Closed'}</span></div><div id="msgs"></div><div class="ft">`+
+     (c.status==='open'?`<button class="b p" id="take">Take this chat</button>${me.role==='support'&&pres!=='available'?' <small style="color:var(--mut)">Set yourself to Available first.</small>':''}`:
+      c.status==='closed'?`<small>Closed ${c.closed_at?new Date(c.closed_at).toLocaleString():''} · Rating: ${c.rating?'★'.repeat(c.rating):'not rated'}${c.feedback?' · “'+esc(c.feedback)+'”':''}</small>`:
+      mine?`<div class="row"><input type="text" id="re" placeholder="Write a reply…" maxlength="500"><button class="b p" id="snd">Send</button></div>
+        <div class="row"><select id="to">${staff.filter(s=>s.id!==me.id).map(s=>`<option value="${s.id}">${esc(s.name)} (${s.status})</option>`).join('')}</select><button class="b" id="tr">Transfer</button><button class="b" id="cl">Close chat</button></div>`:
+      `<small>This chat is being handled by ${esc(c.claimed_name)}.</small> ${me.role==='owner'?'<button class="b" id="take">Take over</button> <button class="b" id="cl">Close chat</button>':''}`)+`</div>`;}
   const m=(await sb.from('chat_messages').select('*').eq('chat_id',c.id).order('id')).data||[],box=$('#msgs');
-  box.innerHTML=m.map(x=>`<div class="m ${x.sender_role==='customer'?'cu':x.sender_role==='staff'?'st':'sy'}">${esc(x.body)}</div>`).join('');box.scrollTop=box.scrollHeight;}
+  box.innerHTML=m.map(x=>x.sender_role==='system'?`<div class="m sy">${esc(x.body)}</div>`:`<div class="m ${x.sender_role==='customer'?'cu':'st'}">${esc(x.body)}<small>${esc(x.sender_name)} · ${new Date(x.created_at).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}</small></div>`).join('');box.scrollTop=box.scrollHeight;}
+
+$('#tabs').onclick=e=>{if(e.target.dataset.f){filt=e.target.dataset.f;list();}};
+$('#sq').oninput=e=>{q=e.target.value.toLowerCase().trim();list();};
 $('#list').onclick=e=>{const d=e.target.closest('[data-c]');if(!d)return;sel=+d.dataset.c;key='';list();};
-$('#f').onchange=list;
 $('#conv').onclick=async e=>{const i=e.target.id,c=chats.find(x=>x.id===sel);if(!c||!['take','snd','tr','cl'].includes(i))return;
   if(i==='take'){if(err(await sb.rpc('chat_claim',{p_chat:c.id})))return;}
-  if(i==='snd'||false){const v=$('#re').value.trim();if(!v)return;$('#re').value='';if(err(await sb.rpc('chat_send',{p_chat:c.id,p_body:v,p_as:'staff'})))return;}
+  if(i==='snd'){const v=$('#re').value.trim();if(!v)return;$('#re').value='';if(err(await sb.rpc('chat_send',{p_chat:c.id,p_body:v,p_as:'staff'})))return;}
   if(i==='tr'){if(err(await sb.rpc('chat_transfer',{p_chat:c.id,p_to:$('#to').value})))return;}
-  if(i==='cl'&&confirm('Close this chat? The customer gets a survey email.')){if(err(await sb.rpc('chat_close',{p_chat:c.id})))return;sb.functions.invoke('swift-action',{body:{action:'chat_close',chat_id:c.id}});}
+  if(i==='cl'&&confirm('Close this chat? The customer receives a satisfaction survey by email.')){if(err(await sb.rpc('chat_close',{p_chat:c.id})))return;sb.functions.invoke('swift-action',{body:{action:'chat_close',chat_id:c.id}});}
   key='';list();};
 $('#conv').addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.id==='re')$('#snd').click();});
-$('#tg').onclick=async()=>{const r=await sb.from('site_settings').upsert({key:'chat_enabled',value:{on:!chatOn}});if(!err(r))setChatBtn();};
+$('#tg').onclick=async()=>{if(!err(await sb.from('site_settings').upsert({key:'chat_enabled',value:{on:!chatOn}})))setChatBtn();};
 async function all(t){let o=[],i=0;for(;;){const{data}=await sb.from(t).select('*').order('id').range(i,i+999);o=o.concat(data||[]);if(!data||data.length<1000)return o;i+=1000;}}
-$('#xl').onclick=async()=>{const[c,m]=await Promise.all([all('chats'),all('chat_messages')]),nm={};c.forEach(x=>nm[x.id]=x.customer_name);
+$('#xl').onclick=async()=>{const[c,m]=await Promise.all([all('chats'),all('chat_messages')]),nm={};c.forEach(x=>nm[x.id]=x.code);
   const wb=XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(c.map(x=>({Chat:x.id,Customer:x.customer_name,Email:x.customer_email,Status:x.status,'Handled by':x.claimed_name,Started:x.created_at,Closed:x.closed_at,Rating:x.rating,Feedback:x.feedback}))),'Chats');
-  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(m.map(x=>({Chat:x.chat_id,Customer:nm[x.chat_id],Time:x.created_at,From:x.sender_role,Name:x.sender_name,Message:x.body}))),'Messages');
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(c.map(x=>({'Chat no.':x.code,Customer:x.customer_name,Status:x.status,'Handled by':x.claimed_name,Started:x.created_at,Closed:x.closed_at,Rating:x.rating,Feedback:x.feedback}))),'Chats');
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(m.map(x=>({'Chat no.':nm[x.chat_id],Time:x.created_at,From:x.sender_role,Name:x.sender_name,Message:x.body}))),'Messages');
   XLSX.writeFile(wb,'telegant-chats-'+new Date().toISOString().slice(0,10)+'.xlsx');};
 $('#th').onclick=()=>{const d=document.documentElement,n=d.dataset.theme==='dark'?'light':'dark';d.dataset.theme=n;localStorage.tg_theme=n};
-$('#out').onclick=async()=>{await TG.signOut();location.href='login.html'};
+$('#out').onclick=async()=>{await sb.rpc('agent_logout');await TG.signOut();location.href='login.html'};
 (async()=>{me=await TG.profile();
   if(!me||me.status!=='approved'||!['owner','support'].includes(me.role)){location.replace('login.html?next=chat-admin.html');return;}
-  staff=(await sb.rpc('staff_list')).data||[];
+  await sb.rpc('agent_login');staff=(await sb.rpc('staff_list')).data||[];$('#al').value=me.chat_alias||'';
   if(me.role==='owner'){$('#tg').style.display=$('#xl').style.display=$('#ad').style.display='';setChatBtn();}
-  list();setInterval(list,4000);})();
+  await loadPres();list();setInterval(list,4000);
+  setInterval(async()=>{await sb.rpc('agent_login');loadPres();staff=(await sb.rpc('staff_list')).data||staff;},60000);})();
 </script></body></html>
