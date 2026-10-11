@@ -270,4 +270,6 @@ $('#out').onclick=async()=>{await TG.signOut();location.href='login.html'};
   $('#who').textContent=me.email;
   $('#nav').innerHTML=Object.keys(TABS).map(n=>`<button>${n}</button>`).join('');
   $('#nav').onclick=e=>e.target.tagName==='BUTTON'&&show(e.target.textContent);show('Analytics');})();
-</script></body></html>
+</script>
+<script src="tg-chat.js"></script>
+</body></html>
