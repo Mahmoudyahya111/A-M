@@ -25,7 +25,7 @@ h3{margin:0 0 10px;font:600 16px Georgia,serif}
 .tag{padding:2px 8px;border-radius:99px;border:1px solid var(--line);font-size:12px}
 </style></head><body>
 <header><img src="MEBG-GOLDEN.png" alt="TELEGANT" style="height:44px"><b>Admin</b>
-<span id="who"></span><button class="b" id="th">Light / dark</button><button class="b" id="out">Sign out</button></header>
+<span id="who"></span><a class="b" href="chat-admin.html" style="text-decoration:none;color:var(--ink)">Chat console</a><button class="b" id="th">Light / dark</button><button class="b" id="out">Sign out</button></header>
 <nav id="nav"></nav><main id="v">Loading…</main>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
@@ -270,6 +270,4 @@ $('#out').onclick=async()=>{await TG.signOut();location.href='login.html'};
   $('#who').textContent=me.email;
   $('#nav').innerHTML=Object.keys(TABS).map(n=>`<button>${n}</button>`).join('');
   $('#nav').onclick=e=>e.target.tagName==='BUTTON'&&show(e.target.textContent);show('Analytics');})();
-</script>
-<script src="tg-chat.js"></script>
-</body></html>
+</script></body></html>
