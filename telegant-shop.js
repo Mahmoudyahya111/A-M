@@ -21,7 +21,8 @@ window.TelegantShop = (function () {
     m:   { label: 'M',   length: 68, chest: 51, shoulder: 45 },
     l:   { label: 'L',   length: 70, chest: 54, shoulder: 47 },
     xl:  { label: 'XL',  length: 72, chest: 57, shoulder: 49 },
-    xxl: { label: 'XXL', length: 74, chest: 60, shoulder: 51 }
+    xxl: { label: 'XXL', length: 74, chest: 60, shoulder: 51 },
+    xxxl:{ label: 'XXXL', length: 76, chest: 63, shoulder: 53 }
   };
 
   function read(key, fallback) {
