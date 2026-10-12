@@ -1,7 +1,7 @@
 /* TELEGANT store sync. Load AFTER tg-core.js on shop.html, cart.html (and track.html). */
 (function () {
   var TG = window.TG; if (!TG || TG.store) return; TG.store = 1;
-  var ar = function () { return document.documentElement.lang === 'ar'; };
+  var ar = function () { return (TG.lang ? TG.lang() : document.documentElement.lang) === 'ar'; };
   var esc = function (s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); };
   var eff = function (p) {
     var live = p.sale_price != null && (!p.offer_ends_at || p.offer_ends_at >= new Date().toISOString().slice(0, 10));

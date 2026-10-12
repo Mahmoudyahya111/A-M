@@ -87,7 +87,7 @@ window.TELEGANT_I18N = {
 .tw{overflow-x:auto}.tgp table{border-collapse:collapse;width:100%;min-width:640px}.tgp th,.tgp td{padding:10px 12px;text-align:center;border-bottom:1px solid rgba(160,130,60,.3)}.tgp th{color:#c9a24b;font-weight:600}.tgp tr:hover td{background:rgba(201,162,75,.08)}
 .tgp input[type=number]{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(160,130,60,.5);background:transparent;color:inherit;font:inherit}.btnl{display:inline-block;margin-top:14px;padding:11px 24px;border-radius:99px;background:#c9a24b;color:#16110a;text-decoration:none;font-weight:700}
 @media(max-width:760px){.grid3{grid-template-columns:1fr}.two{grid-template-columns:1fr!important}}
-</style><main class="tgp"><h1 data-k="h1"></h1><p class="lead" data-k="sub"></p>
+.sw{width:36px;height:36px;border-radius:50%;border:2px solid rgba(128,128,128,.5);cursor:pointer;padding:0;position:relative}.sw.on{border-color:#c9a24b;box-shadow:0 0 0 3px rgba(201,162,75,.45);transform:scale(1.1)}.sw.ours::after{content:"";position:absolute;right:-2px;top:-2px;width:10px;height:10px;border-radius:50%;background:#c9a24b;border:2px solid #111}.grid{display:flex;flex-wrap:wrap;gap:10px;margin:8px 0 14px}.row2{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:8px 0}.row2 input[type=text]{flex:1;min-width:190px;padding:10px 12px;border-radius:99px;border:1px solid rgba(160,130,60,.55);background:transparent;color:inherit;font:inherit}.row2 input[type=color]{width:46px;height:40px;border:0;background:none;padding:0;cursor:pointer}.row2 button{padding:9px 20px;border-radius:99px;border:0;background:#c9a24b;color:#16110a;font-weight:700;cursor:pointer}</style><main class="tgp"><h1 data-k="h1"></h1><p class="lead" data-k="sub"></p>
 <div class="two" style="display:grid;grid-template-columns:260px 1fr;gap:34px;align-items:start">
  <div style="text-align:center"><svg id="man" viewBox="0 0 200 352" width="230" aria-hidden="true">
   <circle cx="100" cy="30" r="21" fill="#d6b394"/><rect id="m-neck" x="86" y="48" width="28" height="16" rx="5"/>
@@ -95,7 +95,7 @@ window.TELEGANT_I18N = {
   <path id="m-pants" d="M60 192 L140 192 L147 322 L108 322 L100 232 L92 322 L53 322 Z" stroke="rgba(0,0,0,.35)"/>
   <path id="m-sl" d="M53 322 L92 322 L97 343 L42 343 Z" stroke="rgba(0,0,0,.35)"/><path id="m-sr" d="M108 322 L147 322 L158 343 L103 343 Z" stroke="rgba(0,0,0,.35)"/></svg>
   <div id="verdict" style="margin-top:12px;padding:10px 14px;border-radius:12px;font-weight:600"></div></div>
- <div><h3 data-k="s1"></h3><div class="chips" id="tops"></div><h3 data-k="s2"></h3><div class="chips" id="pants"></div><h3 data-k="s3"></h3><div class="chips" id="shoes"></div>
+ <div><h3 data-k="s1"></h3><div class="grid" id="tops"></div><small data-k="legend"></small><div class="row2"><input type="text" id="cn" list="cl" data-k="ph" autocomplete="off"><datalist id="cl"></datalist><button id="cgo" data-k="go"></button><label style="display:flex;align-items:center;gap:6px"><input type="color" id="cp" value="#1f2a44"><small data-k="any"></small></label></div><p id="sel" style="margin:6px 0 4px;font-weight:600"></p><small id="cmsg" style="display:block;min-height:1.4em"></small><h3 data-k="s2"></h3><div class="chips" id="pants"></div><h3 data-k="s3"></h3><div class="chips" id="shoes"></div>
   <h3 data-k="s4"></h3><div class="chips" id="avoid"></div><div class="card2" id="tip"></div></div></div></main>
 
 <footer class="telegant-footer" id="contact">
@@ -127,7 +127,43 @@ window.TELEGANT_I18N = {
 <script src="telegant-shop.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="tg-core.js"></script>
+<script src="tg-ui.js"></script>
 <script src="tg-colors.js"></script>
+<script>
+(function(){
+var T=window.TGColors,st={top:'navy',pants:null,shoes:null};
+var D={en:{h1:'What goes with what',sub:'Pick any colour, from the grid, by typing its name, or with the colour picker, and see which trousers and shoes work with it. Tap a suggestion to try it on the figure.',s1:'1. Your shirt colour',legend:'The gold dot marks colours we sell. All other colours use classic menswear colour-wheel rules.',ph:'Type a colour name: teal, olive, mustard, أخضر...',go:'Show',any:'Any shade',sel:'Selected: ',like:'closest to',nf:'We could not recognise that colour. Try another name, pick from the grid, or use the colour picker.',s2:'2. Best trousers',s3:'3. Best shoes',s4:'Better to avoid',lv:['Excellent match','Good match','Acceptable','Avoid this combination'],none:'Tap trousers or shoes to see how the outfit rates.',noav:'Nothing to avoid, it is very versatile.'},
+ ar:{h1:'ما الذي يناسب ماذا',sub:'اختر أي لون من الشبكة أو اكتب اسمه أو استخدم منتقي الألوان، وشاهد البناطيل والأحذية التي تناسبه. اضغط على أي اقتراح لتجربته على الشكل.',s1:'١. لون قميصك',legend:'النقطة الذهبية تدل على الألوان التي نبيعها. بقية الألوان تعتمد على قواعد عجلة الألوان الكلاسيكية للرجال.',ph:'اكتب اسم اللون: تيل، زيتي، خردلي، أخضر...',go:'عرض',any:'أي درجة',sel:'اللون المختار: ',like:'الأقرب إلى',nf:'لم نتعرف على هذا اللون. جرّب اسماً آخر أو اختر من الشبكة أو استخدم منتقي الألوان.',s2:'٢. أفضل البناطيل',s3:'٣. أفضل الأحذية',s4:'الأفضل تجنّبه',lv:['تنسيق ممتاز','تنسيق جيد','مقبول','تجنّب هذا التنسيق'],none:'اضغط على بنطلون أو حذاء لترى تقييم الإطلالة.',noav:'لا شيء يُتجنّب، فهو متعدد الاستخدامات.'}};
+var COL=['#2e8b57','#c9a24b','#e08a2c','#c0392b'],OURS=['navy','white','black','grey','red'];
+function lng(){return (localStorage.getItem('telegant-lang')||document.documentElement.lang)==='ar'?'ar':'en';}
+function fillK(L){document.querySelectorAll('[data-k]').forEach(function(e){var v=L[e.getAttribute('data-k')];if(v===undefined)return;if(e.tagName==='INPUT')e.placeholder=v;else e.innerHTML=v;});}
+new MutationObserver(function(){render();}).observe(document.documentElement,{attributes:true,attributeFilter:['lang']});
+function dots(n){return '●'.repeat(n)+'○'.repeat(5-n);}
+function chip(kind,k,sc,on,x){var i=lng()==='ar'?1:0;return '<button class="chip'+(on?' on':'')+(x?' x':'')+'" data-kind="'+kind+'" data-k="'+k+'"><i style="background:'+T.HEX[k]+'"></i>'+T.label(kind,k,i)+(sc?' <span class="dots">'+dots(sc)+'</span>':'')+'</button>';}
+function render(){
+ var i=lng()==='ar'?1:0,l=D[lng()],r=T.resolve(st.top),a=T.advise([st.top]),it=a.items[0];fillK(l);
+ document.getElementById('cl').innerHTML=Object.keys(T.NAME).map(function(k){return '<option value="'+T.NAME[k][i]+'">';}).join('');
+ document.getElementById('tops').innerHTML=T.SHIRTS.map(function(k){return '<button class="sw'+(OURS.indexOf(k)>-1?' ours':'')+(k===st.top?' on':'')+'" data-kind="top" data-k="'+k+'" title="'+T.NAME[k][i]+'" aria-label="'+T.NAME[k][i]+'" style="background:'+T.HEX[k]+'"></button>';}).join('');
+ document.getElementById('sel').textContent=l.sel+(r.custom?r.hex.toUpperCase()+' ('+l.like+' '+r.name[i]+')':r.name[i]);
+ document.getElementById('pants').innerHTML=it.pants.map(function(p){return chip('pants',p.k,p.score,p.k===st.pants);}).join('');
+ document.getElementById('shoes').innerHTML=it.shoes.map(function(p){return chip('shoes',p.k,p.score,p.k===st.shoes);}).join('');
+ document.getElementById('avoid').innerHTML=it.avoid.length?it.avoid.map(function(k){return chip('pants',k,0,false,true);}).join(''):'<span>'+l.noav+'</span>';
+ document.getElementById('tip').textContent=it.tip[i];document.getElementById('cp').value=r.hex;
+ var sh=r.hex,pa=st.pants?T.HEX[st.pants]:'#4a4a4a',so=st.shoes?T.HEX[st.shoes]:'#7a7a7a';
+ document.getElementById('m-shirt').setAttribute('fill',sh);document.getElementById('m-neck').setAttribute('fill',sh);document.getElementById('m-pants').setAttribute('fill',pa);
+ document.getElementById('m-sl').setAttribute('fill',so);document.getElementById('m-sr').setAttribute('fill',so);
+ var v=T.check(st.top,st.pants,st.shoes),box=document.getElementById('verdict');
+ if(v){box.textContent=l.lv[v.level];box.style.background=COL[v.level];box.style.color=v.level===1?'#16110a':'#fff';}else{box.textContent=l.none;box.style.background='transparent';box.style.color='inherit';}
+}
+function pick(t){st.top=t;st.pants=st.shoes=null;document.getElementById('cmsg').textContent='';render();}
+function go(){var v=document.getElementById('cn').value,p=T.parse(v);if(!p){document.getElementById('cmsg').textContent=D[lng()].nf;return;}pick(p.key||p.hex);document.getElementById('cn').value='';}
+document.addEventListener('click',function(e){var b=e.target.closest('.chip,.sw');if(b&&!b.classList.contains('x')){var k=b.dataset.k,kind=b.dataset.kind;if(kind==='top')pick(k);else{st[kind]=st[kind]===k?null:k;render();}return;}if(e.target.id==='cgo')go();});
+document.getElementById('cn').addEventListener('keydown',function(e){if(e.key==='Enter')go();});
+document.getElementById('cn').addEventListener('change',go);
+document.getElementById('cp').addEventListener('input',function(e){var hx=e.target.value,k=Object.keys(T.HEX).filter(function(x){return T.HEX[x]===hx;})[0];pick(k||hx);});
+render();
+})();
+</script>
 <script>
 (function(){
 var T=window.TGColors,st={top:'navy',pants:null,shoes:null};

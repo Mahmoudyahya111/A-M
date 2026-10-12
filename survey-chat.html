@@ -4,24 +4,37 @@
 <script>try{document.documentElement.dataset.theme=localStorage.getItem('telegant-theme')||'dark'}catch(e){}</script>
 <link rel="stylesheet" href="tg-theme.css">
 <style>
-:root{--ink:#2a2114;--card:rgba(255,252,244,.9);--line:rgba(160,120,40,.35);--gold:#b8892f}
-html[data-tg-theme=dark]{--ink:#f1e9d6;--card:rgba(24,19,12,.9);--line:rgba(232,207,134,.28);--gold:#e8cf86}
+:root{--ink:#2a2114;--card:rgba(255,252,244,.92);--line:rgba(160,120,40,.35);--gold:#b8892f}
+html[data-tg-theme=dark]{--ink:#f1e9d6;--card:rgba(24,19,12,.92);--line:rgba(232,207,134,.28);--gold:#e8cf86}
 body{margin:0;min-height:100vh;display:grid;place-items:center;font:15px/1.5 system-ui,sans-serif;color:var(--ink);padding:20px;box-sizing:border-box}
-.box{width:100%;max-width:400px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:26px;text-align:center}
-h1{font:600 22px Georgia,serif;margin:8px 0 14px}.st button{background:none;border:0;font-size:34px;color:var(--line);cursor:pointer}.st button.on{color:var(--gold)}
-textarea{width:100%;box-sizing:border-box;min-height:80px;padding:10px;border:1px solid var(--line);border-radius:8px;background:transparent;color:var(--ink);font:inherit;margin:10px 0}
-.go{width:100%;padding:11px;border:0;border-radius:8px;background:var(--gold);color:#16110a;font:inherit;font-weight:700;cursor:pointer}
+.box{width:100%;max-width:470px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:26px}
+.box>img{display:block;margin:0 auto 4px;height:54px}h1{font:600 22px Georgia,serif;margin:6px 0 16px;text-align:center}
+.q{margin:18px 0 6px;font-weight:600}.opts{display:flex;gap:6px;flex-wrap:wrap}.opts button{flex:1;min-width:38px;padding:9px 6px;border:1px solid var(--line);background:none;color:var(--ink);border-radius:8px;cursor:pointer;font:inherit}
+.opts button.on{background:var(--gold);color:#16110a;border-color:var(--gold);font-weight:700}.lbl{display:flex;justify-content:space-between;font-size:12px;opacity:.7;margin-top:4px}
+textarea{width:100%;box-sizing:border-box;min-height:80px;padding:10px;border:1px solid var(--line);border-radius:8px;background:transparent;color:var(--ink);font:inherit;margin-top:6px}
+.go{width:100%;margin-top:16px;padding:12px;border:0;border-radius:8px;background:var(--gold);color:#16110a;font:inherit;font-weight:700;cursor:pointer}
+.lg{display:block;margin:12px auto 0;background:none;border:0;color:var(--gold);cursor:pointer;font:inherit;font-size:13px}
 </style></head><body>
-<div class="box"><img src="MEBG-GOLDEN.png" alt="TELEGANT"><h1 id="h">How was your chat?</h1><div id="b">
-<div class="st" id="st"></div><textarea id="fb" maxlength="1000" placeholder="Anything we could do better? (optional)"></textarea><button class="go" id="go">Send</button></div><p id="m"></p></div>
+<div class="box"><img src="MEBG-GOLDEN.png" alt="TELEGANT"><h1 id="h"></h1><div id="b"></div><p id="m" style="text-align:center"></p><button class="lg" id="lg"></button></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
-<script src="tg-core.js"></script>
+<script src="tg-core.js"></script><script src="tg-ui.js"></script>
 <script>
-let r=0;const $=s=>document.querySelector(s),id=+new URLSearchParams(location.search).get('c');
-$('#st').innerHTML=[1,2,3,4,5].map(n=>`<button data-n="${n}">★</button>`).join('');
-$('#st').onclick=e=>{if(!e.target.dataset.n)return;r=+e.target.dataset.n;[...$('#st').children].forEach((b,i)=>b.classList.toggle('on',i<r));};
-$('#go').onclick=async()=>{if(!r)return $('#m').textContent='Please pick a star rating.';
+const $=s=>document.querySelector(s),id=+new URLSearchParams(location.search).get('c'),A={res:null,ease:0,nps:null,sat:0};
+const D={en:{h:'How was your chat?',q1:'Was your issue resolved?',yes:'Yes',no:'No',q2:'How easy was it to get the help you needed?',e1:'Very difficult',e5:'Very easy',q3:'How likely are you to recommend TELEGANT to a friend?',n0:'Not likely',n10:'Very likely',q4:'Overall, how satisfied are you?',fb:'Anything we could do better? (optional)',send:'Send',need:'Please answer all the questions above.',done:'Thank you for your feedback!',lang:'العربية'},
+ ar:{h:'كيف كانت محادثتك؟',q1:'هل تم حل مشكلتك؟',yes:'نعم',no:'لا',q2:'ما مدى سهولة الحصول على المساعدة التي احتجتها؟',e1:'صعب جداً',e5:'سهل جداً',q3:'ما احتمال أن توصي بـ TELEGANT لصديق؟',n0:'غير مرجح',n10:'مرجح جداً',q4:'بشكل عام، ما مدى رضاك؟',fb:'هل هناك شيء يمكننا تحسينه؟ (اختياري)',send:'إرسال',need:'من فضلك أجب عن جميع الأسئلة أعلاه.',done:'شكراً على ملاحظاتك!',lang:'English'}};
+const lang=()=>localStorage.getItem('telegant-lang')==='ar'?'ar':'en',T=k=>D[lang()][k];
+function row(key,vals,lo,hi,fmt){return `<div class="opts" data-q="${key}">${vals.map(v=>`<button data-v="${v}" class="${A[key]===v?'on':''}">${fmt?fmt(v):v}</button>`).join('')}</div>`+(lo?`<div class="lbl"><span>${lo}</span><span>${hi}</span></div>`:'');}
+function render(){document.documentElement.lang=lang();document.documentElement.dir=lang()==='ar'?'rtl':'ltr';const fb=$('#fb')?$('#fb').value:'';
+ $('#h').textContent=T('h');$('#lg').textContent=T('lang');
+ $('#b').innerHTML=`<div class="q">${T('q1')}</div><div class="opts" data-q="res"><button data-v="1" class="${A.res===true?'on':''}">${T('yes')}</button><button data-v="0" class="${A.res===false?'on':''}">${T('no')}</button></div>
+  <div class="q">${T('q2')}</div>${row('ease',[1,2,3,4,5],T('e1'),T('e5'))}<div class="q">${T('q3')}</div>${row('nps',[0,1,2,3,4,5,6,7,8,9,10],T('n0'),T('n10'))}
+  <div class="q">${T('q4')}</div>${row('sat',[1,2,3,4,5],'','',v=>'★'.repeat(v))}<textarea id="fb" maxlength="1000" placeholder="${T('fb')}">${fb.replace(/</g,'&lt;')}</textarea><button class="go" id="go">${T('send')}</button>`;}
+$('#b').onclick=async e=>{const b=e.target.closest('button');if(!b)return;
+ if(b.id==='go'){if(A.res===null||!A.ease||A.nps===null||!A.sat)return $('#m').textContent=T('need');
   const s=(await TG.sb.auth.getSession()).data.session;if(!s){location.href='login.html?next='+encodeURIComponent(location.href);return;}
-  const x=await TG.sb.rpc('chat_rate',{p_chat:id,p_rating:r,p_fb:$('#fb').value});
-  if(x.error)return $('#m').textContent=x.error.message;$('#b').style.display='none';$('#h').textContent='Thank you for your feedback!';$('#m').textContent='';};
+  const x=await TG.sb.rpc('chat_survey',{p_chat:id,p_rating:A.sat,p_resolved:A.res,p_nps:A.nps,p_ease:A.ease,p_fb:$('#fb').value});
+  if(x.error)return $('#m').textContent=x.error.message;$('#b').style.display='none';$('#h').textContent=T('done');$('#m').textContent='';return;}
+ const q=b.parentElement.dataset.q,v=+b.dataset.v;if(q==='res')A.res=v===1;else A[q]=v;render();};
+$('#lg').onclick=()=>{localStorage.setItem('telegant-lang',lang()==='ar'?'en':'ar');render();};
+render();
 </script></body></html>

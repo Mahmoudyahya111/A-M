@@ -28,7 +28,7 @@ ol li.now::before{background:var(--gold);box-shadow:0 0 0 5px rgba(201,162,75,.3
 <header><img src="MEBG-GOLDEN.png" alt="TELEGANT" style="height:40px"><b>My orders</b><a href="shop.html">Shop</a><a href="login.html">Account</a></header>
 <main><div class="sum"><div><b id="n1">0</b>orders</div><div><b id="n2">0</b>in progress</div></div><div id="v">Loading…</div></main>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
-<script src="tg-core.js"></script>
+<script src="tg-core.js"></script><script src="tg-ui.js"></script>
 <script>
 const sb=TG.sb,$=s=>document.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));

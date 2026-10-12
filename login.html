@@ -1,102 +1,90 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="robots" content="noindex"><title>Sign in | TELEGANT</title>
-<script>try{var t=localStorage.tg_theme||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');document.documentElement.dataset.theme=t}catch(e){}</script>
+<meta name="robots" content="noindex"><title>TELEGANT</title>
+<script>try{var t=localStorage.getItem('telegant-theme')||localStorage.tg_theme||'dark';document.documentElement.dataset.theme=t}catch(e){}</script>
 <link rel="stylesheet" href="tg-theme.css">
 <style>
-:root{--ink:#2a2114;--card:rgba(255,252,244,.85);--line:rgba(160,120,40,.35);--gold:#b8892f;--btn:#2a2114;--btnt:#f6efe0}
-html[data-tg-theme=dark]{--ink:#f1e9d6;--card:rgba(24,19,12,.85);--line:rgba(232,207,134,.28);--gold:#e8cf86;--btn:#e8cf86;--btnt:#16110a}
+:root{--ink:#2a2114;--card:rgba(255,252,244,.88);--line:rgba(160,120,40,.35);--gold:#b8892f;--btn:#2a2114;--btnt:#f6efe0}
+html[data-tg-theme=dark]{--ink:#f1e9d6;--card:rgba(24,19,12,.88);--line:rgba(232,207,134,.28);--gold:#e8cf86;--btn:#e8cf86;--btnt:#16110a}
 body{margin:0;min-height:100vh;display:grid;place-items:center;font:15px/1.5 system-ui,sans-serif;color:var(--ink);padding:20px;box-sizing:border-box}
-.box{width:100%;max-width:400px;background:var(--card);backdrop-filter:blur(10px);border:1px solid var(--line);border-radius:14px;padding:28px}
-.box>img{display:block;margin:0 auto 6px}
-h1{font:600 22px Georgia,serif;text-align:center;margin:4px 0 16px}
+.box{width:100%;max-width:410px;background:var(--card);backdrop-filter:blur(10px);border:1px solid var(--line);border-radius:14px;padding:28px}
+.box>img{display:block;margin:0 auto 6px}h1{font:600 22px Georgia,serif;text-align:center;margin:4px 0 16px}
 .tabs,.chips{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
 .tabs button,.chips button{flex:1;padding:8px 4px;border:1px solid var(--line);background:none;color:var(--ink);border-radius:8px;cursor:pointer;font:inherit;font-size:13px}
 .on{background:var(--gold)!important;color:#16110a!important;border-color:var(--gold)!important}
-
 .pwrap{position:relative}.pwrap input{padding-inline-end:64px}.pwrap button{position:absolute;inset-inline-end:8px;top:6px;background:none;border:0;color:var(--gold);cursor:pointer;font:inherit;font-size:13px;padding:4px 6px}
 input{width:100%;box-sizing:border-box;padding:10px;margin-bottom:10px;border:1px solid var(--line);border-radius:8px;background:transparent;color:var(--ink);font:inherit}
 .go{width:100%;padding:11px;border:0;border-radius:8px;background:var(--btn);color:var(--btnt);font:inherit;font-weight:600;cursor:pointer}
-.msg{min-height:20px;margin:10px 0 0;font-size:13px;text-align:center}
-.lnk{background:none;border:0;color:var(--gold);cursor:pointer;font:inherit;font-size:13px;display:block;margin:10px auto 0}
-small{display:block;opacity:.75;margin:-4px 0 12px;font-size:12px}
-.h{display:none}
+.msg{min-height:20px;margin:10px 0 0;font-size:13px;text-align:center}.lnk{background:none;border:0;color:var(--gold);cursor:pointer;font:inherit;font-size:13px;display:block;margin:10px auto 0}
+small{display:block;opacity:.75;margin:-4px 0 12px;font-size:12px}.h{display:none}a{color:var(--gold)}
 </style></head><body>
 <div class="box">
   <img src="MEBG-GOLDEN.png" alt="TELEGANT">
-  <h1 id="ttl">Sign in</h1>
-  <div class="tabs" id="tabs"><button data-m="in" class="on">Sign in</button><button data-m="up">Create account</button></div>
-  <div class="chips h" id="chips">
-    <button data-r="customer" class="on">Customer</button><button data-r="manufacturer">Manufacturer</button>
-    <button data-r="delivery">Delivery</button><button data-r="support">Support</button><button data-r="owner">Owner</button>
-  </div>
-  <input id="nm" class="h" placeholder="Full name" autocomplete="name">
-  <input id="em" type="email" placeholder="Email" autocomplete="email">
-  <div class="pwrap"><input id="pw" type="password" placeholder="Password" autocomplete="current-password"><button type="button" id="eye" aria-label="Show password">Show</button></div>
+  <h1 id="ttl"></h1>
+  <div class="tabs" id="tabs"><button data-m="in" class="on" data-k="t_in"></button><button data-m="up" data-k="t_up"></button></div>
+  <div class="chips h" id="chips"><button data-r="customer" class="on" data-k="c_customer"></button><button data-r="manufacturer" data-k="c_manufacturer"></button><button data-r="delivery" data-k="c_delivery"></button><button data-r="support" data-k="c_support"></button><button data-r="owner" data-k="c_owner"></button></div>
+  <input id="nm" class="h" data-p="p_name" autocomplete="name">
+  <input id="em" type="email" data-p="p_email" autocomplete="email">
+  <div class="pwrap"><input id="pw" type="password" data-p="p_pw" autocomplete="current-password"><button type="button" id="eye"></button></div>
   <small id="note" class="h"></small>
-  <button class="go" id="go">Sign in</button>
-  <p class="msg" id="msg"></p>
-  <button class="lnk" id="fg">Forgot password / owner: set password</button>
-  <button class="lnk" id="bk">Continue without signing in</button>
-  <button class="lnk" id="th">Light / dark</button>
+  <button class="go" id="go"></button><p class="msg" id="msg"></p>
+  <button class="lnk" id="fg" data-k="forgot"></button><button class="lnk" id="bk" data-k="back"></button>
+  <button class="lnk" id="lg"></button><button class="lnk" id="th" data-k="theme"></button>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
-<script src="tg-core.js"></script>
+<script src="tg-core.js"></script><script src="tg-ui.js"></script>
 <script>
-const $=s=>document.querySelector(s); let mode='in',role='customer';
+const $=s=>document.querySelector(s);
+const D={en:{t_in:'Sign in',t_up:'Create account',c_customer:'Customer',c_manufacturer:'Manufacturer',c_delivery:'Delivery',c_support:'Support',c_owner:'Owner',p_name:'Full name',p_email:'Email',p_pw:'Password',show:'Show',hide:'Hide',
+ forgot:'Forgot password / owner: set password',back:'Continue without signing in',theme:'Light / dark',ttl_in:'Sign in',ttl_up:'Create account',ttl_reset:'Set new password',go_in:'Sign in',go_up:'Create account',go_reset:'Save password',
+ n_manufacturer:'Manufacturer accounts need approval from the owner before you can sign in.',n_delivery:'Delivery accounts need approval from the owner before you can sign in.',n_support:'Support accounts need approval from the owner before you can sign in.',n_owner:'Owner accounts work only with the owner email.',
+ m_fill:'Enter email and password.',m_pw8:'Use at least 8 characters.',m_own:'Owner accounts are only for the owner email.',m_confirm:'Check your email to confirm your account.',m_wait:'Confirm your email, then wait for the owner to approve your account.',
+ m_mail:'Enter your email first.',m_sent:'Check your email for the password link.',m_saved:'Password saved.',m_nf:'Account not found.',m_pend:'Your account is waiting for owner approval.',m_rej:'This account was not approved.',
+ so:'Sign out',signed:'Signed in',admin:'Open admin dashboard',chat:'Open support console',staff:'Open my orders screen',orders:'My orders',shop:'Shop',
+ err:{'Invalid login credentials':'Invalid login credentials','Email not confirmed':'Email not confirmed'}},
+ ar:{t_in:'تسجيل الدخول',t_up:'إنشاء حساب',c_customer:'عميل',c_manufacturer:'مصنّع',c_delivery:'توصيل',c_support:'دعم',c_owner:'المالك',p_name:'الاسم الكامل',p_email:'البريد الإلكتروني',p_pw:'كلمة المرور',show:'إظهار',hide:'إخفاء',
+ forgot:'نسيت كلمة المرور / المالك: تعيين كلمة المرور',back:'المتابعة بدون تسجيل الدخول',theme:'فاتح / داكن',ttl_in:'تسجيل الدخول',ttl_up:'إنشاء حساب',ttl_reset:'تعيين كلمة مرور جديدة',go_in:'تسجيل الدخول',go_up:'إنشاء حساب',go_reset:'حفظ كلمة المرور',
+ n_manufacturer:'حسابات المصنّعين تحتاج موافقة المالك قبل تسجيل الدخول.',n_delivery:'حسابات التوصيل تحتاج موافقة المالك قبل تسجيل الدخول.',n_support:'حسابات الدعم تحتاج موافقة المالك قبل تسجيل الدخول.',n_owner:'حسابات المالك تعمل فقط ببريد المالك.',
+ m_fill:'أدخل البريد الإلكتروني وكلمة المرور.',m_pw8:'استخدم 8 أحرف على الأقل.',m_own:'حسابات المالك مخصصة لبريد المالك فقط.',m_confirm:'تحقق من بريدك الإلكتروني لتأكيد حسابك.',m_wait:'أكّد بريدك الإلكتروني ثم انتظر موافقة المالك على حسابك.',
+ m_mail:'أدخل بريدك الإلكتروني أولاً.',m_sent:'تحقق من بريدك الإلكتروني للحصول على رابط كلمة المرور.',m_saved:'تم حفظ كلمة المرور.',m_nf:'الحساب غير موجود.',m_pend:'حسابك بانتظار موافقة المالك.',m_rej:'لم تتم الموافقة على هذا الحساب.',
+ so:'تسجيل الخروج',signed:'تم تسجيل الدخول',admin:'فتح لوحة الإدارة',chat:'فتح وحدة الدعم',staff:'فتح شاشة الطلبات',orders:'طلباتي',shop:'المتجر',
+ err:{'Invalid login credentials':'البريد الإلكتروني أو كلمة المرور غير صحيحة','Email not confirmed':'لم يتم تأكيد البريد الإلكتروني بعد'}}};
+const lang=()=>localStorage.getItem('telegant-lang')==='ar'?'ar':'en',T=k=>D[lang()][k];
 const NEXT=(()=>{try{const n=new URLSearchParams(location.search).get('next')||document.referrer;const u=new URL(n,location.href);
-  if(u.origin===location.origin&&!/\/(login|account|admin|staff)\.html$/.test(u.pathname))return u.href}catch(e){}return 'index.html'})();
-$('#bk').onclick=()=>location.href=NEXT;
-$('#eye').onclick=()=>{const p=$('#pw'),s=p.type==='password';p.type=s?'text':'password';$('#eye').textContent=s?'Hide':'Show';$('#eye').setAttribute('aria-label',s?'Hide password':'Show password');};
-const msg=(t,bad)=>{$('#msg').textContent=t;$('#msg').style.color=bad?'#c0392b':'inherit'};
-function view(m){mode=m;
-  $('#ttl').textContent={in:'Sign in',up:'Create account',reset:'Set new password'}[m];
-  $('#go').textContent={in:'Sign in',up:'Create account',reset:'Save password'}[m];
-  $('#chips').classList.toggle('h',m!=='up'); $('#nm').classList.toggle('h',m!=='up');
-  $('#em').classList.toggle('h',m==='reset'); $('#tabs').classList.toggle('h',m==='reset');
-  $('#fg').classList.toggle('h',m==='reset');
-  $('#pw').autocomplete=m==='in'?'current-password':'new-password';
-  note(); msg('');
-  document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('on',b.dataset.m===m));}
-function note(){const n=$('#note');n.classList.toggle('h',mode!=='up'||role==='customer');
-  n.textContent={manufacturer:'Manufacturer accounts need approval from the owner before you can sign in.',
-   delivery:'Delivery accounts need approval from the owner before you can sign in.',
-   support:'Support accounts need approval from the owner before you can sign in.',
-   owner:'Owner accounts work only with the owner email.'}[role]||'';}
+  if(u.origin===location.origin&&!/\/(login|account|admin|staff|chat-admin)\.html$/.test(u.pathname))return u.href}catch(e){}return 'index.html'})();
+let mode='in',role='customer',signed=null,lastMsg=null;
+const msg=(k,bad,raw)=>{lastMsg=[k,bad,raw];const x=raw?(T('err')[raw]||raw):(k?T(k):'');$('#msg').textContent=x;$('#msg').style.color=bad?'#c0392b':'inherit'};
+function paint(){const ar=lang()==='ar';document.documentElement.lang=lang();document.documentElement.dir=ar?'rtl':'ltr';
+  document.querySelectorAll('[data-k]').forEach(e=>e.textContent=T(e.dataset.k));document.querySelectorAll('[data-p]').forEach(e=>e.placeholder=T(e.dataset.p));
+  $('#ttl').textContent=T('ttl_'+mode);$('#go').textContent=T('go_'+mode);$('#eye').textContent=T($('#pw').type==='password'?'show':'hide');$('#lg').textContent=ar?'English':'العربية';
+  $('#note').textContent=mode==='up'&&role!=='customer'?T('n_'+role):'';$('#note').classList.toggle('h',!(mode==='up'&&role!=='customer'));
+  if(lastMsg)msg(...lastMsg);if(signed)panel(signed);}
+function view(m){mode=m;$('#chips').classList.toggle('h',m!=='up');$('#nm').classList.toggle('h',m!=='up');$('#em').classList.toggle('h',m==='reset');$('#tabs').classList.toggle('h',m==='reset');$('#fg').classList.toggle('h',m==='reset');
+  $('#pw').autocomplete=m==='in'?'current-password':'new-password';document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('on',b.dataset.m===m));msg('');paint();}
 $('#tabs').onclick=e=>e.target.dataset.m&&view(e.target.dataset.m);
-$('#chips').onclick=e=>{if(!e.target.dataset.r)return;role=e.target.dataset.r;
-  document.querySelectorAll('#chips button').forEach(b=>b.classList.toggle('on',b===e.target));note();};
-$('#th').onclick=()=>{const d=document.documentElement,n=d.dataset.theme==='dark'?'light':'dark';d.dataset.theme=n;localStorage.tg_theme=n};
-$('#fg').onclick=async()=>{const e=$('#em').value.trim();if(!e)return msg('Enter your email first.',1);
-  const r=await TG.resetPassword(e);r.error?msg(r.error.message,1):msg('Check your email for the password link.');};
-
+$('#chips').onclick=e=>{if(!e.target.dataset.r)return;role=e.target.dataset.r;document.querySelectorAll('#chips button').forEach(b=>b.classList.toggle('on',b===e.target));paint();};
+$('#eye').onclick=()=>{const p=$('#pw');p.type=p.type==='password'?'text':'password';paint();};
+$('#lg').onclick=()=>{localStorage.setItem('telegant-lang',lang()==='ar'?'en':'ar');paint();};
+$('#th').onclick=()=>{const d=document.documentElement,n=d.dataset.theme==='dark'?'light':'dark';d.dataset.theme=n;localStorage.setItem('telegant-theme',n);localStorage.tg_theme=n};
+$('#bk').onclick=()=>location.href=NEXT;
+$('#fg').onclick=async()=>{const e=$('#em').value.trim();if(!e)return msg('m_mail',1);const r=await TG.resetPassword(e);r.error?msg('',1,r.error.message):msg('m_sent');};
 $('#go').onclick=async()=>{const e=$('#em').value.trim().toLowerCase(),p=$('#pw').value;msg('');
-  if(mode==='reset'){if(p.length<8)return msg('Use at least 8 characters.',1);
-    const r=await TG.sb.auth.updateUser({password:p});if(r.error)return msg(r.error.message,1);
-    msg('Password saved.');return route();}
-  if(!e||!p)return msg('Enter email and password.',1);
-  if(mode==='up'){
-    if(p.length<8)return msg('Use at least 8 characters.',1);
-    if(role==='owner'&&e!==TG.OWNER)return msg('Owner accounts are only for the owner email.',1);
-    const r=await TG.signUp(e,p,$('#nm').value.trim(),role);if(r.error)return msg(r.error.message,1);
-    return msg(role==='manufacturer'||role==='delivery'||role==='support'
-      ?'Confirm your email, then wait for the owner to approve your account.':'Check your email to confirm your account.');}
-  const r=await TG.signIn(e,p);if(r.error)return msg(r.error.message,1);route();};
-
+  if(mode==='reset'){if(p.length<8)return msg('m_pw8',1);const r=await TG.sb.auth.updateUser({password:p});if(r.error)return msg('',1,r.error.message);msg('m_saved');return route();}
+  if(!e||!p)return msg('m_fill',1);
+  if(mode==='up'){if(p.length<8)return msg('m_pw8',1);if(role==='owner'&&e!==TG.OWNER)return msg('m_own',1);
+    const r=await TG.signUp(e,p,$('#nm').value.trim(),role);if(r.error)return msg('',1,r.error.message);return msg(['manufacturer','delivery','support'].includes(role)?'m_wait':'m_confirm');}
+  const r=await TG.signIn(e,p);if(r.error)return msg('',1,r.error.message);route();};
 async function route(){const p=await TG.profile();
-  if(!p){await TG.signOut();return msg('Account not found.',1);}
-  if(p.status!=='approved'){await TG.signOut();return msg(p.status==='pending'?'Your account is waiting for owner approval.':'This account was not approved.',1);}
-  if(p.role==='customer')sessionStorage.tg_welcome=p.full_name||p.email.split('@')[0];
+  if(!p){await TG.signOut();return msg('m_nf',1);}
+  if(p.status!=='approved'){await TG.signOut();return msg(p.status==='pending'?'m_pend':'m_rej',1);}
+  if(p.role==='customer')sessionStorage.tg_welcome2=p.full_name||p.email.split('@')[0];
   location.href=p.role==='owner'?'admin.html':(p.role==='manufacturer'||p.role==='delivery')?'staff.html':p.role==='support'?'chat-admin.html':NEXT;}
 TG.sb.auth.onAuthStateChange(ev=>{if(ev==='PASSWORD_RECOVERY')view('reset');});
-
-(async()=>{if(location.hash.includes('type=recovery'))return;
- const p=await TG.profile();if(!p||p.status!=='approved'||mode==='reset')return;
- ['#ttl','#tabs','#chips','#nm','#em','.pwrap','#note','#go','#msg','#fg','#bk'].forEach(s=>$(s).classList.add('h'));
- const d=document.createElement('div');d.style.textAlign='center';
- d.innerHTML='<h1>Signed in</h1><p><span id="who"></span></p><p id="lk"></p><button class="lnk" id="so">Sign out</button>';
- $('.box').insertBefore(d,$('#th'));$('#who').textContent=p.email+' ('+p.role+')';
- $('#lk').innerHTML=(p.role==='owner'?'<a href="admin.html" style="color:var(--gold)">Open admin dashboard</a><br>':p.role==='support'?'<a href="chat-admin.html" style="color:var(--gold)">Open chat console</a><br>':'')+'<a href="my-orders.html" style="color:var(--gold)">My orders</a> &nbsp; <a href="shop.html" style="color:var(--gold)">Shop</a>';
- $('#so').onclick=async()=>{await TG.signOut();location.reload()};})();
+function panel(p){['#ttl','#tabs','#chips','#nm','#em','.pwrap','#note','#go','#msg','#fg','#bk'].forEach(s=>$(s).classList.add('h'));
+  let d=document.getElementById('sp');if(!d){d=document.createElement('div');d.id='sp';d.style.textAlign='center';$('.box').insertBefore(d,$('#lg'));}
+  d.innerHTML='<h1></h1><p id="who"></p><p id="lk"></p><button class="lnk" id="so"></button>';d.querySelector('h1').textContent=T('signed');$('#who').textContent=p.email+' ('+p.role+')';
+  const L=[];if(p.role==='owner')L.push(['admin.html',T('admin')]);if(p.role==='support')L.push(['chat-admin.html',T('chat')]);if(p.role==='manufacturer'||p.role==='delivery')L.push(['staff.html',T('staff')]);if(p.role==='customer')L.push(['my-orders.html',T('orders')],['shop.html',T('shop')]);
+  $('#lk').innerHTML=L.map(x=>'<a href="'+x[0]+'">'+x[1]+'</a>').join(' &nbsp; ');$('#so').textContent=T('so');$('#so').onclick=async()=>{await TG.signOut();location.reload()};}
+(async()=>{view('in');if(location.hash.includes('type=recovery'))return;const p=await TG.profile();if(p&&p.status==='approved'){signed=p;panel(p);}})();
 </script></body></html>

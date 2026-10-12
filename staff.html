@@ -23,7 +23,7 @@ small{opacity:.8}a{color:var(--gold)}
 <button class="b" id="th">Light / dark</button><button class="b" id="out">Sign out</button></header>
 <main id="v">Loading…</main>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
-<script src="tg-core.js"></script>
+<script src="tg-core.js"></script><script src="tg-ui.js"></script>
 <script>
 const $=s=>document.querySelector(s),sb=TG.sb;
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));

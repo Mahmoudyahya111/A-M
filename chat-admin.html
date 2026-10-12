@@ -42,7 +42,7 @@ main{display:grid;grid-template-columns:340px 1fr;gap:16px;padding:16px 18px;max
 <div class="pane" id="conv"><div class="empty">Select a chat to start</div></div></main>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
-<script src="tg-core.js"></script>
+<script src="tg-core.js"></script><script src="tg-ui.js"></script>
 <script>
 const sb=TG.sb,$=s=>document.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -82,7 +82,7 @@ $('#conv').onclick=async e=>{const i=e.target.id,c=chats.find(x=>x.id===sel);if(
   if(i==='take'){if(err(await sb.rpc('chat_claim',{p_chat:c.id})))return;}
   if(i==='snd'){const v=$('#re').value.trim();if(!v)return;$('#re').value='';if(err(await sb.rpc('chat_send',{p_chat:c.id,p_body:v,p_as:'staff'})))return;}
   if(i==='tr'){if(err(await sb.rpc('chat_transfer',{p_chat:c.id,p_to:$('#to').value})))return;}
-  if(i==='cl'&&confirm('Close this chat? The customer receives a satisfaction survey by email.')){if(err(await sb.rpc('chat_close',{p_chat:c.id})))return;sb.functions.invoke('swift-action',{body:{action:'chat_close',chat_id:c.id}});}
+  if(i==='cl'&&await TG.ask('Close this chat? The customer receives a satisfaction survey by email.')){if(err(await sb.rpc('chat_close',{p_chat:c.id})))return;sb.functions.invoke('swift-action',{body:{action:'chat_close',chat_id:c.id}});}
   key='';list();};
 $('#conv').addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.id==='re')$('#snd').click();});
 $('#tg').onclick=async()=>{if(!err(await sb.from('site_settings').upsert({key:'chat_enabled',value:{on:!chatOn}})))setChatBtn();};

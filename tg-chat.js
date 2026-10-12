@@ -1,6 +1,8 @@
 /* TELEGANT live chat widget – loaded automatically by tg-core.js. Shows only when the owner turns chat ON. */
 (function () {
   var TG = window.TG; if (!TG || TG.chatOn) return; TG.chatOn = 1;
+  if (!TG.uiOn) { var us = document.createElement('script'); us.src = 'tg-ui.js'; us.defer = true; document.head.appendChild(us); }
+  var ask = function (m) { return window.TG && TG.ask ? TG.ask(m) : Promise.resolve(confirm(m)); };
   if (!TG.navOn && document.querySelector('.navbar-links')) { var ns = document.createElement('script'); ns.src = 'tg-nav.js'; ns.defer = true; document.head.appendChild(ns); }
   var sb = TG.sb, ar = document.documentElement.lang === 'ar', cur = null, timer = null, note = false, lastN = -1;
   var L = ar ? { t: 'تحدث معنا', ph: 'اكتب رسالتك…', send: 'إرسال', end: 'إنهاء المحادثة', wait: 'نرد عليك خلال لحظات…', w: 'تتحدث مع ', login: 'سجّل الدخول للدردشة معنا', lb: 'تسجيل الدخول', ended: 'انتهت المحادثة. أرسلنا لك استبياناً قصيراً على بريدك.', first: 'اكتب رسالتك وسيرد عليك أحد أفراد الفريق.', conf: 'إنهاء المحادثة؟', busy: 'فريقنا مشغول حالياً. اترك رسالتك وسنرد عليك في أقرب وقت.' }
@@ -66,7 +68,7 @@
     load();
   }
   async function end() {
-    if (!cur || !confirm(L.conf)) return;
+    if (!cur || !(await ask(L.conf))) return;
     var id = cur, r = await sb.rpc('chat_close', { p_chat: id }); if (r.error) return alert(r.error.message);
     sb.functions.invoke('swift-action', { body: { action: 'chat_close', chat_id: id } }); note = true; cur = null; lastN = -1; load();
   }
