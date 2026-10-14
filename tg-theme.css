@@ -40,3 +40,6 @@ html[data-tg-theme="dark"] img[src*="MEBG-GOLDEN"]{filter:brightness(0) invert(1
  #Title>div>p:not(.title-desc){flex:0 0 100%;max-width:none;box-sizing:border-box;padding-inline:max(0px,calc((100% - 46ch)/2));text-align:center}
  #Title .Shop{margin-inline-end:0!important}
 }
+
+/* PRODUCT PHOTOS: the new pictures are portrait photos of a person. Show the shirt, not just the middle of the picture. */
+.product-card img,#cat-grid .product-card img{width:100%;aspect-ratio:4/5;object-fit:cover;object-position:50% 30%}

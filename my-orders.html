@@ -34,6 +34,7 @@ const sb=TG.sb,$=s=>document.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const STEPS=['Order placed','Getting materials','Cutting','Assembling','Product photo','Ready for pickup','On the way to you','Delivered'];
 const IDX={'new':0,'obtaining material':1,'cutting':2,'assembling':3,'adding product photo':4,'ready for pickup':5,'on the way to manufacturer':5,'picked up':6,'on the way to customer':6,'arrived at customer':6,'delivered':7};
+const ar=()=>(TG.lang?TG.lang():'en')==='ar';
 const open=new Set(location.hash?[decodeURIComponent(location.hash.slice(1))]:[]);
 async function load(){
   const{data:{session}}=await sb.auth.getSession();
@@ -45,12 +46,13 @@ async function load(){
   $('#v').innerHTML=list.map(x=>{const i=IDX[x.status],items=(Array.isArray(x.items)?x.items:[]).map(it=>esc(it.name)+' ('+esc(it.size)+') ×'+esc(it.qty)).join('<br>');
     const show=open.has(x.order_number);
     return `<div class="card"><h3><span>${esc(x.order_number)}</span><span class="tag">${x.status==='cancelled'?'Cancelled':x.payment_status==='awaiting'?'Pending payment confirmation':esc(x.status)}</span></h3>
-     <small>${new Date(x.created_at).toLocaleDateString()} · ${esc(x.total)} EGP · deliver by ${esc(x.delivery_date||'-')}</small><div style="margin-top:6px">${items}</div>${x.payment_status==='awaiting'?'<p style="margin:8px 0 0"><span class="tag">Awaiting payment confirmation</span><br><small>We start making your order as soon as we confirm your InstaPay transfer.</small></p>':''}
-     ${act(x)?`<button class="b" data-t="${esc(x.order_number)}">${show?'Hide tracking':'Track order'}</button>`:''}
+     <small>${new Date(x.created_at).toLocaleDateString()} · ${esc(x.total)} EGP · deliver by ${esc(x.delivery_date||'-')}</small><div style="margin-top:6px">${items}</div>${x.status==='cancelled'?`<p style="margin:8px 0 0;padding:10px;border:1px solid #c0392b;border-radius:8px"><b>${ar()?'تم إلغاء هذا الطلب':'This order was cancelled'}</b> <small>(${x.cancelled_by==='owner'?'TELEGANT':ar()?'بواسطتك':'by you'})</small><br>${ar()?'السبب':'Reason'}: ${esc(x.cancel_reason||'-')}${x.refund_status==='refunded'?`<br><b>${ar()?'تم الاسترداد':'Refunded'}: ${esc(x.refund_amount)} EGP</b>${x.refund_reason?' · '+esc(x.refund_reason):''}`:x.refund_status==='due'?`<br>${ar()?'سيتم رد المبلغ إليك قريباً.':'Your refund is being processed.'}`:''}</p>`:''}${x.payment_status==='awaiting'&&x.status!=='cancelled'?'<p style="margin:8px 0 0"><span class="tag">Awaiting payment confirmation</span><br><small>We start making your order as soon as we confirm your InstaPay transfer.</small></p>':''}
+     ${['new','obtaining material'].includes(x.status)?`<button class="b" data-cx="${x.id}" style="margin-inline-end:8px;border-color:#c0392b;color:#c0392b">${ar()?'إلغاء الطلب':'Cancel order'}</button>`:''}${act(x)?`<button class="b" data-t="${esc(x.order_number)}">${show?'Hide tracking':'Track order'}</button>`:''}
      <div class="${show&&act(x)?'':'hid'}">${x.product_photo&&i>=4?`<img src="${esc(x.product_photo)}" alt="" style="width:100%;max-height:240px;object-fit:cover;border-radius:10px;margin-top:10px">`:''}
      <ol>${STEPS.map((s,k)=>`<li class="${k<i||x.status==='delivered'?'done':k===i?'now':''}">${s}</li>`).join('')}</ol>
      ${x.status==='arrived at customer'&&codes[x.id]?`<div class="code">Your delivery person is here.<br>Give them this code:<b>${esc(codes[x.id])}</b></div>`:''}</div></div>`;}).join('')||'<div class="card">No orders yet. <a href="shop.html" style="color:var(--gold)">Start shopping</a></div>';
 }
-$('#v').addEventListener('click',e=>{const t=e.target.dataset.t;if(!t)return;open.has(t)?open.delete(t):open.add(t);load();});
+$('#v').addEventListener('click',async e=>{const cx=e.target.dataset.cx;if(cx){const A=ar(),f=await TG.form({title:A?'إلغاء الطلب':'Cancel this order',ok:A?'إلغاء الطلب':'Cancel order',fields:[{id:'why',label:A?'لماذا تريد الإلغاء؟':'Why are you cancelling?',type:'select',options:(A?['غيّرت رأيي','طلبته بالخطأ','وجدت سعراً أفضل','التوصيل متأخر','سبب آخر']:['I changed my mind','I ordered by mistake','I found a better price','Delivery is too slow','Other reason']).map(x=>[x,x])},{id:'more',label:A?'تفاصيل (اختياري)':'Details (optional)',type:'textarea'}]});if(!f)return;const r=await sb.rpc('cancel_order',{p_order:+cx,p_reason:f.why+(f.more?': '+f.more:'')});if(r.error)return alert(r.error.message);sb.functions.invoke('swift-action',{body:{action:'cancel',order_id:+cx}});alert(A?'تم إلغاء طلبك. أرسلنا لك رسالة بالتفاصيل.':'Your order was cancelled. We emailed you the details.');return load();}
+  const t=e.target.dataset.t;if(!t)return;open.has(t)?open.delete(t):open.add(t);load();});
 load();setInterval(load,20000);
 </script></body></html>

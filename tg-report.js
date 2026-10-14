@@ -67,5 +67,5 @@ window.TGReport = (function () {
     (spec.sections || []).forEach(function (s) { sheet(s.title, s.head, s.rows, s.fmt, s.widths); });
     var buf = await wb.xlsx.writeBuffer(); save(new Blob([buf], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }), spec.file + '.xlsx');
   }
-  return { pdf: pdf, xlsx: xlsx };
+  return { pdf: pdf, xlsx: xlsx, load: load, logo: logo };
 })();

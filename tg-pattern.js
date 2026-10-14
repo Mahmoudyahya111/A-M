@@ -11,6 +11,8 @@ window.TGPattern = (function () {
   function defaults(sz) { var c = TGSizes.chart[sz] || TGSizes.chart.m;
     return { chest: c.chest, length: c.length, shoulder: c.shoulder, sleeve: c.sleeve, neckW: Math.round(c.shoulder * 0.37), frontDrop: 7, backDrop: 2, armhole: Math.round(c.chest * 0.46), collarH: 4.5, sleeveW: Math.round(c.chest * 0.4) }; }
 
+  function fromMeasures(c, l, s) { return { chest: c, length: l, shoulder: s, sleeve: Math.round(s * 0.45), neckW: Math.round(s * 0.37), frontDrop: 7, backDrop: 2, armhole: Math.round(c * 0.46), collarH: 4.5, sleeveW: Math.round(c * 0.4) }; }
+
   /* ---------- geometry (cm; x to the right, y downwards) ---------- */
   function bez(a, b, c, d, n) { var o = [], i, t, u; for (i = 0; i <= n; i++) { t = i / n; u = 1 - t; o.push([u * u * u * a[0] + 3 * u * u * t * b[0] + 3 * u * t * t * c[0] + t * t * t * d[0], u * u * u * a[1] + 3 * u * u * t * b[1] + 3 * u * t * t * c[1] + t * t * t * d[1]]); } return o; }
   function neck(N, d, n) { var o = [], i, a; for (i = 0; i <= n; i++) { a = i / n * Math.PI / 2; o.push([N * Math.sin(a), d * Math.cos(a)]); } return o; }
@@ -32,11 +34,11 @@ window.TGPattern = (function () {
       notches: [{ i: armStart + 8, n: 1 }, { i: armStart, n: 1 }], dims: [{ a: [0, ya], b: [C, ya], t: 'Chest ' + m.chest + ' (half ' + C + ')', off: [0, 2.5] }, { a: [-3, 0], b: [-3, L], t: 'Length ' + m.length }, { a: [0, -3], b: [S, -3], t: 'Shoulder ' + m.shoulder + ' (half ' + S + ')' }] };
   }
   function sleeve(m) {
-    var SW = m.sleeveW, CH = Math.round(m.armhole * 0.36 * 10) / 10, SL = m.sleeve + CH * 0.5, SO = SW - 2;
+    var SW = m.sleeveW * 2, CH = Math.round(m.armhole * 0.47 * 10) / 10, SL = m.sleeve, SO = 2 * (m.sleeveW - 3);
     var l = bez([-SW / 2, CH], [-SW / 2 + 1.2, CH * 0.45], [-SW * 0.2, 0], [0, 0], 14), r = bez([0, 0], [SW * 0.2, 0], [SW / 2 - 1.2, CH * 0.45], [SW / 2, CH], 14);
     var pts = l.concat(r.slice(1), [[SO / 2, SL], [-SO / 2, SL]]), cut = offset(pts, SA); cut.forEach(function (q, i) { if (pts[i][1] === SL) q[1] = SL + SHEM; });
     return { key: 'SLEEVE', cut: 'Cut 2 (mirror pair)', fold: false, sew: pts, out: cut, capLen: len(l) + len(r), SL: SL, SO: SO, notches: [{ i: l.length - 1, n: 1 }],
-      dims: [{ a: [-SW / 2, CH + 1.5], b: [SW / 2, CH + 1.5], t: 'Width ' + SW }, { a: [SW / 2 + 3, 0], b: [SW / 2 + 3, SL], t: 'Length ' + (Math.round(SL * 10) / 10) }] };
+      dims: [{ a: [-SW / 2, CH + 1.5], b: [SW / 2, CH + 1.5], t: 'Width ' + SW + ' (flat ' + m.sleeveW + ' x 2)' }, { a: [SW / 2 + 3, 0], b: [SW / 2 + 3, SL], t: 'Length ' + (Math.round(SL * 10) / 10) }] };
   }
   function collar(m, neckCirc) {
     var W = Math.round(neckCirc * 0.9 * 10) / 10, H = m.collarH * 2, pts = [[0, 0], [W, 0], [W, H], [0, H]], cut = offset(pts, SA);
@@ -73,7 +75,7 @@ window.TGPattern = (function () {
     function head(w, title, sub) { doc.setFillColor(17, 17, 17); doc.rect(0, 0, w, 28, 'F'); if (lg) doc.addImage(lg.data, 'PNG', M, 5, 17 * lg.w / lg.h, 17); doc.setTextColor(201, 162, 75); doc.setFont('helvetica', 'bold'); doc.setFontSize(15); doc.text(title, w - M, 12, { align: 'right' }); doc.setFont('helvetica', 'normal'); doc.setFontSize(8.5); doc.setTextColor(220, 220, 220); doc.text(sub, w - M, 19, { align: 'right' }); }
     /* page 1: tech spec */
     head(W, 'Pattern & Tech Pack', 'Mock neck T-shirt · size ' + size + (spec.ref ? ' · ' + spec.ref : '') + ' · ' + new Date().toISOString().slice(0, 10));
-    var rows = [['A', 'Chest width (flat, armpit to armpit)', m.chest], ['B', 'Body length (highest shoulder point to hem)', m.length], ['C', 'Shoulder width (seam to seam)', m.shoulder], ['D', 'Sleeve length (shoulder seam to hem)', m.sleeve], ['E', 'Sleeve width at underarm', m.sleeveW], ['F', 'Sleeve opening width', P.s.SO], ['G', 'Neck opening width', m.neckW], ['H', 'Front neck drop', m.frontDrop], ['I', 'Back neck drop', m.backDrop], ['J', 'Armhole depth (straight)', m.armhole], ['K', 'Collar height (finished)', m.collarH]];
+    var rows = [['A', 'Chest width (flat, armpit to armpit)', m.chest], ['B', 'Body length (highest shoulder point to hem)', m.length], ['C', 'Shoulder width (seam to seam)', m.shoulder], ['D', 'Sleeve length (shoulder seam to hem)', m.sleeve], ['E', 'Sleeve width at underarm', m.sleeveW], ['F', 'Sleeve opening width (flat)', P.s.SO / 2], ['G', 'Neck opening width', m.neckW], ['H', 'Front neck drop', m.frontDrop], ['I', 'Back neck drop', m.backDrop], ['J', 'Armhole depth (straight)', m.armhole], ['K', 'Collar height (finished)', m.collarH]];
     doc.autoTable({ startY: 34, margin: { left: M, right: spec.photo ? 92 : M }, head: [['', 'Point of measure (finished, flat)', 'cm']], body: rows, styles: { fontSize: 8.5, cellPadding: 1.8 }, headStyles: { fillColor: [201, 162, 75], textColor: [17, 17, 17] }, columnStyles: { 0: { cellWidth: 8, fontStyle: 'bold' }, 2: { halign: 'right', cellWidth: 16 } }, alternateRowStyles: { fillColor: [250, 247, 240] } });
     if (spec.photo) { var ph = spec.photo, bw = 78, bh = 100, r = Math.min(bw / ph.w, bh / ph.h); doc.setFontSize(8); doc.setTextColor(110, 90, 50); doc.text('Reference photo', 120, 36); doc.addImage(ph.data, 'JPEG', 120, 39, ph.w * r, ph.h * r); }
     var y = Math.max(doc.lastAutoTable.finalY, spec.photo ? 145 : 0) + 8;
@@ -106,5 +108,5 @@ window.TGPattern = (function () {
     var n = doc.getNumberOfPages(); for (var p = 1; p <= n; p++) { doc.setPage(p); doc.setFontSize(7); doc.setTextColor(130, 130, 130); var pw = doc.internal.pageSize.getWidth(), ph2 = doc.internal.pageSize.getHeight(); if (p <= 2) doc.text('TELEGANT · pattern ' + p + ' of ' + n + ' · confidential', M, ph2 - 6); }
     doc.save('telegant-pattern-' + (spec.ref || size) + '.pdf');
   }
-  return { PROMPT: PROMPT, defaults: defaults, build: build, pdf: pdf, bbox: bbox };
+  return { PROMPT: PROMPT, defaults: defaults, fromMeasures: fromMeasures, build: build, pdf: pdf, bbox: bbox };
 })();

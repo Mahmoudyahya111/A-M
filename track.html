@@ -90,6 +90,7 @@ window.TELEGANT_I18N = {
   <div class="track-result" id="track-result" style="display:none;">
     <p><span data-i18n="order_for">Order for</span> <strong id="tr-name"></strong> — <span class="track-order-id" id="tr-id"></span></p>
     <div class="timeline" id="timeline"></div>
+    <div id="tr-cancel" style="display:none;margin:14px 0;padding:14px 16px;border:1px solid #c0392b;border-radius:12px"></div>
     <p><span data-i18n="expected">Expected delivery</span>: <strong id="tr-date"></strong></p>
     <p><span data-i18n="items_label">Items</span>: <span id="tr-items"></span></p>
   </div>
@@ -137,7 +138,7 @@ window.TELEGANT_I18N = {
   const STAGE={'new':0,'obtaining material':1,'cutting':2,'assembling':2,'adding product photo':2,'ready for pickup':2,'on the way to manufacturer':2,'picked up':3,'on the way to customer':3,'arrived at customer':3,'delivered':4,'cancelled':0};
   async function lookup(id){
     try{ const q=await TG.sb.from('orders').select('*').eq('order_number',id.trim().toUpperCase()).maybeSingle();
-      if(q.data){const o=q.data;return {id:o.order_number,customer:{name:o.customer_name},deliveryDate:o.delivery_date||'-',items:o.items||[],_stage:STAGE[o.status]??0};} }catch(e){}
+      if(q.data){const o=q.data;return {id:o.order_number,customer:{name:o.customer_name},deliveryDate:o.delivery_date||'-',items:o.items||[],_stage:STAGE[o.status]??0,_cancel:o.status==='cancelled'?{by:o.cancelled_by,reason:o.cancel_reason,refund:o.refund_status,amount:o.refund_amount,note:o.refund_reason}:null};} }catch(e){}
     return Shop.Orders.findById(id);
   }
   async function showOrder(order){
@@ -154,6 +155,12 @@ window.TELEGANT_I18N = {
     document.getElementById('tr-date').textContent = order.deliveryDate;
     document.getElementById('tr-items').textContent = order.items.map(it => it.name + ' (' + it.size + ') x' + it.qty).join(', ');
 
+    const cb = document.getElementById('tr-cancel'), tl = document.getElementById('timeline'), A = document.documentElement.lang === 'ar';
+    cb.style.display = 'none'; tl.style.display = '';
+    if (order._cancel){ const c = order._cancel, esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, x => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[x]));
+      cb.innerHTML = '<b style="color:#e74c3c">' + (A ? 'تم إلغاء هذا الطلب' : 'This order was cancelled') + '</b> <small>(' + (c.by === 'owner' ? 'TELEGANT' : (A ? 'بواسطة العميل' : 'by the customer')) + ')</small><br>' + (A ? 'السبب: ' : 'Reason: ') + esc(c.reason || '-') +
+        (c.refund === 'refunded' ? '<br><b>' + (A ? 'تم الاسترداد: ' : 'Refunded: ') + esc(c.amount) + ' EGP</b>' + (c.note ? ' · ' + esc(c.note) : '') : c.refund === 'due' ? '<br>' + (A ? 'جارٍ تجهيز استرداد المبلغ.' : 'Your refund is being processed.') : '');
+      cb.style.display = 'block'; tl.style.display = 'none'; return; }
     const stageIndex = order._stage !== undefined ? order._stage : Shop.Orders.stage(order);
     const labels = [T.st_placed, T.st_confirmed, T.st_production, T.st_shipped, T.st_delivered];
     document.getElementById('timeline').innerHTML = labels.map((label, i) => `

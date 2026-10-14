@@ -1,6 +1,6 @@
 /* TELEGANT – colour pairing rules (menswear, shirt -> trousers + shoes). Score 5 = best, 1 = weak. */
 window.TGColors = (function () {
-  var HEX = { navy: '#1f2a44', white: '#f5f5f2', black: '#121212', grey: '#8a8d91', red: '#b3262c', charcoal: '#3a3d42', lightgrey: '#c9ccd0', beige: '#d8c3a5', khaki: '#b5a27a', olive: '#5f6b3a', tan: '#b08d57', brown: '#5b3a29', burgundy: '#6d1a2a', denim: '#2b3f5e', lightdenim: '#6f8fb5', cream: '#efe6d2', royalblue: '#2a4fb0', skyblue: '#8fb8e0', forest: '#2e4a3a', teal: '#1f6f73', purple: '#5b3a8a', pink: '#e7a1b0', orange: '#d9722a', mustard: '#d4a017' };
+  var HEX = { navy: '#1f2a44', white: '#f5f5f2', black: '#121212', grey: '#8a8d91', red: '#7b1e2c', charcoal: '#3a3d42', lightgrey: '#c9ccd0', beige: '#d8c3a5', khaki: '#b5a27a', olive: '#5f6b3a', tan: '#b08d57', brown: '#5b3a29', burgundy: '#6d1a2a', denim: '#2b3f5e', lightdenim: '#6f8fb5', cream: '#efe6d2', royalblue: '#2a4fb0', skyblue: '#8fb8e0', forest: '#2e4a3a', teal: '#1f6f73', purple: '#5b3a8a', pink: '#e7a1b0', orange: '#d9722a', mustard: '#d4a017' };
   var NAME = { navy: ['Navy', 'كحلي'], white: ['White', 'أبيض'], black: ['Black', 'أسود'], grey: ['Grey', 'رمادي'], red: ['Red', 'أحمر'], charcoal: ['Charcoal', 'فحمي'], lightgrey: ['Light grey', 'رمادي فاتح'], beige: ['Beige', 'بيج'], khaki: ['Khaki', 'كاكي'], olive: ['Olive', 'زيتي'], tan: ['Tan', 'جملي فاتح'], brown: ['Brown', 'بني'], burgundy: ['Burgundy', 'عنابي'], denim: ['Dark denim', 'جينز غامق'], lightdenim: ['Light denim', 'جينز فاتح'], cream: ['Cream', 'كريمي'], royalblue: ['Royal blue', 'أزرق ملكي'], skyblue: ['Sky blue', 'أزرق سماوي'], forest: ['Forest green', 'أخضر غامق'], teal: ['Teal', 'أخضر مزرق'], purple: ['Purple', 'بنفسجي'], pink: ['Pink', 'وردي'], orange: ['Orange', 'برتقالي'], mustard: ['Mustard', 'خردلي'] };
   var PANTS = { denim: ['jeans', 'جينز'], lightdenim: ['jeans', 'جينز'] };
   var SHOES = { white: ['sneakers', 'حذاء رياضي'], grey: ['sneakers', 'حذاء رياضي'], black: ['shoes', 'حذاء'], navy: ['suede shoes', 'حذاء سويد'], tan: ['leather shoes', 'حذاء جلد'], brown: ['leather shoes', 'حذاء جلد'], beige: ['suede shoes', 'حذاء سويد'] };
@@ -54,7 +54,7 @@ window.TGColors = (function () {
     return { items: items, pants: combine(known.map(function (t) { return rule(t).p; })), shoes: combine(known.map(function (t) { return rule(t).s; })), avoid: Object.keys(avoid), unknown: tops.filter(function (t) { return !rule(t); }) };
   }
   function check(t, p, s) {                                               // rate a chosen outfit
-    var r = rule(t); if (!r) return null; var ps = p ? (r.p[p] || (r.x.indexOf(p) > -1 ? 1 : 2)) : null, ss = s ? (r.s[s] || 2) : null, v = [ps, ss].filter(Boolean);
+    var r = rule(t); if (!r) return null; var kk = function (c) { return c && (HEX[c] ? c : nearest(toHex(c))); }; p = kk(p); s = kk(s); var ps = p ? (r.p[p] || (r.x.indexOf(p) > -1 ? 1 : 2)) : null, ss = s ? (r.s[s] || 2) : null, v = [ps, ss].filter(Boolean);
     if (!v.length) return null; var avg = v.reduce(function (a, b) { return a + b; }, 0) / v.length; if (p && r.x.indexOf(p) > -1) avg = Math.min(avg, 2);
     return { score: avg, level: avg >= 4.5 ? 0 : avg >= 3.5 ? 1 : avg >= 2.5 ? 2 : 3 };   // 0 excellent 1 good 2 okay 3 avoid
   }

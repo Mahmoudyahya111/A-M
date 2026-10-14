@@ -38,6 +38,30 @@
     return modal({ msg: s, icon: ok ? 'ok' : 'warn', buttons: [{ t: L.ok, v: true, p: true }] });
   };
   TG.ask = function (m) { var L = STR[TG.lang()]; return modal({ msg: String(m), icon: 'ask', buttons: [{ t: L.cancel, v: false }, { t: L.yes, v: true, p: true }] }); };
+
+  /* TG.form({title, ok, fields:[{id,label,type:'text|textarea|number|select',value,options:[[v,label]],required}]}) -> Promise of {id:value} or null */
+  TG.form = function (o) {
+    css();
+    return new Promise(function (res) {
+      var ar = TG.lang() === 'ar', L = STR[TG.lang()], d = document.createElement('div'); d.className = 'tgu';
+      d.innerHTML = '<div class="tgu-box" dir="' + (ar ? 'rtl' : 'ltr') + '" style="text-align:start;max-width:460px"><img class="tgu-logo" src="MEBG-GOLDEN.png" alt="" style="display:block;margin:0 auto 6px"><h2 style="text-align:center"></h2><div class="tgu-f"></div><p class="tgu-err" style="color:#e74c3c;min-height:1.3em;margin:6px 0 0;font-size:13px"></p><div class="tgu-btns" style="margin-top:8px"></div></div>';
+      d.querySelector('h2').textContent = o.title; var box = d.querySelector('.tgu-f');
+      (o.fields || []).forEach(function (f) {
+        var w = document.createElement('label'); w.style.cssText = 'display:block;margin:10px 0 0;font-size:13px;opacity:.9'; w.textContent = f.label; var e;
+        if (f.type === 'select') { e = document.createElement('select'); (f.options || []).forEach(function (op) { var x = document.createElement('option'); x.value = op[0]; x.textContent = op[1]; e.appendChild(x); }); }
+        else if (f.type === 'textarea') { e = document.createElement('textarea'); e.rows = 4; } else { e = document.createElement('input'); e.type = f.type || 'text'; if (f.type === 'number') e.step = 'any'; }
+        e.id = 'tgf_' + f.id; if (f.value != null) e.value = f.value; e.style.cssText = 'display:block;width:100%;box-sizing:border-box;margin-top:4px;padding:10px;border:1px solid #c9a24b;border-radius:10px;background:rgba(255,255,255,.06);color:inherit;font:inherit'; w.appendChild(e); box.appendChild(w);
+      });
+      var close = function (v) { document.removeEventListener('keydown', key); d.classList.add('out'); setTimeout(function () { d.remove(); res(v); }, 220); };
+      var key = function (e) { if (e.key === 'Escape') close(null); };
+      var cb = document.createElement('button'); cb.textContent = L.cancel; cb.onclick = function () { close(null); };
+      var ok = document.createElement('button'); ok.textContent = o.ok || L.ok; ok.className = 'p';
+      ok.onclick = function () { var out = {}, bad = null; (o.fields || []).forEach(function (f) { var v = document.getElementById('tgf_' + f.id).value.trim(); out[f.id] = v; if (f.required && !v && !bad) bad = f.label; });
+        if (bad) { d.querySelector('.tgu-err').textContent = (ar ? 'مطلوب: ' : 'Required: ') + bad; return; } close(out); };
+      d.querySelector('.tgu-btns').appendChild(cb); d.querySelector('.tgu-btns').appendChild(ok); document.addEventListener('keydown', key); document.body.appendChild(d);
+      var first = box.querySelector('input,textarea,select'); if (first) first.focus();
+    });
+  };
   window.alert = function (m) { TG.say(m); };
 
   TG.celebrate = function (o) {                                   // welcome + thank-you: confetti, drawn tick, logo

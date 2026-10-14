@@ -33,8 +33,10 @@ h3{margin:0 0 10px;font:600 16px Georgia,serif}
 <script src="tg-ui.js"></script>
 <script src="tg-colors.js"></script>
 <script src="tg-report.js"></script>
+<script src="tg-sizes.js"></script>
+<script src="tg-pattern.js"></script>
 <script>
-const $=s=>document.querySelector(s),sb=TG.sb,ST=['new','obtaining material','cutting','assembling','adding product photo','ready for pickup','on the way to manufacturer','picked up','on the way to customer','arrived at customer','delivered','cancelled'];
+const $=s=>document.querySelector(s),sb=TG.sb,ST=['new','obtaining material','cutting','assembling','adding product photo','ready for pickup','on the way to manufacturer','picked up','on the way to customer','arrived at customer','delivered'];
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const tbl=(h,r)=>`<div class="card"><table><tr>${h.map(x=>`<th>${x}</th>`).join('')}</tr>${r.map(x=>`<tr>${x.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('')||`<tr><td colspan="${h.length}">Nothing yet.</td></tr>`}</table></div>`;
 const val=(tr,n)=>tr.querySelector(`[name=${n}]`).value;
@@ -50,7 +52,7 @@ async function bizLoad(){const[os,ls,ps]=await Promise.all([all('orders'),all('l
 function biz(d,f,t){
   const inR=x=>{const k=iso(x);return k>=f&&k<=t;},del=d.os.filter(o=>o.status==='delivered'&&inR(o.delivered_at||o.created_at)),placed=d.os.filter(o=>inR(o.created_at)),led=d.ls.filter(l=>inR(l.entry_date));
   const purchases=sum(led.filter(l=>l.kind==='purchase'),'amount'),expenses=sum(led.filter(l=>l.kind==='expense'),'amount'),other=sum(led.filter(l=>l.kind==='other_income'),'amount');
-  const rev=sum(del,'total'),n=del.length,items=o=>Array.isArray(o.items)?o.items:[],units=del.reduce((s,o)=>s+items(o).reduce((a,x)=>a+(+x.qty||1),0),0),ship=sum(del,'delivery_fee'),gross=rev-purchases,net=gross-expenses+other;
+  const rev=sum(del,'total'),n=del.length,items=o=>Array.isArray(o.items)?o.items:[],units=del.reduce((s,o)=>s+items(o).reduce((a,x)=>a+(+x.qty||1),0),0),ship=sum(del,'delivery_fee'),gross=rev-purchases,refunds=sum(d.os.filter(o=>o.refund_status==='refunded'&&o.refunded_at&&inR(o.refunded_at)),'refund_amount'),net=gross-expenses+other-refunds;
   const open=d.os.filter(o=>!['delivered','cancelled'].includes(o.status)),cancelled=placed.filter(o=>o.status==='cancelled').length;
   const dd=del.filter(o=>o.delivered_at).map(o=>(new Date(o.delivered_at)-new Date(o.created_at))/864e5),fulfil=dd.length?dd.reduce((a,b)=>a+b,0)/dd.length:null;
   const cust={};del.forEach(o=>{const k=o.user_id||o.email||o.phone;if(!k)return;(cust[k]=cust[k]||{name:o.customer_name||o.email,n:0,spend:0}).n++;cust[k].spend+=+o.total||0;});
@@ -61,7 +63,7 @@ function biz(d,f,t){
   const pay={};del.forEach(o=>{const k=PM[o.payment_method]||o.payment_method||'-',p=pay[k]=pay[k]||{k,n:0,r:0};p.n++;p.r+=+o.total||0;});
   const cat={};led.filter(l=>l.kind!=='other_income').forEach(l=>{const k=(l.category||'Uncategorised')+'|'+l.kind,p=cat[k]=cat[k]||{c:l.category||'Uncategorised',kind:l.kind==='purchase'?'Purchase':'Expense',a:0};p.a+=+l.amount;});
   const live=d.ps.filter(p=>!p.archived),gpo=n?gross/n:0;
-  return {f,t,rev,net,gross,n,units,ship,purchases,expenses,other,aov:n?rev/n:0,cpo:n?(purchases+expenses)/n:0,nm:rev?net/rev:null,gm:rev?gross/rev:null,placed:placed.length,cancelled,cr:placed.length?cancelled/placed.length:null,
+  return {f,t,refunds,canc:d.os.filter(o=>o.status==='cancelled'&&o.cancelled_at&&inR(o.cancelled_at)),rev,net,gross,n,units,ship,purchases,expenses,other,aov:n?rev/n:0,cpo:n?(purchases+expenses)/n:0,nm:rev?net/rev:null,gm:rev?gross/rev:null,placed:placed.length,cancelled,cr:placed.length?cancelled/placed.length:null,
    open:open.length,cod:sum(open.filter(o=>o.payment_status!=='awaiting'&&o.payment_status!=='received'),'total'),awaiting:sum(open.filter(o=>o.payment_status==='awaiting'),'total'),fulfil,repeat,buyers:buyers.length,
    be:gpo>0?Math.ceil(expenses/gpo):null,invUnits:sum(live,'stock'),invValue:live.reduce((s,p)=>s+(+p.stock||0)*(+p.price||0),0),
    months:Object.values(mo).sort((x,y)=>x.m.localeCompare(y.m)),prods:Object.values(prod).sort((x,y)=>y.r-x.r),pay:Object.values(pay).sort((x,y)=>y.r-x.r),cats:Object.values(cat).sort((x,y)=>y.a-x.a),
@@ -77,22 +79,23 @@ const SC={good:['#2ecc71','On track'],watch:['#f39c12','Watch'],risk:['#e74c3c',
 function bizHtml(B,P){const dl=(a,b)=>{const g=gr(a,b);return g==null?'':`<small style="color:${g>=0?'#2ecc71':'#e74c3c'}">${g>=0?'▲':'▼'} ${Math.abs(Math.round(g*100))}% vs previous</small>`;},k2=(t,v,s)=>`<div class="card" style="flex:1;min-width:160px;margin:0"><small>${t}</small><h3 style="margin:4px 0 2px">${v}</h3>${s||''}</div>`,R=(...x)=>`<div class="row" style="gap:12px;margin-bottom:12px;align-items:stretch">${x.join('')}</div>`,E=x=>x==null?'-':fm(x)+' EGP';
   return R(k2('Revenue',E(B.rev),dl(B.rev,P.rev)),k2('Net profit',E(B.net),dl(B.net,P.net)),k2('Net margin',B.nm==null?'-':pct(B.nm)),k2('Gross margin',B.gm==null?'-':pct(B.gm)))+
    R(k2('Orders delivered',B.n,dl(B.n,P.n)),k2('Average order value',E(B.aov),dl(B.aov,P.aov)),k2('Units sold',B.units),k2('Cost per order',E(B.cpo)))+
-   R(k2('Cash to collect on delivery',E(B.cod),'<small>orders in progress</small>'),k2('Awaiting InstaPay confirmation',E(B.awaiting)),k2('Orders in progress',B.open),k2('Cancellation rate',B.cr==null?'-':pct(B.cr)))+
+   R(k2('Cash to collect on delivery',E(B.cod),'<small>orders in progress</small>'),k2('Awaiting InstaPay confirmation',E(B.awaiting)),k2('Orders in progress',B.open),k2('Cancellation rate',B.cr==null?'-':pct(B.cr),'<small>'+B.canc.length+' cancelled</small>'))+
    R(k2('Avg days to deliver',B.fulfil==null?'-':B.fulfil.toFixed(1)),k2('Repeat customers',B.repeat==null?'-':pct(B.repeat)),k2('Orders to cover expenses',B.be==null?'-':B.be),k2('Stock value (at price)',E(B.invValue),`<small>${fm(B.invUnits)} units</small>`))+
-   `<div class="card"><h3>Are we heading the right way?</h3><small>Guide thresholds, compared with the previous period of the same length.</small>${direction(B,P).map(x=>`<p style="margin:8px 0"><span style="color:${SC[x.s][0]}">●</span> <b>${x.k}</b>: ${x.val} <small>(${SC[x.s][1]} · ${x.guide})</small></p>`).join('')}</div>`+
+   R(k2('Refunds paid',E(B.refunds)),k2('Cancelled orders',B.canc.length))+`<div class="card"><h3>Are we heading the right way?</h3><small>Guide thresholds, compared with the previous period of the same length.</small>${direction(B,P).map(x=>`<p style="margin:8px 0"><span style="color:${SC[x.s][0]}">●</span> <b>${x.k}</b>: ${x.val} <small>(${SC[x.s][1]} · ${x.guide})</small></p>`).join('')}</div>`+
    tbl(['Month','Revenue','Purchases','Expenses','Net profit'],B.months.map(m=>[m.m,fm(m.rev),fm(m.pur),fm(m.exp),fm(m.rev-m.pur-m.exp)]))+
    tbl(['Product','Units','Revenue','Share'],B.prods.map(p=>[esc(p.name),p.u,fm(p.r),B.rev?pct(p.r/B.rev):'-']))+
    tbl(['Payment method','Orders','Revenue'],B.pay.map(p=>[esc(p.k),p.n,fm(p.r)]))+tbl(['Spend category','Type','Amount'],B.cats.map(c=>[esc(c.c),c.kind,fm(c.a)]))+
-   tbl(['Top customers','Orders','Spend'],B.top.map(c=>[esc(c.name),c.n,fm(c.spend)]))+tbl(['Low stock (5 or fewer)','Stock'],B.low.map(p=>[esc(p.name_en),p.stock]));}
+   tbl(['Top customers','Orders','Spend'],B.top.map(c=>[esc(c.name),c.n,fm(c.spend)]))+tbl(['Low stock (5 or fewer)','Stock'],B.low.map(p=>[esc(p.name_en),p.stock]))+tbl(['Cancelled','Order','By','Reason','Refund'],B.canc.map(o=>[cairo(o.cancelled_at),esc(o.order_number),esc(o.cancelled_by||''),esc(o.cancel_reason||''),o.refund_status==='refunded'?fm(o.refund_amount)+' EGP':o.refund_status==='due'?'due':'-']));}
 function bizSpec(B,P){const E=x=>x==null?'-':fm(x)+' EGP',D=(a,b)=>{const r=gr(a,b);return r==null?'':(r>=0?'+':'')+Math.round(r*100)+'% vs previous period';};
-  return{file:'telegant-business-report-'+B.t,title:'Business Report',subtitle:B.f+' to '+B.t,kpis:[['Revenue',E(B.rev),D(B.rev,P.rev)],['Net profit',E(B.net),D(B.net,P.net)],['Net margin',B.nm==null?'-':pct(B.nm),'after materials and expenses'],['Gross margin',B.gm==null?'-':pct(B.gm),'sales minus materials'],['Orders delivered',String(B.n),D(B.n,P.n)],['Average order value',E(B.aov),D(B.aov,P.aov)],['Units sold',String(B.units)],['Cost per order',E(B.cpo)],['Orders in progress',String(B.open)],['Cash to collect on delivery',E(B.cod)],['Awaiting InstaPay',E(B.awaiting)],['Cancellation rate',B.cr==null?'-':pct(B.cr)],['Avg days to deliver',B.fulfil==null?'-':B.fulfil.toFixed(1)],['Repeat customers',B.repeat==null?'-':pct(B.repeat)],['Orders to cover expenses',B.be==null?'-':String(B.be)],['Stock value',E(B.invValue),fm(B.invUnits)+' units']],
+  return{file:'telegant-business-report-'+B.t,title:'Business Report',subtitle:B.f+' to '+B.t,kpis:[['Revenue',E(B.rev),D(B.rev,P.rev)],['Net profit',E(B.net),D(B.net,P.net)],['Net margin',B.nm==null?'-':pct(B.nm),'after materials and expenses'],['Gross margin',B.gm==null?'-':pct(B.gm),'sales minus materials'],['Orders delivered',String(B.n),D(B.n,P.n)],['Average order value',E(B.aov),D(B.aov,P.aov)],['Units sold',String(B.units)],['Cost per order',E(B.cpo)],['Orders in progress',String(B.open)],['Cash to collect on delivery',E(B.cod)],['Awaiting InstaPay',E(B.awaiting)],['Cancellation rate',B.cr==null?'-':pct(B.cr)],['Avg days to deliver',B.fulfil==null?'-':B.fulfil.toFixed(1)],['Repeat customers',B.repeat==null?'-':pct(B.repeat)],['Orders to cover expenses',B.be==null?'-':String(B.be)],['Stock value',E(B.invValue),fm(B.invUnits)+' units'],['Refunds paid',E(B.refunds)],['Cancelled orders',String(B.canc.length)]],
    sections:[{title:'Are we heading the right way?',head:['Indicator','Status','Value','Guide'],rows:direction(B,P).map(x=>[x.k,SC[x.s][1],x.val,x.guide]),widths:[34,16,16,34]},
     {title:'Monthly performance',head:['Month','Revenue','Purchases','Expenses','Net profit','Margin'],fmt:['text','money','money','money','money','pct'],rows:B.months.map(m=>[m.m,m.rev,m.pur,m.exp,m.rev-m.pur-m.exp,m.rev?(m.rev-m.pur-m.exp)/m.rev:0])},
     {title:'Products',head:['Product','Units','Revenue','Share of revenue'],fmt:['text','int','money','pct'],rows:B.prods.map(p=>[p.name,p.u,p.r,B.rev?p.r/B.rev:0]),widths:[34,12,16,18]},
     {title:'Payment methods',head:['Method','Orders','Revenue'],fmt:['text','int','money'],rows:B.pay.map(p=>[p.k,p.n,p.r]),widths:[34,12,16]},
     {title:'Spend by category',head:['Category','Type','Amount'],fmt:['text','text','money'],rows:B.cats.map(c=>[c.c,c.kind,c.a]),widths:[34,14,16]},
     {title:'Top customers',head:['Customer','Orders','Spend'],fmt:['text','int','money'],rows:B.top.map(c=>[c.name,c.n,c.spend]),widths:[34,12,16]},
-    {title:'Low stock',head:['Product','Stock'],fmt:['text','int'],rows:B.low.map(p=>[p.name_en,p.stock]),widths:[34,12]}]};}
+    {title:'Low stock',head:['Product','Stock'],fmt:['text','int'],rows:B.low.map(p=>[p.name_en,p.stock]),widths:[34,12]},
+    {title:'Cancellations and refunds',head:['Cancelled','Order','By','Reason','Refund status','Refunded (EGP)','Refund note'],fmt:['text','text','text','text','text','money','text'],rows:B.canc.map(o=>[cairo(o.cancelled_at),o.order_number,o.cancelled_by||'',o.cancel_reason||'',o.refund_status,o.refund_amount||0,o.refund_reason||'']),widths:[16,12,10,40,12,14,30]}]};}
 async function stmtSpec(){const rows=await statement(),f=SR.f,t=SR.t,before=f?rows.filter(r=>r.date<f):[],open=before.length?before[before.length-1].bal:0,v=rows.filter(r=>(!f||r.date>=f)&&(!t||r.date<=t)),inn=sum(v,'credit'),out=sum(v,'debit'),close=v.length?v[v.length-1].bal:open;
   const os=await all('orders',q=>q.eq('status','delivered')),det=[];os.filter(o=>(!f||iso(o.delivered_at||o.created_at)>=f)&&(!t||iso(o.delivered_at||o.created_at)<=t)).forEach(o=>(Array.isArray(o.items)?o.items:[]).forEach(x=>det.push([o.order_number,iso(o.delivered_at||o.created_at),o.customer_name,x.name||x.color,(x.size==='Custom'?'Custom':x.size)||'',+x.qty||1,+x.price||0,(+x.qty||1)*(+x.price||0),PM[o.payment_method]||o.payment_method])));
   return{file:'telegant-statement-'+new Date().toISOString().slice(0,10),title:'Account Statement',subtitle:(f||'start')+' to '+(t||'today'),landscape:true,kpis:[['Opening balance',fm(open)+' EGP'],['Money in (completed orders)',fm(inn)+' EGP'],['Money out (purchases and expenses)',fm(out)+' EGP'],['Closing balance',fm(close)+' EGP']],
@@ -117,6 +120,17 @@ async function styleSpec(id){const o=(await sb.from('orders').select('*').eq('id
   if(adv.unknown.length)sec.push({title:'Not covered',head:['Colour'],rows:adv.unknown.map(u=>[u])});
   return{file:'telegant-styling-'+o.order_number,title:'Styling Guide',subtitle:'Order '+o.order_number+' · '+(o.customer_name||''),kpis:[['Order',o.order_number],['Customer',o.customer_name||'-'],['Shirts',String(its.reduce((s,x)=>s+(+x.qty||1),0))]],sections:sec};}
 async function specFor(k,id){if(k==='biz'){const{B,P}=bizPair(window.__bd);return bizSpec(B,P);}return k==='stmt'?stmtSpec():k==='svc'?svcSpec():k==='agents'?agentSpec():styleSpec(id);}
+
+function statusCell(o,aw){
+  const refund=o.refund_status==='refunded'?`<br><span class="tag">Refunded ${fm(o.refund_amount)} EGP</span><br><small>${esc(o.refund_reason||'')}</small>`:o.refund_status==='due'?`<br><span class="tag" style="border-color:#c0392b;color:#c0392b">Refund due</span>`:'';
+  const em=`<br><button class="b" data-em="${o.id}">Email customer</button>`,canRefund=o.refund_status!=='refunded'&&(o.status==='cancelled'?o.payment_status==='received':(o.status==='delivered'||o.payment_status==='received'));
+  if(o.status==='cancelled')return `<span class="tag" style="border-color:#c0392b;color:#c0392b">Cancelled</span><br><small>by ${esc(o.cancelled_by||'')} · ${o.cancelled_at?new Date(o.cancelled_at).toLocaleDateString():''}<br>Reason: ${esc(o.cancel_reason||'-')}</small>${refund}${canRefund?`<br><button class="b" data-orf="${o.id}">Refund</button>`:''}${em}`;
+  return `<select data-st="${o.id}"${aw?' data-aw="1"':''}>${ST.map(s=>`<option${s===o.status?' selected':''}>${s}</option>`).join('')}</select>`+(aw?'<br><small>On hold: manufacturer cannot see it until payment is confirmed</small>':'')+refund+
+    (o.status==='delivered'?'':`<br><button class="b" data-oc="${o.id}">Cancel order</button>`)+(canRefund?` <button class="b" data-orf="${o.id}">Refund</button>`:'')+em;}
+const PTK=['chest','length','shoulder','sleeve','neckW','frontDrop','backDrop','armhole','collarH','sleeveW'];
+function ptFill(sz){const m=TGPattern.defaults(sz==='custom'?'m':sz);PTK.forEach(k=>{const e=$('#pt_'+k);if(e)e.value=m[k];});}
+function ptRead(){const m={};for(const k of PTK){m[k]=parseFloat($('#pt_'+k).value);if(!(m[k]>0))throw new Error('Fill every measurement with a number above 0 ('+k+').');}return m;}
+function ptPhoto(){return new Promise(res=>{const f=$('#ptPhoto')&&$('#ptPhoto').files[0];if(!f)return res(null);const fr=new FileReader();fr.onload=()=>{const im=new Image();im.onload=()=>{const s=Math.min(1,900/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*s);c.height=Math.round(im.height*s);c.getContext('2d').drawImage(im,0,0,c.width,c.height);res({data:c.toDataURL('image/jpeg',.82),w:c.width,h:c.height});};im.src=fr.result;};fr.readAsDataURL(f);});}
 const clabel=(c,all)=>{const p=all.find(x=>x.id===c.parent_id);return (p?p.name_en+' › ':'')+c.name_en;};
 const DR={f:new Date(Date.now()-29*864e5).toISOString().slice(0,10),t:new Date().toISOString().slice(0,10)};
 const dur=s=>{s=Math.round(+s||0);return Math.floor(s/3600)+'h '+String(Math.floor(s%3600/60)).padStart(2,'0')+'m'};
@@ -133,9 +147,11 @@ async function all(t,f){let o=[],i=0;for(;;){let q=sb.from(t).select('*');if(f)q
 const PM={cod:'Cash on delivery',instapay_now:'InstaPay - paid now',instapay_delivery:'InstaPay - pay at delivery'};
 const SR={f:'',t:''};
 const itemParts=a=>(Array.isArray(a)?a:[]).map(x=>{const d=x.sizeDetail||{},sz=(x.size==='Custom'||d.label==='Custom')?`Custom (chest ${d.chest}, length ${d.length}, shoulder ${d.shoulder} cm)`:(x.size||'');return `${x.qty||1} x ${x.name||x.color||'item'}${sz?' / '+sz:''} @ ${fm(x.price)}`;});
-async function statement(){const[os,ls]=await Promise.all([all('orders',q=>q.eq('status','delivered')),all('ledger')]),rows=[];
-  os.forEach(o=>rows.push({date:String(o.delivered_at||o.created_at).slice(0,10),ref:o.order_number,type:'Order',desc:`${o.customer_name||''} - ${itemParts(o.items).join('; ')}${o.express?' - express +'+fm(o.delivery_fee):''} - ${PM[o.payment_method]||o.payment_method}`,debit:0,credit:+o.total||0}));
+async function statement(){const[os,ls]=await Promise.all([all('orders'),all('ledger')]),rows=[];
+  os.filter(o=>o.status==='delivered').forEach(o=>rows.push({date:String(o.delivered_at||o.created_at).slice(0,10),ref:o.order_number,type:'Order',desc:`${o.customer_name||''} - ${itemParts(o.items).join('; ')}${o.express?' - express +'+fm(o.delivery_fee):''} - ${PM[o.payment_method]||o.payment_method}`,debit:0,credit:+o.total||0}));
   ls.forEach(l=>{const out=l.kind!=='other_income';rows.push({date:String(l.entry_date),ref:'LDG-'+l.id,type:l.kind==='purchase'?'Purchase':l.kind==='expense'?'Expense':'Other income',desc:[l.category,l.supplier,l.description].filter(Boolean).join(' - '),debit:out?+l.amount:0,credit:out?0:+l.amount});});
+  os.forEach(o=>{if(o.status!=='delivered'&&o.payment_status==='received'&&o.refund_status==='refunded'&&o.paid_at)rows.push({date:iso(o.paid_at),ref:o.order_number,type:'Payment',desc:'Payment received for cancelled order - '+(o.customer_name||''),debit:0,credit:+o.total||0});
+    if(o.refund_status==='refunded'&&o.refunded_at)rows.push({date:iso(o.refunded_at),ref:o.order_number,type:'Refund',desc:'Refund - '+(o.refund_reason||'')+' ('+(o.customer_name||'')+')',debit:+o.refund_amount||0,credit:0});});
   rows.sort((x,y)=>x.date.localeCompare(y.date)||x.ref.localeCompare(y.ref));let b=0;rows.forEach(r=>{b+=r.credit-r.debit;r.bal=b;});return rows;}
 async function stmtSection(){const rows=await statement(),f=SR.f,t=SR.t,before=f?rows.filter(r=>r.date<f):[],open=before.length?before[before.length-1].bal:0,
   v=rows.filter(r=>(!f||r.date>=f)&&(!t||r.date<=t)),inn=sum(v,'credit'),out=sum(v,'debit'),close=v.length?v[v.length-1].bal:open;
@@ -158,7 +174,7 @@ const TABS={
    o.express?`<span class="tag">Express</span><br><small>+${fm(o.delivery_fee)} EGP</small>`:'Standard<br><small>no fee</small>',
    esc(PM[o.payment_method]||o.payment_method)+'<br>'+(aw?`<span class="tag" style="border-color:#c0392b;color:#c0392b">Pending payment confirmation</span><br><small>Transfer ref: <b>${esc(o.payment_ref||'-')}</b></small><br>${o.payment_proof?`<button class="b" data-pf="${esc(o.payment_proof)}">View transfer proof</button> `:''}<button class="b p" data-cp="${o.id}">Confirm payment received</button>`:o.payment_status==='received'?'<span class="tag">Payment received</span>'+(o.payment_ref?`<br><small>Ref: ${esc(o.payment_ref)}</small>`:''):'<small>Collected on delivery</small>'),
    `<b>${fm(o.total)} EGP</b><br><small>items ${fm(o.subtotal??o.total)}${+o.delivery_fee?' + shipping '+fm(o.delivery_fee):''}</small>`,
-   `<select data-st="${o.id}"${aw?' data-aw="1"':''}>${ST.map(s=>`<option${s===o.status?' selected':''}>${s}</option>`).join('')}</select>`+(aw?'<br><small>On hold: manufacturer cannot see it until payment is confirmed</small>':'')];}));},
+   statusCell(o,aw)];}));},
  async Users(){const{data}=await sb.from('profiles').select('*').order('created_at',{ascending:false});
   return `<div id="adrBox"></div><div class="card"><h3>Add user (manufacturer, delivery, support or another owner)</h3><div class="row">
    <input id="ue" type="email" placeholder="Email"><input id="up" type="text" placeholder="Password (8+)">
@@ -234,6 +250,20 @@ const TABS={
    tbl(['Agent','Now','First login','Last logout','Online','Available','On break','Breaks','Chats','Avg rating'],(d.agents||[]).map(x=>[esc(x.name)+` <small>${esc(x.role)}</small>`,`<span style="color:${PDOT[x.status][0]}">●</span> ${PDOT[x.status][1]}`,cairo(x.first_login),cairo(x.last_logout),dur(x.online_s),dur(x.available_s),dur(x.break_s),x.breaks,x.chats,stars(x.avg_rating)]))+
    tbl(['Agent','Break started','Break ended','Length'],(d.breaks||[]).map(x=>[esc(x.name),cairo(x.start),x.end?cairo(x.end):'still on break',dur(x.secs)]))+
    tbl(['Agent','Logged in','Logged out','Length'],(d.logins||[]).map(x=>[esc(x.name),cairo(x.in),x.out?cairo(x.out):'online now',dur(x.secs)]));},
+ async 'Pattern maker'(){const{data:os}=await sb.from('orders').select('id,order_number,items').neq('status','cancelled').order('created_at',{ascending:false}).limit(100);
+  const F=[['chest','Chest width (flat)'],['length','Body length'],['shoulder','Shoulder width'],['sleeve','Sleeve length'],['sleeveW','Sleeve width (flat)'],['neckW','Neck width'],['frontDrop','Front neck drop'],['backDrop','Back neck drop'],['armhole','Armhole depth'],['collarH','Collar height']];
+  const ta='width:100%;min-height:70px;padding:8px;border:1px solid var(--line);border-radius:8px;background:transparent;color:var(--ink);font:inherit;margin-top:6px';
+  return `<div class="card"><h3>Pattern maker</h3><small>Enter the finished garment measurements in cm (flat). You get a professional PDF for the manufacturer: tech spec, scaled overview of all pieces, and optional full-size sheets to print at 100%.</small>
+   <div class="row" style="margin-top:10px"><select id="ptSize">${TGSizes.order.map(k=>`<option value="${k}"${k==='m'?' selected':''}>${TGSizes.chart[k].label}</option>`).join('')}<option value="custom">Custom</option></select>
+    <select id="ptOrder"><option value="">Fill from an order item...</option>${(os||[]).flatMap(o=>(Array.isArray(o.items)?o.items:[]).map((x,i)=>`<option value="${o.id}|${i}">${esc(o.order_number)} · ${esc(x.name)} · ${esc(x.size)}</option>`)).join('')}</select>
+    <input id="ptRef" placeholder="Reference / order no."></div>
+   <div class="row">${F.map(([k,n])=>`<label style="margin-right:10px">${n}<br><input id="pt_${k}" type="number" step="0.5" style="width:110px"></label>`).join('')}</div>
+   <div class="row"><input id="ptFab" style="min-width:300px" placeholder="Fabric (e.g. cotton jersey 95/5, 190 gsm)"><input id="ptNote" style="min-width:300px" placeholder="Extra notes for the manufacturer"></div>
+   <div class="row"><label>Reference photo (optional, shown in the PDF) <input id="ptPhoto" type="file" accept="image/*"></label></div>
+   <div class="row"><button class="b p" data-pt="pdf">Pattern PDF (spec + overview)</button><button class="b" data-pt="full">Pattern PDF + full-size sheets (print at 100%)</button></div></div>
+  <div class="card"><h3>Photo to pattern with an AI tool</h3><small>Getting accurate measurements from a photo needs an AI that can see images (for example Claude or ChatGPT). Upload the photo there together with this prompt, then paste the JSON it returns below.</small>
+   <textarea id="ptPrompt" readonly style="${ta};min-height:170px">${esc(TGPattern.PROMPT)}</textarea><div class="row" style="margin-top:8px"><button class="b" data-pt="copy">Copy prompt</button></div>
+   <textarea id="ptJson" placeholder="Paste the AI's JSON answer here" style="${ta}"></textarea><div class="row" style="margin-top:8px"><button class="b p" data-pt="fill">Fill the measurements from this JSON</button></div></div>`;},
  async Reviews(){const{data}=await sb.from('reviews').select('*').order('created_at',{ascending:false});
   return `<div class="card"><h3>Add review</h3><div class="row"><input id="ra" placeholder="Name"><input id="rr" type="number" min="1" max="5" placeholder="Stars 1-5">
    <input id="rb" placeholder="Review text" style="min-width:240px"><button class="b p" id="addR">Add</button></div></div>`+
@@ -242,7 +272,7 @@ const TABS={
 };
 
 async function show(n){document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('on',b.textContent===n));
-  $('#v').innerHTML=await TABS[n]();$('#v').dataset.tab=n;if(n==='Pages')pgToggle();}
+  $('#v').innerHTML=await TABS[n]();$('#v').dataset.tab=n;if(n==='Pages')pgToggle();if(n==='Pattern maker')ptFill('m');}
 const done=(r,n)=>{if(r&&r.error)alert(r.error.message||r.error);show(n||$('#v').dataset.tab)};
 
 $('#v').addEventListener('change',async e=>{const id=e.target.dataset.st;
@@ -252,9 +282,31 @@ $('#v').addEventListener('change',async e=>{const t=e.target;if(!t.dataset.role)
   done(await sb.from('profiles').update({role:t.value,status:'approved'}).eq('id',t.dataset.role));});
 $('#v').addEventListener('change',async e=>{const t=e.target;
   if(t.id==='pgT'||t.id==='gps')pgToggle();
+  if(t.id==='ptSize')ptFill(t.value);
+  if(t.id==='ptOrder'&&t.value){const[id,ix]=t.value.split('|'),o=(await sb.from('orders').select('items,order_number').eq('id',+id).single()).data,x=(o.items||[])[+ix]||{},sd=x.sizeDetail||{},key=String(x.size||'').toLowerCase();
+    const m=(x.size==='Custom'||sd.label==='Custom')?TGPattern.fromMeasures(+sd.chest,+sd.length,+sd.shoulder):TGPattern.defaults(TGSizes.chart[key]?key:'m');PTK.forEach(k=>{$('#pt_'+k).value=m[k];});$('#ptSize').value=TGSizes.chart[key]?key:'custom';$('#ptRef').value=o.order_number;}
   if(t.id==='pfil'){PF=t.value;show('Products');}
   if(t.dataset.nm){const r=await sb.from('profiles').update({full_name:t.value.trim()}).eq('id',t.dataset.nm);if(r.error)alert(r.error.message);}});
 $('#v').addEventListener('click',async e=>{const t=e.target,d=t.dataset;if(!t.closest('button'))return;
+  if(d.oc){const o=(await sb.from('orders').select('*').eq('id',+d.oc).single()).data;
+    const f=await TG.form({title:'Cancel order '+o.order_number,ok:'Cancel order',fields:[{id:'reason',label:'Reason (the customer sees it, it is in the email and in your reports)',type:'textarea',required:true},{id:'refund',label:'Refund',type:'select',options:[['no','No refund'],['full','Refund the full amount ('+fm(o.total)+' EGP)']]}]});if(!f)return;
+    const r=await sb.rpc('cancel_order',{p_order:o.id,p_reason:f.reason});if(r.error)return alert(r.error.message);
+    if(f.refund==='full'){const q=await sb.rpc('refund_order',{p_order:o.id,p_amount:+o.total,p_reason:f.reason});if(q.error)alert(q.error.message);else sb.functions.invoke('swift-action',{body:{action:'refund',order_id:o.id}});}
+    sb.functions.invoke('swift-action',{body:{action:'cancel',order_id:o.id}});return show('Orders');}
+  if(d.orf){const o=(await sb.from('orders').select('*').eq('id',+d.orf).single()).data;
+    const f=await TG.form({title:'Refund order '+o.order_number,ok:'Record refund',fields:[{id:'amount',label:'Amount in EGP (up to '+fm(o.total)+')',type:'number',value:o.total,required:true},{id:'reason',label:'Note (the customer sees it and it goes in your reports)',type:'textarea',required:true}]});if(!f)return;
+    const r=await sb.rpc('refund_order',{p_order:o.id,p_amount:+f.amount,p_reason:f.reason});if(r.error)return alert(r.error.message);
+    sb.functions.invoke('swift-action',{body:{action:'refund',order_id:o.id}});return show('Orders');}
+  if(d.em){const o=(await sb.from('orders').select('*').eq('id',+d.em).single()).data;
+    const f=await TG.form({title:'Email '+(o.customer_name||'the customer')+' about '+o.order_number,ok:'Send email',fields:[{id:'subject',label:'Subject',value:'About your order '+o.order_number,required:true},{id:'message',label:'Message (sent with the TELEGANT logo)',type:'textarea',required:true}]});if(!f)return;
+    const r=await sb.functions.invoke('swift-action',{body:{action:'manual',order_id:o.id,subject:f.subject,message:f.message}}),er=(r.data&&r.data.error)||(r.error&&r.error.message);
+    return alert(er?er:'Sent to '+(o.email||'the customer')+'.');}
+  if(d.pt){try{
+    if(d.pt==='copy'){await navigator.clipboard.writeText($('#ptPrompt').value);return alert('Copied. Paste it into your AI tool together with the photo.');}
+    if(d.pt==='fill'){const raw=$('#ptJson').value.replace(/```json|```/g,'').trim(),j=JSON.parse(raw);PTK.forEach(k=>{if(+j[k]>0)$('#pt_'+k).value=+j[k];});$('#ptSize').value='custom';return alert('Measurements filled in. Check them, then create the PDF.'+(j.confidence?' AI confidence: '+j.confidence+'.':''));}
+    const m=ptRead(),sz=$('#ptSize').value;t.disabled=true;
+    await TGPattern.pdf({m,size:sz==='custom'?'CUSTOM':TGSizes.chart[sz].label,ref:$('#ptRef').value.trim(),fabric:$('#ptFab').value.trim(),note:$('#ptNote').value.trim(),photo:await ptPhoto(),full:d.pt==='full'});
+  }catch(e){alert(e.message||e);}finally{t.disabled=false;}return;}
   if(t.id==='applyD'){DR.f=$('#df').value;DR.t=$('#dt').value;return show(d.tab);}
   if(t.id==='chatSw'){const r=await sb.from('site_settings').upsert({key:'chat_enabled',value:{on:d.on!=='1'}});if(r.error)return alert(r.error.message);return show('Chat');}
   if(t.id==='saveSch'){const days={};DAYS.forEach((n,i)=>{days[i]={on:document.querySelector(`[data-day="${i}"]`).checked,from:document.querySelector(`[data-from="${i}"]`).value||'10:00',to:document.querySelector(`[data-to="${i}"]`).value||'18:00'};});

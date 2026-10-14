@@ -38,7 +38,7 @@ window.TELEGANT_I18N = {
     h1:"TE-Shop For Men. <br><em>High-Neck Summer T-Shirts That Fit You.</em>",
     buy:"Buy Now",
     p_navy:"Mock Neck — Navy", p_white:"Mock Neck — White", p_black:"Mock Neck — Black", p_grey:"Mock Neck — Grey", p_red:"Mock Neck — Red",
-    close:"✕ Close", size_sub:"Pick a size — measurements shown in cm (length × chest × shoulder).",
+    close:"✕ Close", size_sub:"Pick your size. Not sure? Choose Custom and enter your own measurements.", custom_lbl:"Custom", range_alert:"Please enter measurements inside the allowed ranges: chest 44-70, length 60-82, shoulder 40-58 cm. The size guide shows how to measure.",
     lbl_chest:"Chest (cm)", lbl_length:"Length (cm)", lbl_shoulder:"Shoulder (cm)", add_to_cart:"Add to Cart",
     pick_size_alert:"Please choose a size.", fill_custom_alert:"Please fill in all three custom measurements.",
     foot_tag:"Premium T-shirts, defined by elegance.",
@@ -51,7 +51,7 @@ window.TELEGANT_I18N = {
     h1:"متجر تيشيرتات الرجال. <br><em>تيشيرتات صيفية بياقة عالية تناسبك.</em>",
     buy:"اشترِ الآن",
     p_navy:"ياقة موك — كحلي", p_white:"ياقة موك — أبيض", p_black:"ياقة موك — أسود", p_grey:"ياقة موك — رمادي", p_red:"ياقة موك — أحمر",
-    close:"✕ إغلاق", size_sub:"اختر المقاس — القياسات بالسنتيمتر (الطول × الصدر × الكتف).",
+    close:"✕ إغلاق", size_sub:"اختر مقاسك. غير متأكد؟ اختر المقاس المخصص وأدخل قياساتك.", custom_lbl:"مخصص", range_alert:"من فضلك أدخل قياسات ضمن الحدود المسموحة: الصدر ٤٤-٧٠ والطول ٦٠-٨٢ والكتف ٤٠-٥٨ سم. دليل المقاسات يوضح طريقة القياس.",
     lbl_chest:"الصدر (سم)", lbl_length:"الطول (سم)", lbl_shoulder:"الكتف (سم)", add_to_cart:"أضف إلى السلة",
     pick_size_alert:"يرجى اختيار مقاس.", fill_custom_alert:"يرجى إدخال القياسات الثلاثة كاملة.",
     foot_tag:"تيشيرتات فاخرة، بلمسة أناقة.",
@@ -288,14 +288,14 @@ window.TELEGANT_I18N = {
       const div = document.createElement('div');
       div.className = 'size-option';
       div.dataset.size = key;
-      div.innerHTML = '<strong>' + s.label + '</strong>' + s.length + '×' + s.chest + '×' + s.shoulder + ' cm';
+      div.innerHTML = '<strong>' + s.label + '</strong>';
       div.addEventListener('click', () => selectSize(key));
       optionsWrap.appendChild(div);
     });
     const customDiv = document.createElement('div');
     customDiv.className = 'size-option';
     customDiv.dataset.size = 'custom';
-    customDiv.innerHTML = '<strong>Custom</strong>Enter cm';
+    customDiv.innerHTML = '<strong data-i18n="custom_lbl">Custom</strong>';
     customDiv.addEventListener('click', () => selectSize('custom'));
     optionsWrap.appendChild(customDiv);
   }
@@ -334,6 +334,8 @@ window.TELEGANT_I18N = {
       const length = Number(document.getElementById('custom-length').value);
       const shoulder = Number(document.getElementById('custom-shoulder').value);
       if (!chest || !length || !shoulder) { alert(t.fill_custom_alert); return; }
+      const RG = window.TGSizes && TGSizes.ranges;
+      if (RG && (chest < RG.chest[0] || chest > RG.chest[1] || length < RG.length[0] || length > RG.length[1] || shoulder < RG.shoulder[0] || shoulder > RG.shoulder[1])) { alert(t.range_alert); return; }
       sizeInfo = { label: 'Custom', chest, length, shoulder };
     } else {
       sizeInfo = chart[selectedSize];
@@ -348,7 +350,7 @@ window.TELEGANT_I18N = {
       qty: 1
     });
     modal.classList.remove('show');
-    window.location.href = 'cart.html';
+    if (window.TG && TG.afterAdd) TG.afterAdd(); else window.location.href = 'cart.html';
   });
 
   renderOptions();
@@ -356,6 +358,9 @@ window.TELEGANT_I18N = {
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="tg-core.js"></script>
+<script src="tg-ui.js"></script>
 <script src="tg-store.js"></script>
+<script src="tg-cats.js"></script>
+<script src="tg-buy.js"></script>
 </body>
 </html>
