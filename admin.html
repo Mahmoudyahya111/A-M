@@ -25,7 +25,7 @@ h3{margin:0 0 10px;font:600 16px Georgia,serif}
 .tag{padding:2px 8px;border-radius:99px;border:1px solid var(--line);font-size:12px}
 </style></head><body>
 <header><img src="MEBG-GOLDEN.png" alt="TELEGANT" style="height:44px"><b>Admin</b>
-<span id="who"></span><a class="b" href="chat-admin.html" style="text-decoration:none;color:var(--ink)">Chat console</a><button class="b" id="th">Light / dark</button><button class="b" id="out">Sign out</button></header>
+<span id="who"></span><select id="repLang" class="b" title="Language of every PDF and Excel download"><option value="en">Reports: English</option><option value="ar">Reports: العربية</option></select><a class="b" href="chat-admin.html" style="text-decoration:none;color:var(--ink)">Chat console</a><button class="b" id="th">Light / dark</button><button class="b" id="out">Sign out</button></header>
 <nav id="nav"></nav><main id="v">Loading…</main>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
@@ -33,6 +33,7 @@ h3{margin:0 0 10px;font:600 16px Georgia,serif}
 <script src="tg-ui.js"></script>
 <script src="tg-colors.js"></script>
 <script src="tg-report.js"></script>
+<script src="tg-ar.js"></script>
 <script src="tg-sizes.js"></script>
 <script src="tg-pattern.js"></script>
 <script>
@@ -111,15 +112,15 @@ async function agentSpec(){const x=(await sb.rpc('agent_report',{p_from:DR.f,p_t
    {title:'Agents',head:['Agent','Role','Now','First login','Last logout','Online (min)','Available (min)','On break (min)','Breaks','Chats','Avg rating'],fmt:['text','text','text','text','text','int','int','int','int','int','dec1'],rows:(x.agents||[]).map(a=>[a.name,a.role,PDOT[a.status][1],cairo(a.first_login),cairo(a.last_logout),m(a.online_s),m(a.available_s),m(a.break_s),a.breaks,a.chats,a.avg_rating])},
    {title:'Break log',head:['Agent','Break started','Break ended','Minutes'],fmt:['text','text','text','int'],rows:(x.breaks||[]).map(a=>[a.name,cairo(a.start),a.end?cairo(a.end):'still on break',m(a.secs)])},
    {title:'Login log',head:['Agent','Logged in','Logged out','Minutes'],fmt:['text','text','text','int'],rows:(x.logins||[]).map(a=>[a.name,cairo(a.in),a.out?cairo(a.out):'online now',m(a.secs)])}]};}
-async function styleSpec(id){const o=(await sb.from('orders').select('*').eq('id',+id).single()).data,its=Array.isArray(o.items)?o.items:[],tops=[...new Set(its.map(x=>x.color))],adv=TGColors.advise(tops),H=TGColors.HEX,N=TGColors.NAME,C=TGColors;
-  const sw=(kind,x)=>({v:C.label(kind,x.k,0)+'  ('+x.score+'/5)',c:H[x.k]});
-  const sec=[{title:'Items in this order',head:['Item','Size','Qty','Shirt colour'],fmt:['text','text','int','text'],rows:its.map(x=>[x.name,x.size||'',+x.qty||1,{v:(N[x.color]||[x.color])[0],c:H[x.color]}]),widths:[30,12,8,22]}];
+async function styleSpec(id,lang){const I=lang==='ar'?1:0;const o=(await sb.from('orders').select('*').eq('id',+id).single()).data,its=Array.isArray(o.items)?o.items:[],tops=[...new Set(its.map(x=>x.color))],adv=TGColors.advise(tops),H=TGColors.HEX,N=TGColors.NAME,C=TGColors;
+  const sw=(kind,x)=>({v:C.label(kind,x.k,I)+'  ('+x.score+'/5)',c:H[x.k]});
+  const sec=[{title:'Items in this order',head:['Item','Size','Qty','Shirt colour'],fmt:['text','text','int','text'],rows:its.map(x=>[x.name,x.size||'',+x.qty||1,{v:(N[x.color]||[x.color,x.color])[I],c:H[x.color]}]),widths:[30,12,8,22]}];
   if(adv.pants.length||adv.shoes.length)sec.push({title:'Best with ALL shirts in this order',head:['Trousers','Shoes'],rows:Array.from({length:Math.max(adv.pants.length,adv.shoes.length)},(_,i)=>[adv.pants[i]?sw('pants',adv.pants[i]):'',adv.shoes[i]?sw('shoes',adv.shoes[i]):'']),widths:[40,40]});
   else if(adv.items.length>1)sec.push({title:'Best with ALL shirts in this order',head:['Note'],rows:[['No single colour suits every shirt equally. Use the suggestions for each shirt below.']]});
-  adv.items.forEach(it=>{sec.push({title:'With the '+N[it.top][0]+' shirt',head:['Best trousers','Best shoes','Avoid'],rows:Array.from({length:5},(_,i)=>[it.pants[i]?sw('pants',it.pants[i]):'',it.shoes[i]?sw('shoes',it.shoes[i]):'',it.avoid[i]?{v:N[it.avoid[i]][0],c:H[it.avoid[i]]}:'']),widths:[40,40,28]});sec.push({title:'Styling tip: '+N[it.top][0],head:['Advice'],rows:[[it.tip[0]]]});});
+  adv.items.forEach(it=>{sec.push({title:'With the '+N[it.top][I]+' shirt',head:['Best trousers','Best shoes','Avoid'],rows:Array.from({length:5},(_,i)=>[it.pants[i]?sw('pants',it.pants[i]):'',it.shoes[i]?sw('shoes',it.shoes[i]):'',it.avoid[i]?{v:N[it.avoid[i]][I],c:H[it.avoid[i]]}:'']),widths:[40,40,28]});sec.push({title:'Styling tip: '+N[it.top][I],head:['Advice'],rows:[[it.tip[I]]]});});
   if(adv.unknown.length)sec.push({title:'Not covered',head:['Colour'],rows:adv.unknown.map(u=>[u])});
   return{file:'telegant-styling-'+o.order_number,title:'Styling Guide',subtitle:'Order '+o.order_number+' · '+(o.customer_name||''),kpis:[['Order',o.order_number],['Customer',o.customer_name||'-'],['Shirts',String(its.reduce((s,x)=>s+(+x.qty||1),0))]],sections:sec};}
-async function specFor(k,id){if(k==='biz'){const{B,P}=bizPair(window.__bd);return bizSpec(B,P);}return k==='stmt'?stmtSpec():k==='svc'?svcSpec():k==='agents'?agentSpec():styleSpec(id);}
+async function specFor(k,id,lang){if(k==='biz'){const{B,P}=bizPair(window.__bd);return bizSpec(B,P);}return k==='stmt'?stmtSpec():k==='svc'?svcSpec():k==='agents'?agentSpec():styleSpec(id,lang);}
 
 function statusCell(o,aw){
   const refund=o.refund_status==='refunded'?`<br><span class="tag">Refunded ${fm(o.refund_amount)} EGP</span><br><small>${esc(o.refund_reason||'')}</small>`:o.refund_status==='due'?`<br><span class="tag" style="border-color:#c0392b;color:#c0392b">Refund due</span>`:'';
@@ -128,9 +129,14 @@ function statusCell(o,aw){
   return `<select data-st="${o.id}"${aw?' data-aw="1"':''}>${ST.map(s=>`<option${s===o.status?' selected':''}>${s}</option>`).join('')}</select>`+(aw?'<br><small>On hold: manufacturer cannot see it until payment is confirmed</small>':'')+refund+
     (o.status==='delivered'?'':`<br><button class="b" data-oc="${o.id}">Cancel order</button>`)+(canRefund?` <button class="b" data-orf="${o.id}">Refund</button>`:'')+em;}
 const PTK=['chest','length','shoulder','sleeve','neckW','frontDrop','backDrop','armhole','collarH','sleeveW'];
-function ptFill(sz){const m=TGPattern.defaults(sz==='custom'?'m':sz);PTK.forEach(k=>{const e=$('#pt_'+k);if(e)e.value=m[k];});}
+function ptFill(sz){const m=TGPattern.defaults(sz==='custom'?'m':sz);PTK.forEach(k=>{const e=$('#pt_'+k);if(e)e.value=m[k];});if($('#ptRefVal')&&$('#ptRefType').value==='chest')$('#ptRefVal').value=m.chest;}
+function ptApply(j,note){const m=TGPattern.complete(j);PTK.forEach(k=>{const e=$('#pt_'+k);if(e&&m[k])e.value=m[k];});$('#ptSize').value='custom';if($('#ptStatus'))$('#ptStatus').textContent=note;}
+async function ptAuto(){const st=$('#ptStatus');try{const ph=await ptPhoto(1400);if(!ph)return alert('Choose a photo first.');st.textContent='Reading the photo, this takes a few seconds...';
+  const j=await TGPattern.analyze(ph,{type:$('#ptRefType').value,value:+$('#ptRefVal').value});ptApply(j,'Filled from the photo'+(j.confidence?' (AI confidence: '+j.confidence+')':'')+'. Check the numbers, then create the PDF.'+(j.assumptions?' Assumed: '+j.assumptions:''));}
+  catch(e){st.textContent='';alert((e.message||e)+' You can still use "Measure on the photo by hand".');}}
 function ptRead(){const m={};for(const k of PTK){m[k]=parseFloat($('#pt_'+k).value);if(!(m[k]>0))throw new Error('Fill every measurement with a number above 0 ('+k+').');}return m;}
-function ptPhoto(){return new Promise(res=>{const f=$('#ptPhoto')&&$('#ptPhoto').files[0];if(!f)return res(null);const fr=new FileReader();fr.onload=()=>{const im=new Image();im.onload=()=>{const s=Math.min(1,900/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*s);c.height=Math.round(im.height*s);c.getContext('2d').drawImage(im,0,0,c.width,c.height);res({data:c.toDataURL('image/jpeg',.82),w:c.width,h:c.height});};im.src=fr.result;};fr.readAsDataURL(f);});}
+function ptPhoto(mx){return new Promise(res=>{const f=$('#ptPhoto')&&$('#ptPhoto').files[0];if(!f)return res(null);const fr=new FileReader();fr.onload=()=>{const im=new Image();im.onload=()=>{const s=Math.min(1,(mx||900)/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*s);c.height=Math.round(im.height*s);c.getContext('2d').drawImage(im,0,0,c.width,c.height);res({data:c.toDataURL('image/jpeg',.82),w:c.width,h:c.height});};im.src=fr.result;};fr.readAsDataURL(f);});}
+const RL=()=>localStorage.getItem('tg_replang')==='ar'?'ar':'en';
 const clabel=(c,all)=>{const p=all.find(x=>x.id===c.parent_id);return (p?p.name_en+' › ':'')+c.name_en;};
 const DR={f:new Date(Date.now()-29*864e5).toISOString().slice(0,10),t:new Date().toISOString().slice(0,10)};
 const dur=s=>{s=Math.round(+s||0);return Math.floor(s/3600)+'h '+String(Math.floor(s%3600/60)).padStart(2,'0')+'m'};
@@ -259,9 +265,11 @@ const TABS={
     <input id="ptRef" placeholder="Reference / order no."></div>
    <div class="row">${F.map(([k,n])=>`<label style="margin-right:10px">${n}<br><input id="pt_${k}" type="number" step="0.5" style="width:110px"></label>`).join('')}</div>
    <div class="row"><input id="ptFab" style="min-width:300px" placeholder="Fabric (e.g. cotton jersey 95/5, 190 gsm)"><input id="ptNote" style="min-width:300px" placeholder="Extra notes for the manufacturer"></div>
-   <div class="row"><label>Reference photo (optional, shown in the PDF) <input id="ptPhoto" type="file" accept="image/*"></label></div>
+   <div class="row"><label>Photo of the item <input id="ptPhoto" type="file" accept="image/*"></label>
+    <select id="ptRefType"><option value="chest">Scale: chest width (flat) is</option><option value="length">Scale: body length is</option><option value="height">Scale: person's height is</option></select><input id="ptRefVal" type="number" step="0.5" placeholder="cm" style="width:90px"></div>
+   <div class="row"><button class="b p" data-pt="ai">Read measurements from the photo (AI)</button><button class="b" data-pt="hand">Measure on the photo by hand</button></div><p id="ptStatus" style="margin:6px 0 0;color:var(--gold)"></p>
    <div class="row"><button class="b p" data-pt="pdf">Pattern PDF (spec + overview)</button><button class="b" data-pt="full">Pattern PDF + full-size sheets (print at 100%)</button></div></div>
-  <div class="card"><h3>Photo to pattern with an AI tool</h3><small>Getting accurate measurements from a photo needs an AI that can see images (for example Claude or ChatGPT). Upload the photo there together with this prompt, then paste the JSON it returns below.</small>
+  <div class="card"><h3>Prefer to use another AI tool yourself?</h3><small>Upload the photo to any AI that can see images (for example Claude or ChatGPT) together with this prompt, then paste the JSON it returns below.</small>
    <textarea id="ptPrompt" readonly style="${ta};min-height:170px">${esc(TGPattern.PROMPT)}</textarea><div class="row" style="margin-top:8px"><button class="b" data-pt="copy">Copy prompt</button></div>
    <textarea id="ptJson" placeholder="Paste the AI's JSON answer here" style="${ta}"></textarea><div class="row" style="margin-top:8px"><button class="b p" data-pt="fill">Fill the measurements from this JSON</button></div></div>`;},
  async Reviews(){const{data}=await sb.from('reviews').select('*').order('created_at',{ascending:false});
@@ -283,6 +291,7 @@ $('#v').addEventListener('change',async e=>{const t=e.target;if(!t.dataset.role)
 $('#v').addEventListener('change',async e=>{const t=e.target;
   if(t.id==='pgT'||t.id==='gps')pgToggle();
   if(t.id==='ptSize')ptFill(t.value);
+  if(t.id==='ptPhoto'&&t.files[0])ptAuto();
   if(t.id==='ptOrder'&&t.value){const[id,ix]=t.value.split('|'),o=(await sb.from('orders').select('items,order_number').eq('id',+id).single()).data,x=(o.items||[])[+ix]||{},sd=x.sizeDetail||{},key=String(x.size||'').toLowerCase();
     const m=(x.size==='Custom'||sd.label==='Custom')?TGPattern.fromMeasures(+sd.chest,+sd.length,+sd.shoulder):TGPattern.defaults(TGSizes.chart[key]?key:'m');PTK.forEach(k=>{$('#pt_'+k).value=m[k];});$('#ptSize').value=TGSizes.chart[key]?key:'custom';$('#ptRef').value=o.order_number;}
   if(t.id==='pfil'){PF=t.value;show('Products');}
@@ -302,16 +311,18 @@ $('#v').addEventListener('click',async e=>{const t=e.target,d=t.dataset;if(!t.cl
     const r=await sb.functions.invoke('swift-action',{body:{action:'manual',order_id:o.id,subject:f.subject,message:f.message}}),er=(r.data&&r.data.error)||(r.error&&r.error.message);
     return alert(er?er:'Sent to '+(o.email||'the customer')+'.');}
   if(d.pt){try{
+    if(d.pt==='ai'){await ptAuto();return;}
+    if(d.pt==='hand'){const ph=await ptPhoto(1400);if(!ph)return alert('Choose a photo first.');const g=await TGPattern.measureOnPhoto(ph.data);if(g)ptApply(g,'Filled from your measurements on the photo. Check the numbers, then create the PDF.');return;}
     if(d.pt==='copy'){await navigator.clipboard.writeText($('#ptPrompt').value);return alert('Copied. Paste it into your AI tool together with the photo.');}
     if(d.pt==='fill'){const raw=$('#ptJson').value.replace(/```json|```/g,'').trim(),j=JSON.parse(raw);PTK.forEach(k=>{if(+j[k]>0)$('#pt_'+k).value=+j[k];});$('#ptSize').value='custom';return alert('Measurements filled in. Check them, then create the PDF.'+(j.confidence?' AI confidence: '+j.confidence+'.':''));}
     const m=ptRead(),sz=$('#ptSize').value;t.disabled=true;
-    await TGPattern.pdf({m,size:sz==='custom'?'CUSTOM':TGSizes.chart[sz].label,ref:$('#ptRef').value.trim(),fabric:$('#ptFab').value.trim(),note:$('#ptNote').value.trim(),photo:await ptPhoto(),full:d.pt==='full'});
+    await TGPattern.pdf({m,size:sz==='custom'?'CUSTOM':TGSizes.chart[sz].label,ref:$('#ptRef').value.trim(),fabric:$('#ptFab').value.trim(),note:$('#ptNote').value.trim(),photo:await ptPhoto(),full:d.pt==='full',lang:RL()});
   }catch(e){alert(e.message||e);}finally{t.disabled=false;}return;}
   if(t.id==='applyD'){DR.f=$('#df').value;DR.t=$('#dt').value;return show(d.tab);}
   if(t.id==='chatSw'){const r=await sb.from('site_settings').upsert({key:'chat_enabled',value:{on:d.on!=='1'}});if(r.error)return alert(r.error.message);return show('Chat');}
   if(t.id==='saveSch'){const days={};DAYS.forEach((n,i)=>{days[i]={on:document.querySelector(`[data-day="${i}"]`).checked,from:document.querySelector(`[data-from="${i}"]`).value||'10:00',to:document.querySelector(`[data-to="${i}"]`).value||'18:00'};});
     const r=await sb.from('site_settings').upsert({key:'chat_schedule',value:{mode:$('#schMode').value,days}});if(r.error)return alert(r.error.message);alert('Opening hours saved.');return;}
-  if(d.rp){t.disabled=true;try{await TGReport[d.fmt](await specFor(d.rp,d.id));}catch(e){alert(e.message||e);}finally{t.disabled=false;}return;}
+  if(d.rp){t.disabled=true;try{const sp=await specFor(d.rp,d.id,RL());sp.lang=RL();await TGReport[d.fmt](sp);}catch(e){alert(e.message||e);}finally{t.disabled=false;}return;}
   if(t.id==='saveIP'){const r=await sb.from('site_settings').upsert({key:'instapay',value:{handle:$('#ipv').value.trim()}});if(r.error)return alert(r.error.message);return alert('Saved. Customers will see this account when they choose InstaPay.');}
   if(d.pf){const r=await sb.storage.from('payment-proofs').createSignedUrl(d.pf,120);if(r.error)return alert(r.error.message);window.open(r.data.signedUrl,'_blank');return;}
   if(t.id==='applyS'){SR.f=$('#sf').value;SR.t=$('#stt').value;return show('Accounting');}
@@ -398,6 +409,7 @@ $('#v').addEventListener('click',async e=>{const t=e.target,d=t.dataset;if(!t.cl
   if(d.rv){const[i,v]=d.rv.split('|');return done(await sb.from('reviews').update({visible:v==='1'}).eq('id',i));}
   if(d.rd&&await TG.ask('Delete this?'))return done(await sb.from('reviews').delete().eq('id',d.rd));});
 
+$('#repLang').value=RL();$('#repLang').onchange=()=>localStorage.setItem('tg_replang',$('#repLang').value);
 $('#th').onclick=()=>{const d=document.documentElement,n=d.dataset.theme==='dark'?'light':'dark';d.dataset.theme=n;localStorage.tg_theme=n};
 $('#out').onclick=async()=>{await TG.signOut();location.href='login.html'};
 (async()=>{me=await TG.profile();

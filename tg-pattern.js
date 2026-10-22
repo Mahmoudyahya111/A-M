@@ -47,6 +47,11 @@ window.TGPattern = (function () {
   }
   function build(m) { var f = body(m, false), b = body(m, true), neckCirc = 2 * (f.neckLen + b.neckLen); return { f: f, b: b, s: sleeve(m), c: collar(m, neckCirc), neckCirc: neckCirc }; }
 
+  var TP = { 'FRONT': 'الأمام', 'BACK': 'الخلف', 'SLEEVE': 'الكم', 'COLLAR': 'الياقة', 'GRAIN': 'خط الخيط', 'FOLD': 'طية', 'Cut 1 on fold': 'قص 1 على الطية', 'Cut 2 (mirror pair)': 'قص 2 (زوج متماثل)',
+    'Cut 1 (fold in half lengthwise, join at centre back)': 'قص 1 (يُطوى طولياً ويُوصل عند منتصف الخلف)' };
+  function trP(t) { if (typeof t !== 'string') return t; if (TP[t]) return TP[t];
+    return t.replace(/\bFRONT\b/, 'الأمام').replace(/\bBACK\b/, 'الخلف').replace(/\bSLEEVE\b/, 'الكم').replace(/\bCOLLAR\b/, 'الياقة').replace(/\bChest\b/, 'الصدر').replace(/\bLength\b/, 'الطول').replace(/\bShoulder\b/, 'الكتف').replace(/\bWidth\b/, 'العرض').replace(/\bHeight\b/, 'الارتفاع').replace(/\bhalf\b/, 'النصف').replace(/\bflat\b/, 'مسطح').replace(/\bneck\b/, 'الرقبة').replace(/\bCut 1 on fold\b/, 'قص 1 على الطية').replace(/\bCut 2 \(mirror pair\)/, 'قص 2 (زوج متماثل)').replace(/\bCut 1 \(fold in half lengthwise, join at centre back\)/, 'قص 1 (يُطوى طولياً ويُوصل عند منتصف الخلف)'); }
+
   /* ---------- drawing ---------- */
   function T(k, ox, oy) { return function (p) { return [ox + p[0] * k, oy + p[1] * k]; }; }
   function poly(doc, pts, tf, close) { for (var i = 1; i < pts.length; i++) { var a = tf(pts[i - 1]), b = tf(pts[i]); doc.line(a[0], a[1], b[0], b[1]); } if (close) { var a2 = tf(pts[pts.length - 1]), b2 = tf(pts[0]); doc.line(a2[0], a2[1], b2[0], b2[1]); } }
@@ -63,31 +68,74 @@ window.TGPattern = (function () {
     (P.marks || []).forEach(function (x) { var q = tf([x, 0]), e = tf([x, -SA - 0.1]); doc.line(q[0], q[1], e[0], e[1]); });
     var bb = bbox(P.sew), cx = (bb.x0 + bb.x1) / 2, g0 = tf([cx, bb.y0 + bb.h * 0.28]), g1 = tf([cx, bb.y0 + bb.h * 0.72]);                          // grainline
     doc.setLineWidth(0.4); doc.line(g0[0], g0[1], g1[0], g1[1]); arrow(doc, g0, g1); doc.setFontSize(6); doc.setTextColor(60, 60, 60); doc.text('GRAIN', g0[0] + 1.2, (g0[1] + g1[1]) / 2, { angle: 90 });
-    var lb = tf([cx, bb.y0 + bb.h * 0.5]); doc.setFont('helvetica', 'bold'); doc.setFontSize(o && o.big ? 11 : 8); doc.setTextColor(20, 20, 20); doc.text(P.key + ' · ' + o.size, lb[0] + 2.5, lb[1] - 4, { align: 'left' }); doc.setFont('helvetica', 'normal'); doc.setFontSize(o && o.big ? 8 : 6.5); doc.text(P.cut, lb[0] + 2.5, lb[1], { align: 'left', maxWidth: 60 });
+    var lb = tf([cx, bb.y0 + bb.h * 0.5]); doc.setFont(doc.__fn || 'helvetica', 'bold'); doc.setFontSize(o && o.big ? 11 : 8); doc.setTextColor(20, 20, 20); doc.text(P.key + ' · ' + o.size, lb[0] + 2.5, lb[1] - 4, { align: 'left' }); doc.setFont(doc.__fn || 'helvetica', 'normal'); doc.setFontSize(o && o.big ? 8 : 6.5); doc.text(P.cut, lb[0] + 2.5, lb[1], { align: 'left', maxWidth: 60 });
   }
   function dim(doc, d, tf) { var a = tf(d.a), b = tf(d.b); doc.setDrawColor(201, 162, 75); doc.setLineWidth(0.2); doc.line(a[0], a[1], b[0], b[1]); arrow(doc, a, b); doc.setFontSize(6.5); doc.setTextColor(120, 90, 20);
     var mx = (a[0] + b[0]) / 2, my = (a[1] + b[1]) / 2, vert = Math.abs(b[1] - a[1]) > Math.abs(b[0] - a[0]); if (vert) doc.text(d.t, mx - 1, my, { angle: 90, align: 'center' }); else doc.text(d.t, mx, my - 1.2, { align: 'center' }); }
+
+
+  /* ---------- measurements from a photo ---------- */
+  function complete(j) {                                            // merge what the photo gave us with sensible derived values
+    var base = (+j.chest > 0 && +j.length > 0 && +j.shoulder > 0) ? fromMeasures(+j.chest, +j.length, +j.shoulder) : defaults(TGSizes.nearest(+j.chest > 0 ? +j.chest : 51)), out = {}, k;
+    for (k in base) out[k] = base[k]; for (k in out) if (+j[k] > 0) out[k] = Math.round(+j[k] * 2) / 2; return out;
+  }
+  async function analyze(photo, ref) {                              // AI reads the garment in the photo (runs in your Supabase function; needs ANTHROPIC_API_KEY)
+    var r = await TG.sb.functions.invoke('swift-action', { body: { action: 'analyze', image: photo.data.split(',')[1], mediaType: 'image/jpeg', reference: ref } });
+    var e = (r.data && r.data.error) || (r.error && r.error.message); if (e) throw new Error(e); return r.data.data;
+  }
+  function measureOnPhoto(src) {                                    // click points on a flat-lay photo, calibrated with one known width
+    return new Promise(function (res) {
+      TG.css(); var STEPS = [['chest', 'Click the LEFT armpit seam, then the RIGHT armpit seam (chest width). You will then type its real width in cm.'], ['length', 'Click the highest point of the shoulder next to the neck, then the bottom hem (body length).'], ['shoulder', 'Click the LEFT shoulder seam, then the RIGHT shoulder seam (shoulder width).'], ['sleeve', 'Click the shoulder seam, then the sleeve hem along the outside (sleeve length).'], ['neckW', 'Click the LEFT and RIGHT edge of the neck opening at the shoulder seams (neck width).']];
+      var ov = document.createElement('div'); ov.className = 'tgu';
+      ov.innerHTML = '<div class="tgu-box" style="width:94vw;max-width:900px;text-align:start"><h2 style="margin:0 0 6px;font-size:18px">Measure on the photo</h2><p class="tgm" style="margin:0 0 8px;min-height:2.6em"></p><canvas style="width:100%;border-radius:10px;background:#000;cursor:crosshair"></canvas><div class="tgu-btns" style="margin-top:10px"><button data-a="undo">Undo</button><button data-a="skip">Skip this one</button><button data-a="cancel">Cancel</button><button class="p" data-a="done">Done</button></div></div>';
+      var cv = ov.querySelector('canvas'), cx = cv.getContext('2d'), msg = ov.querySelector('.tgm'), img = new Image(), st = 0, pts = [], scale = null, got = {}, lines = [];
+      function redraw() { cx.drawImage(img, 0, 0, cv.width, cv.height); lines.forEach(function (l) { cx.strokeStyle = '#c9a24b'; cx.lineWidth = 3; cx.beginPath(); cx.moveTo(l[0][0], l[0][1]); cx.lineTo(l[1][0], l[1][1]); cx.stroke(); l.forEach(function (q) { cx.fillStyle = '#c9a24b'; cx.beginPath(); cx.arc(q[0], q[1], 6, 0, 7); cx.fill(); }); cx.fillStyle = '#fff'; cx.font = 'bold 20px sans-serif'; cx.fillText(l[2], (l[0][0] + l[1][0]) / 2 + 8, (l[0][1] + l[1][1]) / 2 - 8); });
+        pts.forEach(function (q) { cx.fillStyle = '#fff'; cx.beginPath(); cx.arc(q[0], q[1], 6, 0, 7); cx.fill(); }); msg.textContent = st < STEPS.length ? (st + 1) + ' of ' + STEPS.length + ': ' + STEPS[st][1] : 'All steps done. Press Done to fill the measurements.'; }
+      function next() { pts = []; st++; redraw(); }
+      async function pair() { var a = pts[0], b = pts[1], px = Math.hypot(a[0] - b[0], a[1] - b[1]), k = STEPS[st][0];
+        if (k === 'chest') { var f = await TG.form({ title: 'Real chest width', ok: 'OK', fields: [{ id: 'v', label: 'How wide is the chest really, in cm? (flat, armpit to armpit)', type: 'number', required: true }] }); if (!f || !(+f.v > 0)) { pts = []; redraw(); return; } scale = +f.v / px; got.chest = +f.v; lines.push([a, b, f.v + ' cm']); }
+        else { var cm = Math.round(px * scale * 2) / 2; got[k] = cm; lines.push([a, b, cm + ' cm']); } next(); }
+      cv.addEventListener('click', function (e) { if (st >= STEPS.length) return; if (st > 0 && !scale) return; var r = cv.getBoundingClientRect(); pts.push([(e.clientX - r.left) * cv.width / r.width, (e.clientY - r.top) * cv.height / r.height]); redraw(); if (pts.length === 2) pair(); });
+      ov.querySelector('.tgu-btns').addEventListener('click', function (e) { var a = e.target.dataset.a; if (!a) return;
+        if (a === 'undo') { if (pts.length) pts.pop(); else if (lines.length) { lines.pop(); st = Math.max(0, st - 1); delete got[STEPS[st][0]]; if (st === 0) scale = null; } redraw(); }
+        if (a === 'skip') { if (st === 0) return; if (st < STEPS.length) next(); }
+        if (a === 'cancel') { ov.remove(); res(null); } if (a === 'done') { if (!got.chest) { alert('Measure the chest first. It sets the scale for everything else.'); return; } ov.remove(); res(got); } });
+      img.onload = function () { cv.width = img.width; cv.height = img.height; redraw(); }; img.src = src; document.body.appendChild(ov);
+    });
+  }
 
   /* ---------- PDF ---------- */
   async function pdf(spec) {
     await Promise.all([TGReport.load('j'), TGReport.load('a')]); var lg = await TGReport.logo().catch(function () { return null; });
     var m = spec.m, size = spec.size || 'CUSTOM', P = build(m), doc = new window.jspdf.jsPDF({ unit: 'mm', format: 'a4' }), M = 12, W = 210;
-    function head(w, title, sub) { doc.setFillColor(17, 17, 17); doc.rect(0, 0, w, 28, 'F'); if (lg) doc.addImage(lg.data, 'PNG', M, 5, 17 * lg.w / lg.h, 17); doc.setTextColor(201, 162, 75); doc.setFont('helvetica', 'bold'); doc.setFontSize(15); doc.text(title, w - M, 12, { align: 'right' }); doc.setFont('helvetica', 'normal'); doc.setFontSize(8.5); doc.setTextColor(220, 220, 220); doc.text(sub, w - M, 19, { align: 'right' }); }
+    var ar = spec.lang === 'ar', FN = ar ? 'Naskh' : 'helvetica', L = function (e, a) { return ar ? a : e; }, rv = function (x) { return ar ? x.slice().reverse() : x; }, TODAY = new Date().toISOString().slice(0, 10), AL = { align: ar ? 'right' : 'left' }, TX = ar ? W - M : M;
+    if (ar) { await TGReport.arabic(doc); var ot = doc.text; doc.text = function (t, x, y, o) { return ot.call(doc, Array.isArray(t) ? t.map(trP) : trP(t), x, y, o); }; } doc.__fn = FN; doc.setFont(FN, 'normal');
+    function head(w, title, sub) { doc.setFillColor(17, 17, 17); doc.rect(0, 0, w, 28, 'F'); if (lg) doc.addImage(lg.data, 'PNG', ar ? w - M - 17 * lg.w / lg.h : M, 5, 17 * lg.w / lg.h, 17); doc.setTextColor(201, 162, 75); doc.setFont(FN, 'bold'); doc.setFontSize(15); doc.text(title, ar ? M : w - M, 12, { align: ar ? 'left' : 'right' }); doc.setFont(FN, 'normal'); doc.setFontSize(8.5); doc.setTextColor(220, 220, 220); doc.text(sub, ar ? M : w - M, 19, { align: ar ? 'left' : 'right' }); }
     /* page 1: tech spec */
-    head(W, 'Pattern & Tech Pack', 'Mock neck T-shirt · size ' + size + (spec.ref ? ' · ' + spec.ref : '') + ' · ' + new Date().toISOString().slice(0, 10));
-    var rows = [['A', 'Chest width (flat, armpit to armpit)', m.chest], ['B', 'Body length (highest shoulder point to hem)', m.length], ['C', 'Shoulder width (seam to seam)', m.shoulder], ['D', 'Sleeve length (shoulder seam to hem)', m.sleeve], ['E', 'Sleeve width at underarm', m.sleeveW], ['F', 'Sleeve opening width (flat)', P.s.SO / 2], ['G', 'Neck opening width', m.neckW], ['H', 'Front neck drop', m.frontDrop], ['I', 'Back neck drop', m.backDrop], ['J', 'Armhole depth (straight)', m.armhole], ['K', 'Collar height (finished)', m.collarH]];
-    doc.autoTable({ startY: 34, margin: { left: M, right: spec.photo ? 92 : M }, head: [['', 'Point of measure (finished, flat)', 'cm']], body: rows, styles: { fontSize: 8.5, cellPadding: 1.8 }, headStyles: { fillColor: [201, 162, 75], textColor: [17, 17, 17] }, columnStyles: { 0: { cellWidth: 8, fontStyle: 'bold' }, 2: { halign: 'right', cellWidth: 16 } }, alternateRowStyles: { fillColor: [250, 247, 240] } });
-    if (spec.photo) { var ph = spec.photo, bw = 78, bh = 100, r = Math.min(bw / ph.w, bh / ph.h); doc.setFontSize(8); doc.setTextColor(110, 90, 50); doc.text('Reference photo', 120, 36); doc.addImage(ph.data, 'JPEG', 120, 39, ph.w * r, ph.h * r); }
+    head(W, L('Pattern & Tech Pack', 'باترون ومواصفات التصنيع'), L('Mock neck T-shirt · size ', 'تيشيرت بياقة عالية · المقاس ') + size + (spec.ref ? ' · ' + spec.ref : '') + ' · ' + TODAY);
+    var rows = [['A', L('Chest width (flat, armpit to armpit)', 'عرض الصدر (مسطح، من الإبط إلى الإبط)'), m.chest], ['B', L('Body length (highest shoulder point to hem)', 'طول الجسم (من أعلى الكتف إلى الحافة السفلية)'), m.length], ['C', L('Shoulder width (seam to seam)', 'عرض الكتف (من درزة إلى درزة)'), m.shoulder], ['D', L('Sleeve length (shoulder seam to hem)', 'طول الكم (من درزة الكتف إلى الحافة)'), m.sleeve], ['E', L('Sleeve width at underarm', 'عرض الكم عند الإبط'), m.sleeveW], ['F', L('Sleeve opening width (flat)', 'عرض فتحة الكم (مسطح)'), P.s.SO / 2], ['G', L('Neck opening width', 'عرض فتحة الرقبة'), m.neckW], ['H', L('Front neck drop', 'انخفاض الرقبة من الأمام'), m.frontDrop], ['I', L('Back neck drop', 'انخفاض الرقبة من الخلف'), m.backDrop], ['J', L('Armhole depth (straight)', 'عمق فتحة الإبط (مستقيم)'), m.armhole], ['K', L('Collar height (finished)', 'ارتفاع الياقة (نهائي)'), m.collarH]];
+    doc.autoTable({ startY: 34, margin: ar ? { left: spec.photo ? 92 : M, right: M } : { left: M, right: spec.photo ? 92 : M }, head: [rv(['', L('Point of measure (finished, flat)', 'نقطة القياس (نهائي، مسطح)'), L('cm', 'سم')])], body: rows.map(rv), styles: { font: FN, fontSize: 8.5, cellPadding: 1.8, halign: ar ? 'right' : 'left' }, headStyles: { fillColor: [201, 162, 75], textColor: [17, 17, 17], halign: ar ? 'right' : 'left' }, columnStyles: ar ? { 2: { cellWidth: 8, fontStyle: 'bold' }, 0: { halign: 'right', cellWidth: 16 } } : { 0: { cellWidth: 8, fontStyle: 'bold' }, 2: { halign: 'right', cellWidth: 16 } }, alternateRowStyles: { fillColor: [250, 247, 240] } });
+    if (spec.photo) { var ph = spec.photo, bw = 78, bh = 100, r = Math.min(bw / ph.w, bh / ph.h); doc.setFontSize(8); doc.setTextColor(110, 90, 50); doc.text(L('Reference photo', 'صورة مرجعية'), ar ? M : 120, 36); doc.addImage(ph.data, 'JPEG', ar ? M : 120, 39, ph.w * r, ph.h * r); }
     var y = Math.max(doc.lastAutoTable.finalY, spec.photo ? 145 : 0) + 8;
-    doc.autoTable({ startY: y, margin: { left: M, right: M }, head: [['Piece', 'Cut', 'Notes']], body: [['FRONT', '1 on fold', 'Neck drop ' + m.frontDrop + ' cm. Fold line is the centre front.'], ['BACK', '1 on fold', 'Neck drop ' + m.backDrop + ' cm, 1 cm longer than front. Fold is the centre back.'], ['SLEEVE', '2 (mirror pair)', 'Sleeve cap ' + P.s.capLen.toFixed(1) + ' cm sews to the armholes (front + back ' + (P.f.armLen + P.b.armLen).toFixed(1) + ' cm): ' + (P.s.capLen - (P.f.armLen + P.b.armLen) >= 0 ? '+' : '') + (P.s.capLen - (P.f.armLen + P.b.armLen)).toFixed(1) + ' cm ease.'], ['COLLAR', '1', 'Length ' + P.c.W + ' cm (90% of the ' + P.neckCirc.toFixed(1) + ' cm neck opening so it sits close). Fold in half lengthwise.']], styles: { fontSize: 8.5, cellPadding: 1.8 }, headStyles: { fillColor: [17, 17, 17], textColor: [201, 162, 75] }, alternateRowStyles: { fillColor: [250, 247, 240] } });
-    y = doc.lastAutoTable.finalY + 6; doc.setFont('helvetica', 'bold'); doc.setFontSize(10); doc.setTextColor(30, 24, 12); doc.text('Construction and finishing', M, y); doc.setFont('helvetica', 'normal'); doc.setFontSize(8.5);
-    var lines = ['Seam allowance ' + SA + ' cm on all seams; body hem ' + HEM + ' cm; sleeve hem ' + SHEM + ' cm (already included in the cutting line).', 'Fabric: ' + (spec.fabric || 'cotton jersey with a little stretch, about 190 gsm, pre-shrunk') + '. Cut with the grain running down the body.', 'Order: shoulder seams, join collar into a loop, attach collar to neck, set sleeves in the round, close side and sleeve seams in one pass, hem.', 'Use a stretch stitch on all seams. Tolerance on every measurement: +/- 1 cm.', 'Notches mark the front armhole, sleeve cap centre and collar quarters. Match them when sewing.'];
-    if (spec.note) lines.push('Note: ' + spec.note); lines.forEach(function (l) { var t = doc.splitTextToSize('• ' + l, W - 2 * M); doc.text(t, M, y + 6); y += 4.4 * t.length; });
+    var ease = P.s.capLen - (P.f.armLen + P.b.armLen), ES = (ease >= 0 ? '+' : '') + ease.toFixed(1);
+    var prow = [[L('FRONT', 'الأمام'), L('1 on fold', '1 على الطية'), L('Neck drop ' + m.frontDrop + ' cm. Fold line is the centre front.', 'انخفاض الرقبة ' + m.frontDrop + ' سم. خط الطية هو منتصف الأمام.')],
+      [L('BACK', 'الخلف'), L('1 on fold', '1 على الطية'), L('Neck drop ' + m.backDrop + ' cm, 1 cm longer than front. Fold is the centre back.', 'انخفاض الرقبة ' + m.backDrop + ' سم، وأطول من الأمام بمقدار 1 سم. الطية هي منتصف الخلف.')],
+      [L('SLEEVE', 'الكم'), L('2 (mirror pair)', '2 (زوج متماثل)'), L('Sleeve cap ' + P.s.capLen.toFixed(1) + ' cm sews to the armholes (front + back ' + (P.f.armLen + P.b.armLen).toFixed(1) + ' cm): ' + ES + ' cm ease.', 'قوس الكم ' + P.s.capLen.toFixed(1) + ' سم يُخاط بفتحتي الإبط (الأمام + الخلف ' + (P.f.armLen + P.b.armLen).toFixed(1) + ' سم): سماحية ' + ES + ' سم.')],
+      [L('COLLAR', 'الياقة'), '1', L('Length ' + P.c.W + ' cm (90% of the ' + P.neckCirc.toFixed(1) + ' cm neck opening so it sits close). Fold in half lengthwise.', 'الطول ' + P.c.W + ' سم (90% من فتحة الرقبة ' + P.neckCirc.toFixed(1) + ' سم ليلتصق جيداً). تُطوى طولياً.')]];
+    doc.autoTable({ startY: y, margin: { left: M, right: M }, head: [rv([L('Piece', 'القطعة'), L('Cut', 'القص'), L('Notes', 'ملاحظات')])], body: prow.map(rv), styles: { font: FN, fontSize: 8.5, cellPadding: 1.8, halign: ar ? 'right' : 'left' }, headStyles: { fillColor: [17, 17, 17], textColor: [201, 162, 75], halign: ar ? 'right' : 'left' }, alternateRowStyles: { fillColor: [250, 247, 240] } });
+    y = doc.lastAutoTable.finalY + 6; doc.setFont(FN, 'bold'); doc.setFontSize(10); doc.setTextColor(30, 24, 12); doc.text(L('Construction and finishing', 'التجميع والتشطيب'), TX, y, AL); doc.setFont(FN, 'normal'); doc.setFontSize(8.5);
+    var lines = [L('Seam allowance ' + SA + ' cm on all seams; body hem ' + HEM + ' cm; sleeve hem ' + SHEM + ' cm (already included in the cutting line).', 'سماحية الخياطة ' + SA + ' سم في جميع الدرزات؛ حافة الجسم ' + HEM + ' سم؛ حافة الكم ' + SHEM + ' سم (محسوبة داخل خط القص).'),
+      L('Fabric: ' + (spec.fabric || 'cotton jersey with a little stretch, about 190 gsm, pre-shrunk') + '. Cut with the grain running down the body.', 'القماش: ' + (spec.fabric || 'جيرسيه قطن مع قليل من المطاطية، حوالي 190 جم/م²، مُسبق الانكماش') + '. يُقص مع اتجاه الخيط على طول الجسم.'),
+      L('Order: shoulder seams, join collar into a loop, attach collar to neck, set sleeves in the round, close side and sleeve seams in one pass, hem.', 'الترتيب: درزات الكتف، توصيل الياقة على شكل حلقة، تركيب الياقة بالرقبة، تركيب الأكمام، إغلاق درزات الجانب والكم دفعة واحدة، ثم الحافة.'),
+      L('Use a stretch stitch on all seams. Tolerance on every measurement: +/- 1 cm.', 'استخدم غرزة مطاطية في جميع الدرزات. التفاوت المسموح في كل قياس: ± 1 سم.'),
+      L('Notches mark the front armhole, sleeve cap centre and collar quarters. Match them when sewing.', 'العلامات تحدد فتحة إبط الأمام ومنتصف قوس الكم وأرباع الياقة. طابقها أثناء الخياطة.')];
+    if (spec.note) lines.push(L('Note: ', 'ملاحظة: ') + spec.note);
+    lines.forEach(function (l) { var t = doc.splitTextToSize((ar ? '' : '• ') + l, W - 2 * M); doc.text(t, TX, y + 6, AL); y += 4.4 * t.length; });
     /* page 2: overview, scale about 1:5 (landscape) */
-    doc.addPage('a4', 'l'); var LW = 297; head(LW, 'Pattern overview', 'size ' + size + ' · dashed = sewing line, solid = cutting line (seam allowance included)');
+    doc.addPage('a4', 'l'); var LW = 297; head(LW, L('Pattern overview', 'نظرة عامة على الباترون'), L('size ', 'المقاس ') + size + L(' · dashed = sewing line, solid = cutting line (seam allowance included)', ' · المتقطع = خط الخياطة، المتصل = خط القص (شاملاً سماحية الخياطة)'));
     var bf = bbox(P.f.out), bs = bbox(P.s.out), bc = bbox(P.c.out), gap = 12, colW = [bf.w + 8, bf.w + 8, Math.max(bs.w, bc.w) + 8], totW = colW[0] + colW[1] + colW[2] + 2 * gap, totH = Math.max(bf.h + 8, bs.h + bc.h + 22);
     var k = Math.min((LW - 2 * M) / totW, (210 - 28 - 26) / totH), x0 = M + ((LW - 2 * M) - totW * k) / 2, y0 = 28 + 14;
-    var sc = (10 / k); doc.setFontSize(8); doc.setTextColor(60, 60, 60); doc.text('Scale about 1:' + sc.toFixed(1) + '  ·  all dimensions in cm', M, 36);
+    var sc = (10 / k); doc.setFontSize(8); doc.setTextColor(60, 60, 60); doc.text(L('Scale about 1:' + sc.toFixed(1) + '  ·  all dimensions in cm', 'المقياس حوالي 1:' + sc.toFixed(1) + '  ·  جميع الأبعاد بالسنتيمتر'), ar ? LW - M : M, 36, AL);
     var pieces = [[P.f, x0 - bf.x0 * k + 4 * k, y0 - bf.y0 * k + 4 * k], [P.b, x0 + (colW[0] + gap) * k - bbox(P.b.out).x0 * k + 4 * k, y0 - bbox(P.b.out).y0 * k + 4 * k], [P.s, x0 + (colW[0] + colW[1] + 2 * gap) * k - bs.x0 * k + 4 * k, y0 - bs.y0 * k + 4 * k], [P.c, x0 + (colW[0] + colW[1] + 2 * gap) * k - bc.x0 * k + 4 * k, y0 + (bs.h + 14) * k - bc.y0 * k]];
     pieces.forEach(function (z) { var tf = T(k, z[1], z[2]); drawPiece(doc, z[0], tf, k, { size: size }); z[0].dims.forEach(function (d) { dim(doc, d, tf); }); });
     /* optional: full-size sheets, 1:1, printed at 100% */
@@ -100,13 +148,13 @@ window.TGPattern = (function () {
           drawPiece(doc, pc, tf, 10, { size: size, big: true });
           doc.setFillColor(255, 255, 255); doc.rect(0, 0, W, 10, 'F'); doc.rect(0, 287, W, 10, 'F'); doc.rect(0, 0, 10, 297, 'F'); doc.rect(200, 0, 10, 297, 'F');       // mask the margins
           doc.setDrawColor(0); doc.setLineWidth(0.2); [[10, 10], [200, 10], [10, 287], [200, 287]].forEach(function (q) { doc.line(q[0] - 4, q[1], q[0] + 4, q[1]); doc.line(q[0], q[1] - 4, q[0], q[1] + 4); });
-          doc.setFontSize(8); doc.setTextColor(40, 40, 40); doc.text(pc.key + ' · size ' + size + ' · sheet ' + (r * cols + c + 1) + ' of ' + (cols * rws) + ' (row ' + (r + 1) + ', column ' + (c + 1) + ')  ·  join sheets by the marks, overlap 1 cm', 12, 8);
-          doc.setDrawColor(0); doc.rect(12, 276, 50, 8); doc.setFontSize(6.5); doc.text('PRINT AT 100%. This box must measure 5 x 0.8 cm', 14, 281);
+          doc.setFontSize(8); doc.setTextColor(40, 40, 40); doc.text(L(pc.key + ' · size ' + size + ' · sheet ' + (r * cols + c + 1) + ' of ' + (cols * rws) + ' (row ' + (r + 1) + ', column ' + (c + 1) + ')  ·  join sheets by the marks, overlap 1 cm', pc.key + ' · المقاس ' + size + ' · ورقة ' + (r * cols + c + 1) + ' من ' + (cols * rws) + ' (صف ' + (r + 1) + '، عمود ' + (c + 1) + ')  ·  اربط الأوراق بالعلامات، التداخل 1 سم'), ar ? 198 : 12, 8, AL);
+          doc.setDrawColor(0); doc.rect(12, 276, 50, 8); doc.setFontSize(6.5); doc.text(L('PRINT AT 100%. This box must measure 5 x 0.8 cm', 'اطبع بنسبة 100%. يجب أن يقيس هذا المربع 5 × 0.8 سم'), 14, 281);
         }
       });
     }
-    var n = doc.getNumberOfPages(); for (var p = 1; p <= n; p++) { doc.setPage(p); doc.setFontSize(7); doc.setTextColor(130, 130, 130); var pw = doc.internal.pageSize.getWidth(), ph2 = doc.internal.pageSize.getHeight(); if (p <= 2) doc.text('TELEGANT · pattern ' + p + ' of ' + n + ' · confidential', M, ph2 - 6); }
-    doc.save('telegant-pattern-' + (spec.ref || size) + '.pdf');
+    var n = doc.getNumberOfPages(); for (var p = 1; p <= n; p++) { doc.setPage(p); doc.setFontSize(7); doc.setTextColor(130, 130, 130); var pw = doc.internal.pageSize.getWidth(), ph2 = doc.internal.pageSize.getHeight(); if (p <= 2) doc.text(L('TELEGANT · pattern ' + p + ' of ' + n + ' · confidential', 'TELEGANT · باترون ' + p + ' من ' + n + ' · سري'), ar ? pw - M : M, ph2 - 6, AL); }
+    doc.save('telegant-pattern-' + (spec.ref || size) + (ar ? '-ar' : '') + '.pdf');
   }
-  return { PROMPT: PROMPT, defaults: defaults, fromMeasures: fromMeasures, build: build, pdf: pdf, bbox: bbox };
+  return { PROMPT: PROMPT, defaults: defaults, fromMeasures: fromMeasures, complete: complete, analyze: analyze, measureOnPhoto: measureOnPhoto, build: build, pdf: pdf, bbox: bbox };
 })();

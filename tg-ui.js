@@ -33,6 +33,7 @@
       document.addEventListener('keydown', key); document.body.appendChild(d); var f = d.querySelector('.p') || d.querySelector('button'); if (f) f.focus();
     });
   }
+  TG.css = css;
   TG.say = function (m) {
     var s = String(m == null ? '' : m), ok = /^(saved|added|created|sent|delivered|page created|product page|reset link|opening hours saved|thank)|✔|✓/i.test(s), L = STR[TG.lang()];
     return modal({ msg: s, icon: ok ? 'ok' : 'warn', buttons: [{ t: L.ok, v: true, p: true }] });
