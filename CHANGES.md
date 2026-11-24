@@ -90,3 +90,7 @@ Not changed on purpose: login.html (no real bug found), account.html (old redire
 - DB additive (sql/chat-alert-toggle.sql): owner-only table chat_alert_cfg (enabled, default ON = today's behavior) and a BEFORE INSERT trigger on chats that marks a new chat as already notified when alerts are OFF, which the existing mail function treats as "skip". The mail function (swift-action / order-mail) was NOT changed or redeployed. Tested in a rolled-back transaction: ON gives notified=false (alert sent), OFF gives notified=true (skipped).
 - Admin > Chat: new card "Email alert for new chats" with an ON/OFF button. Public pages unchanged.
 - Not done on purpose: choosing recipients or sender address/name in the admin needs a change to the mail function. Its deployed source (order-mail, v12) can't be proven identical to the repo copy, so I did not redeploy it. Gmail app password stays a Supabase secret.
+
+## 39. TELEGANT admin: new Settings tab (Pixel + new-chat email alert moved)
+- New admin tab "Settings" (owner only, like the whole admin). It holds the Facebook Pixel section (moved from Marketing, same code and same save/clear/check buttons, rendered by the Marketing module and relocated) and the new-chat email alert ON/OFF card (moved from Chat). Marketing and Chat keep a one-line pointer. No database change, no public-site change.
+- Next in this tab: Order emails and the per-email-type switches (see the inventory in the report).

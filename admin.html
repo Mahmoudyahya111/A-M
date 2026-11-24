@@ -259,7 +259,7 @@ const TABS={
    <div class="row"><button class="b ${on?'p':''}" id="chatSw" data-on="${on?1:0}">Chat widget: ${on?'ON':'OFF'}</button>
    <select id="schMode"><option value="always"${sc.mode!=='schedule'?' selected':''}>Always open (when ON)</option><option value="schedule"${sc.mode==='schedule'?' selected':''}>Only during opening hours</option></select>
    <a class="b" href="chat-admin.html" style="text-decoration:none;color:var(--ink)">Open support console</a></div></div>
-   <div class="card"><h3>Email alert for new chats</h3><p>When a customer starts a new chat, owners and available support agents get one email (sent from TELEGANT's Gmail account). The Gmail app password is stored as a Supabase secret, never in this page.</p><div class="row"><button class="b ${alOn?'p':''}" id="alertSw" data-on="${alOn?1:0}">New-chat email alerts: ${alOn?'ON':'OFF'}</button></div></div>
+   <p class="note" style="margin:8px 0">Email alerts for new chats and the Facebook Pixel now live in the <b>Settings</b> tab.</p>
    <div class="card"><h3>Opening hours</h3><table style="min-width:420px"><tr><th>Day</th><th>Open</th><th>From</th><th>To</th></tr>${DAYS.map((n,i)=>{const d=(sc.days||{})[i]||{on:i!==5,from:'10:00',to:'18:00'};
    return `<tr><td>${n}</td><td><input type="checkbox" data-day="${i}" ${d.on?'checked':''} style="width:auto;padding:0;border:0"></td><td><input type="time" data-from="${i}" value="${d.from||'10:00'}"></td><td><input type="time" data-to="${i}" value="${d.to||'18:00'}"></td></tr>`}).join('')}</table>
    <p><button class="b p" id="saveSch">Save opening hours</button></p></div>`;},
@@ -298,7 +298,13 @@ const TABS={
   <div class="card"><h3>Prefer to use another AI tool yourself?</h3><small>Upload the photo to any AI that can see images (for example Claude or ChatGPT) together with this prompt, then paste the JSON it returns below.</small>
    <textarea id="ptPrompt" readonly style="${ta};min-height:170px">${esc(TGPattern.PROMPT)}</textarea><div class="row" style="margin-top:8px"><button class="b" data-pt="copy">Copy prompt</button></div>
    <textarea id="ptJson" placeholder="Paste the AI's JSON answer here" style="${ta}"></textarea><div class="row" style="margin-top:8px"><button class="b p" data-pt="fill">Fill the measurements from this JSON</button></div></div>`;},
- async Marketing(){setTimeout(()=>window.TGMarketing.render().catch(e=>{$('#mkroot').innerHTML='<div class="card">Could not load Marketing: '+esc(e.message||e)+'</div>'}),0);return '<div id="mkroot">Loading…</div>'},
+ async Marketing(){setTimeout(()=>window.TGMarketing.render().then(()=>{const p=document.querySelector('#mkroot details[data-s="pixel"]');if(p){const n=document.createElement('p');n.className='note';n.innerHTML='The Facebook Pixel and the campaign link builder moved to the <b>Settings</b> tab.';p.replaceWith(n);}}).catch(e=>{$('#mkroot').innerHTML='<div class="card">Could not load Marketing: '+esc(e.message||e)+'</div>'}),0);return '<div id="mkroot">Loading…</div>'},
+ async Settings(){const al=await sb.from('chat_alert_cfg').select('enabled').eq('id',1).maybeSingle();const alOn=!(al.data&&al.data.enabled===false);
+  setTimeout(()=>window.TGMarketing.render().then(()=>{const p=document.querySelector('#mkroot details[data-s="pixel"]'),h=document.getElementById('stPx');if(p&&h){p.open=true;h.appendChild(p);}const r=document.getElementById('mkroot');if(r)r.remove();}).catch(e=>{const h=document.getElementById('stPx');if(h)h.textContent='Could not load: '+(e.message||e);}),0);
+  return `<h3 style="margin:6px 0">Facebook Pixel</h3><div id="stPx"></div><div id="mkroot" hidden>Loading…</div>
+   <div class="card"><h3>Email alert for new chats</h3><p>When a customer starts a new chat, owners and available support agents get one email (sent from TELEGANT's Gmail account). The Gmail app password is stored as a Supabase secret, never in this page.</p><div class="row"><button class="b ${alOn?'p':''}" id="alertSw" data-on="${alOn?1:0}">New-chat email alerts: ${alOn?'ON':'OFF'}</button></div></div>
+`;},
+
  async Reviews(){const{data}=await sb.from('reviews').select('*').order('created_at',{ascending:false});
   return `<div class="card"><h3>Add review</h3><div class="row"><input id="ra" placeholder="Name"><input id="rr" type="number" min="1" max="5" placeholder="Stars 1-5">
    <input id="rb" placeholder="Review text" style="min-width:240px"><button class="b p" id="addR">Add</button></div></div>`+
@@ -359,7 +365,7 @@ $('#v').addEventListener('click',async e=>{const t=e.target,d=t.dataset;if(!t.cl
   if(t.id==='saveSch'){const days={};DAYS.forEach((n,i)=>{days[i]={on:document.querySelector(`[data-day="${i}"]`).checked,from:document.querySelector(`[data-from="${i}"]`).value||'10:00',to:document.querySelector(`[data-to="${i}"]`).value||'18:00'};});
     const r=await sb.from('site_settings').upsert({key:'chat_schedule',value:{mode:$('#schMode').value,days}});if(r.error)return alert(r.error.message);alert('Opening hours saved.');return;}
   if(d.rp){t.disabled=true;try{const sp=await specFor(d.rp,d.id,RL());sp.lang=RL();await TGReport[d.fmt](sp);}catch(e){alert(e.message||e);}finally{t.disabled=false;}return;}
-  if(t.id==='alertSw'){const on=d.on==='1';const r=await sb.from('chat_alert_cfg').upsert({id:1,enabled:!on});if(r.error)return alert(r.error.message);return show('Chat');}
+  if(t.id==='alertSw'){const on=d.on==='1';const r=await sb.from('chat_alert_cfg').upsert({id:1,enabled:!on});if(r.error)return alert(r.error.message);return show('Settings');}
   if(t.id==='saveIP'){const r=await sb.from('site_settings').upsert({key:'instapay',value:{handle:$('#ipv').value.trim()}});if(r.error)return alert(r.error.message);return alert('Saved. Customers will see this account when they choose InstaPay.');}
   if(d.pf){const r=await sb.storage.from('payment-proofs').createSignedUrl(d.pf,120);if(r.error)return alert(r.error.message);window.open(r.data.signedUrl,'_blank');return;}
   if(t.id==='applyS'){SR.f=$('#sf').value;SR.t=$('#stt').value;return show('Accounting');}
