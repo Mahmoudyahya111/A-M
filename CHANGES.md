@@ -97,3 +97,4 @@ Not changed on purpose: login.html (no real bug found), account.html (old redire
 
 - #40 tg-marketing.js: guard the poster download link when the Marketing module renders hidden inside Settings (removes a harmless null .href console error). Revert: git revert this commit.
 - #41 backups/order-mail: deployed swift-action (order-mail) v12 eszip + extracted transpiled source + repo copy, taken before any change.
+- #42 order-mail v15 (slug swift-action): additive gates via table order_mail_cfg (types on/off, provider gmail|resend, sender name/address). Missing key = ON, defaults unchanged. Repo index.ts replaced with the real deployed source (the old repo copy was stale: it lacked analyze/cancel/refund/manual and guest confirm). Settings > 'Order emails & sender' card. Revert: redeploy backups/order-mail/v12-deployed.ts. NOTE: v13 (from the stale copy) was live ~18s by mistake and was rolled back at once.
