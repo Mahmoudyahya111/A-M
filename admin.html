@@ -29,7 +29,7 @@ h3{margin:0 0 10px;font:600 16px Georgia,serif}
 <nav id="nav"></nav><main id="v">Loading…</main>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
-<script src="tg-core.js?v=1795558985"></script>
+<script src="tg-core.js?v=1795560080"></script>
 <script src="tg-ui.js"></script>
 <script src="tg-colors.js"></script>
 <script src="tg-report.js"></script>
@@ -173,6 +173,21 @@ async function stmtSection(){const rows=await statement(),f=SR.f,t=SR.t,before=f
    <p>Opening balance <b>${fm(open)}</b> &nbsp;·&nbsp; Money in <b>${fm(inn)}</b> &nbsp;·&nbsp; Money out <b>${fm(out)}</b> &nbsp;·&nbsp; Closing balance <b>${fm(close)} EGP</b></p></div>`+
    tbl(['Date','Reference','Type','Description','Money out','Money in','Balance'],v.map(r=>[esc(r.date),esc(r.ref),esc(r.type),esc(r.desc),r.debit?fm(r.debit):'',r.credit?fm(r.credit):'',fm(r.bal)]));}
 
+async function liveHtml(){
+ const{data:L,error}=await sb.rpc('live_summary');
+ if(error)return '<div class="card">Could not load live visitors: '+esc(error.message)+'</div>';
+ const pages=L.pages||[],camps=L.campaigns||[];
+ return '<div class="row">'+kpi('Visitors right now',L.now)+kpi('From Meta ads',L.ads)+kpi('Organic / direct / other',L.organic)+'</div>'+
+  '<h3 style="margin:14px 0 6px">Live per page</h3>'+tbl(['Page','Visitors now','From Meta ads'],pages.map(r=>[esc(r.path),r.visitors,r.ads]))+
+  '<h3 style="margin:14px 0 6px">Live campaigns</h3>'+tbl(['Campaign','Platform','Visitors now'],camps.map(c=>[esc(c.campaign),esc(c.platform||'-'),c.visitors]))+
+  '<p><small>Counts people with a TELEGANT page open in the last 90 seconds. Updates every 15 seconds. It is a minimum: ad blockers and in-app browsers hide some visitors. Campaign names need UTM-tagged links.</small></p>';
+}
+async function liveBlock(){
+ const h='<h3 style="margin:6px 0">Visitors right now <small style="font-weight:400">(live)</small></h3><div id="liveBox">'+await liveHtml()+'</div>';
+ clearInterval(window._liveT);
+ window._liveT=setInterval(async()=>{const b=document.getElementById('liveBox');if(!b){clearInterval(window._liveT);return;}if(document.visibilityState!=='visible')return;try{b.innerHTML=await liveHtml();}catch(e){}},15000);
+ return h;
+}
 async function metaAds(){
  const[{data:px},{data:M,error}]=await Promise.all([sb.from('site_settings').select('value').eq('key','pixel').maybeSingle(),sb.rpc('meta_ads_summary',{p_days:30})]);
  const hasPx=!!(px&&px.value&&String(px.value.id||'').trim());
@@ -187,7 +202,7 @@ async function metaAds(){
   '<p><small>Counts are a minimum: the Facebook/Instagram in-app browser and ad blockers hide some visits ('+M.inapp_views+' views came from in-app browsers). Campaign detail needs links with UTM tags. "Meta click without tags" has a Facebook click id but no ad tags, so it can be an ad or an ordinary post. Only visits since this tracking was added are classified.</small></p>';}
 const TABS={
  async Analytics(){const{data}=await sb.from('page_stats').select('*').order('views',{ascending:false});
-  return `<p>Last 30 days. "Engaged" = stayed 15s or scrolled. "Left without engaging" = viewed but did neither.</p>`+
+  return await liveBlock()+`<h3 style="margin:18px 0 6px">Last 30 days</h3><p> "Engaged" = stayed 15s or scrolled. "Left without engaging" = viewed but did neither.</p>`+
    tbl(['Page','Views','Unique visitors','Engaged','Left without engaging','Clicked out of site'],
    (data||[]).map(r=>[esc(r.page),r.views,r.visitors,r.engaged,Math.max(r.sessions-r.engaged,0),r.exits]))+await metaAds();},
  async Orders(){const[{data},ip]=await Promise.all([sb.from('orders').select('*').order('created_at',{ascending:false}).limit(300),sb.from('site_settings').select('value').eq('key','instapay').maybeSingle()]);

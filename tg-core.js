@@ -76,6 +76,9 @@
       sb.from('page_events').insert(row).then(function () {});
     };
     ev('view');
+    /* live presence: one small heartbeat per open tab, only while it is visible */
+    var ping = function () { if (document.visibilityState !== 'visible') return; try { sb.rpc('track_ping', { p_session: sid, p_path: page, p_ref: att.ref_host || '', p_source: att.utm_source || '', p_medium: att.utm_medium || '', p_campaign: att.utm_campaign || '', p_fbclid: !!att.has_fbclid, p_device: (innerWidth < 768 ? 'mobile' : 'desktop') }).then(function () {}, function () {}); } catch (e) { } };
+    ping(); setInterval(ping, 30000); document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'visible') ping(); });
     var eng = 0, engage = function () { if (!eng) { eng = 1; ev('engaged'); } };
     setTimeout(engage, 15000); // stayed 15s = actually reviewing
     addEventListener('scroll', function () { if (scrollY > innerHeight * 0.4) engage(); }, { passive: true });
