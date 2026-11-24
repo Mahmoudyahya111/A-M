@@ -310,6 +310,11 @@ window.TELEGANT_I18N = {
   });
 
   (window.TG && TG.prepCart ? TG.prepCart() : Promise.resolve()).then(() => { renderCart(); renderSummary(); renderDates(); });
+
+  // re-render cart lines, totals and date grid when the language is toggled,
+  // so item names and the "N orders so far" labels follow the current language
+  new MutationObserver(() => { renderCart(); renderSummary(); renderDates(); })
+    .observe(document.documentElement, { attributes: true, attributeFilter: ['lang'] });
 })();
 </script>
 
