@@ -73,3 +73,6 @@ Not changed on purpose: login.html (no real bug found), account.html (old redire
 - Created pages: Delete saves a copy to pages_trash first (if the copy fails nothing is deleted), "Deleted pages" list has Restore.
 - Hidden/deleted page message now sits between header and footer.
 - Note: sitemap.xml is static, edit it if a page is removed for good.
+
+## 35. TELEGANT SEO re-audit fixes (no visual change)
+- Survey: added a visually hidden h1 (page had none). About: the second h1 is now a level-2 heading for crawlers (looks identical). Home: added WebSite structured data next to the ClothingStore data.
