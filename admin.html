@@ -137,9 +137,6 @@ function ptModelSet(id){PTMODEL=id;const md=TGPattern.modelById(id),im=$('#ptMod
   ptFill($('#ptSize')?$('#ptSize').value:'m');}
 async function ptModelPdfPhoto(){const md=TGPattern.modelById(PTMODEL);if(!md||!md.photo)return null;try{return await TGPattern.loadPhoto(md.photo,900);}catch(e){return null;}}
 function ptApply(j,note){const m=TGPattern.complete(j);PTK.forEach(k=>{const e=$('#pt_'+k);if(e&&m[k])e.value=m[k];});$('#ptSize').value='custom';if($('#ptStatus'))$('#ptStatus').textContent=note;}
-async function ptAuto(){const st=$('#ptStatus');try{const ph=await ptPhoto(1400);if(!ph)return alert('Choose a photo first.');st.textContent='Reading the photo, this takes a few seconds...';
-  const j=await TGPattern.analyze(ph,{type:$('#ptRefType').value,value:+$('#ptRefVal').value});ptApply(j,'Filled from the photo'+(j.confidence?' (AI confidence: '+j.confidence+')':'')+'. Check the numbers, then create the PDF.'+(j.assumptions?' Assumed: '+j.assumptions:''));}
-  catch(e){st.textContent='';alert((e.message||e)+' You can still use "Measure on the photo by hand".');}}
 function ptRead(){const m={};for(const k of PTK){m[k]=parseFloat($('#pt_'+k).value);if(!(m[k]>0))throw new Error('Fill every measurement with a number above 0 ('+k+').');}return m;}
 function ptPhoto(mx){return new Promise(res=>{const f=$('#ptPhoto')&&$('#ptPhoto').files[0];if(!f)return res(null);const fr=new FileReader();fr.onload=()=>{const im=new Image();im.onload=()=>{const s=Math.min(1,(mx||900)/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*s);c.height=Math.round(im.height*s);c.getContext('2d').drawImage(im,0,0,c.width,c.height);res({data:c.toDataURL('image/jpeg',.82),w:c.width,h:c.height});};im.src=fr.result;};fr.readAsDataURL(f);});}
 const RL=()=>localStorage.getItem('tg_replang')==='ar'?'ar':'en';
@@ -275,9 +272,8 @@ const TABS={
     <input id="ptRef" placeholder="Reference / order no."></div>
    <div class="row">${F.map(([k,n])=>`<label style="margin-right:10px">${n}<br><input id="pt_${k}" type="number" step="0.5" style="width:110px"></label>`).join('')}</div>
    <div class="row"><input id="ptFab" style="min-width:300px" placeholder="Fabric (e.g. cotton jersey 95/5, 190 gsm)"><input id="ptNote" style="min-width:300px" placeholder="Extra notes for the manufacturer"></div>
-   <div class="row"><label>Photo of the item <input id="ptPhoto" type="file" accept="image/*"></label>
-    <select id="ptRefType"><option value="chest">Scale: chest width (flat) is</option><option value="length">Scale: body length is</option><option value="height">Scale: person's height is</option></select><input id="ptRefVal" type="number" step="0.5" placeholder="cm" style="width:90px"></div>
-   <div class="row"><button class="b p" data-pt="ai">Read measurements from the photo (AI)</button><button class="b" data-pt="hand">Measure on the photo by hand</button></div><p id="ptStatus" style="margin:6px 0 0;color:var(--gold)"></p>
+   <div class="row"><label>Photo of the item <input id="ptPhoto" type="file" accept="image/*"></label></div>
+   <div class="row"><button class="b p" data-pt="hand">Measure on the photo by hand</button></div><p id="ptStatus" style="margin:6px 0 0;color:var(--gold)"></p>
    <div class="row"><button class="b p" data-pt="pdf">Pattern PDF (spec + overview)</button><button class="b" data-pt="full">Pattern PDF + full-size sheets (print at 100%)</button></div></div>
   <div class="card"><h3>Prefer to use another AI tool yourself?</h3><small>Upload the photo to any AI that can see images (for example Claude or ChatGPT) together with this prompt, then paste the JSON it returns below.</small>
    <textarea id="ptPrompt" readonly style="${ta};min-height:170px">${esc(TGPattern.PROMPT)}</textarea><div class="row" style="margin-top:8px"><button class="b" data-pt="copy">Copy prompt</button></div>
@@ -302,7 +298,6 @@ $('#v').addEventListener('change',async e=>{const t=e.target;
   if(t.id==='pgT'||t.id==='gps')pgToggle();
   if(t.id==='ptModel')ptModelSet(t.value);
   if(t.id==='ptSize')ptFill(t.value);
-  if(t.id==='ptPhoto'&&t.files[0])ptAuto();
   if(t.id==='ptOrder'&&t.value){const[id,ix]=t.value.split('|'),o=(await sb.from('orders').select('items,order_number').eq('id',+id).single()).data,x=(o.items||[])[+ix]||{},sd=x.sizeDetail||{},key=String(x.size||'').toLowerCase();
     const m=(x.size==='Custom'||sd.label==='Custom')?TGPattern.fromMeasures(+sd.chest,+sd.length,+sd.shoulder):TGPattern.defaults(TGSizes.chart[key]?key:'m');PTK.forEach(k=>{$('#pt_'+k).value=m[k];});$('#ptSize').value=TGSizes.chart[key]?key:'custom';$('#ptRef').value=o.order_number;}
   if(t.id==='pfil'){PF=t.value;show('Products');}
@@ -322,7 +317,6 @@ $('#v').addEventListener('click',async e=>{const t=e.target,d=t.dataset;if(!t.cl
     const r=await sb.functions.invoke('swift-action',{body:{action:'manual',order_id:o.id,subject:f.subject,message:f.message}}),er=(r.data&&r.data.error)||(r.error&&r.error.message);
     return alert(er?er:'Sent to '+(o.email||'the customer')+'.');}
   if(d.pt){try{
-    if(d.pt==='ai'){await ptAuto();return;}
     if(d.pt==='hand'){const ph=await ptPhoto(1400);if(!ph)return alert('Choose a photo first.');const g=await TGPattern.measureOnPhoto(ph.data);if(g)ptApply(g,'Filled from your measurements on the photo. Check the numbers, then create the PDF.');return;}
     if(d.pt==='savemodel'){const f=await TG.form({title:'Save these settings as a model',ok:'Save model',fields:[{id:'name',label:'Model name (for example "Polo shirt")',type:'text',required:true}]});
       if(!f)return;const m=ptRead(),up=await ptPhoto(500),cur=TGPattern.modelById(PTMODEL);
