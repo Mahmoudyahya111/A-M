@@ -94,3 +94,5 @@ Not changed on purpose: login.html (no real bug found), account.html (old redire
 ## 39. TELEGANT admin: new Settings tab (Pixel + new-chat email alert moved)
 - New admin tab "Settings" (owner only, like the whole admin). It holds the Facebook Pixel section (moved from Marketing, same code and same save/clear/check buttons, rendered by the Marketing module and relocated) and the new-chat email alert ON/OFF card (moved from Chat). Marketing and Chat keep a one-line pointer. No database change, no public-site change.
 - Next in this tab: Order emails and the per-email-type switches (see the inventory in the report).
+
+- #40 tg-marketing.js: guard the poster download link when the Marketing module renders hidden inside Settings (removes a harmless null .href console error). Revert: git revert this commit.

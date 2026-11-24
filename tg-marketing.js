@@ -115,7 +115,7 @@
       c.font = '500 26px Cairo, Inter, sans-serif'; c.globalAlpha = .7; c.textAlign = 'center'; c.fillText(ar ? 'مقاسك بالظبط · تتبع مباشر لطلبك' : 'Made to your fit · Live order tracking', W / 2, H - 36); c.globalAlpha = 1;
 return true; }
     async function drawImg() { var my = ++drawing, p = pid('#ip'), sz = $('#is').value.split('x'), W = +sz[0], H = +sz[1], cv = $('#cv'); if (!(await paint(cv, p, { size: $('#is').value, style: $('#ist').value, lang: $('#il').value, badge: $('#ib').value.trim(), cta: $('#ic').value.trim() }, my))) return;
-      cv.toBlob(function (b) { if (!b || my !== drawing) return; var a = $('#idl'); if (a.href && a.href.indexOf('blob:') === 0) URL.revokeObjectURL(a.href); a.href = URL.createObjectURL(b); a.download = 'TELEGANT-' + (p.slug || p.id) + '-' + W + 'x' + H + '.png'; }, 'image/png'); }
+      cv.toBlob(function (b) { if (!b || my !== drawing) return; var a = $('#idl'); if (!a) return; if (a.href && a.href.indexOf('blob:') === 0) URL.revokeObjectURL(a.href); a.href = URL.createObjectURL(b); a.download = 'TELEGANT-' + (p.slug || p.id) + '-' + W + 'x' + H + '.png'; }, 'image/png'); }
 
     ['#ip', '#is', '#ist', '#il'].forEach(function (s) { $(s).onchange = drawImg; }); $('#ib').oninput = $('#ic').oninput = drawImg;
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(drawImg); else drawImg();
