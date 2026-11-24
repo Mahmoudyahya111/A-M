@@ -46,3 +46,9 @@ Not changed on purpose: login.html (no real bug found), account.html (old redire
 - New edge function `admin-passwords` (supabase/functions/admin-passwords/index.ts, deployed, verify_jwt on). Owner-only (checked server-side from profiles). Actions: set_password, generate_password (server makes a 14-char random password with crypto RNG, returns it once, never stores/logs it). Cannot change another owner's password. Existing `admin-users` function untouched. No DB change.
 - Admin > Users: "Set / generate password" button per user, and a "Generate" button beside the password field of Add user.
 - Revert: git revert + delete the function.
+
+## 30. Security fix: anonymous callers could run staff-only database functions (TELEGANT)
+- Found: confirm_payment, refund_order, chat_claim/close/transfer, set_order_photo, confirm_delivery and others checked the role with `my_role() <> 'owner'`, which is NULL (not true) for signed-out visitors, so the check was skipped. Verified with a signed-out call to confirm_payment (it ran).
+- Fix (no design change): REVOKE EXECUTE from anon/public on staff-only functions (confirm_payment, refund_order, chat_claim, chat_close, chat_transfer, set_order_photo, set_order_status, confirm_delivery, cancel_order, staff_orders, staff_list, delivery_counts, set_presence, set_my_alias, claim_my_orders, service_report, csat_report). Signed-in users unchanged. place_order, track_order and chat start are untouched.
+- Backups of previous grants: backups/grants-before-revoke-anon*.json. Revert: GRANT EXECUTE ... TO anon.
+- A stray test event row made by the probe (order_events id 185) was deleted.
