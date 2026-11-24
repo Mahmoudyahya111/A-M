@@ -44,9 +44,8 @@
       }
       var r = await TG.sb.rpc('delivery_counts');
       if (r.data) localStorage.setItem('telegant-order-counts', JSON.stringify(r.data));
-      var s = (await TG.sb.auth.getSession()).data.session, btn = document.getElementById('place-order-btn');
-      if (btn && !s) btn.textContent = ar() ? 'سجّل الدخول لإتمام الطلب' : 'Sign in to place your order';
-      if (btn && s) {
+      var s = (await TG.sb.auth.getSession()).data.session;
+      if (s) {
         var p = await TG.profile(), n = document.getElementById('cust-name'), m = document.getElementById('cust-email');
         if (n && !n.value && p && p.full_name) n.value = p.full_name;
         if (m && !m.value) m.value = s.user.email;

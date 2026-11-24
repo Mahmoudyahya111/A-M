@@ -19,6 +19,7 @@ window.TELEGANT_I18N = {
     h1:"Track Your Order", sub:"Enter your order ID (from your confirmation) to see its status.",
     lbl_id:"Order ID", btn_track:"Track Order",
     not_found:"No order found with that ID. If you ordered while signed in, sign in with the same account to track it.",
+    lbl_email:"Email used at checkout", need_email:"If you checked out as a guest, enter the email you used at checkout to verify it's your order.",
     st_placed:"Placed", st_confirmed:"Confirmed", st_production:"In Production", st_shipped:"Shipped", st_delivered:"Delivered",
     order_for:"Order for", expected:"Expected delivery", items_label:"Items",
     foot_tag:"Premium T-shirts, defined by elegance.",
@@ -31,6 +32,7 @@ window.TELEGANT_I18N = {
     h1:"تتبع طلبك", sub:"أدخل رقم الطلب (من رسالة التأكيد) لمعرفة حالته.",
     lbl_id:"رقم الطلب", btn_track:"تتبع الطلب",
     not_found:"لا يوجد طلب بهذا الرقم. إذا طلبت وأنت مسجّل الدخول، سجّل الدخول بنفس الحساب لتتبعه.",
+    lbl_email:"البريد المستخدم عند الطلب", need_email:"إذا أكملت الطلب كضيف، أدخل البريد الإلكتروني الذي استخدمته عند الطلب للتحقق من أنه طلبك.",
     st_placed:"تم الطلب", st_confirmed:"تم التأكيد", st_production:"قيد التصنيع", st_shipped:"تم الشحن", st_delivered:"تم التسليم",
     order_for:"طلب باسم", expected:"موعد التسليم المتوقع", items_label:"المنتجات",
     foot_tag:"تيشيرتات فاخرة، بلمسة أناقة.",
@@ -85,6 +87,10 @@ window.TELEGANT_I18N = {
   <div class="field-group">
     <label data-i18n="lbl_id">Order ID</label>
     <input type="text" id="track-input" placeholder="TG-10001">
+    <div id="track-email-wrap" style="display:none; margin-top:12px;">
+      <label for="track-email" data-i18n="lbl_email">Email used at checkout</label>
+      <input type="email" id="track-email" placeholder="you@example.com">
+    </div>
   </div>
   <button class="btn-gold" id="track-btn" data-i18n="btn_track" style="width:100%;">Track Order</button>
 
@@ -137,10 +143,27 @@ window.TELEGANT_I18N = {
   }
 
   const STAGE={'new':0,'obtaining material':1,'cutting':2,'assembling':2,'adding product photo':2,'ready for pickup':2,'on the way to manufacturer':2,'picked up':3,'on the way to customer':3,'arrived at customer':3,'delivered':4,'cancelled':0};
-  async function lookup(id){
+  async function lookup(id, email){
     try{ const q=await TG.sb.from('orders').select('*').eq('order_number',id.trim().toUpperCase()).maybeSingle();
       if(q.data){const o=q.data;return {id:o.order_number,customer:{name:o.customer_name},deliveryDate:o.delivery_date||'-',items:o.items||[],_stage:STAGE[o.status]??0,_cancel:o.status==='cancelled'?{by:o.cancelled_by,reason:o.cancel_reason,refund:o.refund_status,amount:o.refund_amount,note:o.refund_reason}:null};} }catch(e){}
+    if (email){ try{ const r=await TG.sb.rpc('track_order',{p_order_number:id.trim().toUpperCase(), p_email:email.trim()});
+      const o=r.data; if(o){return {id:o.order_number,customer:{name:o.customer_name},deliveryDate:o.delivery_date||'-',items:o.items||[],_stage:STAGE[o.status]??0,_cancel:o.status==='cancelled'?{by:o.cancelled_by,reason:o.cancel_reason,refund:o.refund_status,amount:o.refund_amount,note:o.refund_reason}:null};} }catch(e){} }
     return Shop.Orders.findById(id);
+  }
+  async function tryTrack(id){
+    const em=(document.getElementById('track-email')||{}).value||'';
+    const res=await lookup(id, em.trim());
+    if(!res){
+      const s=(await TG.sb.auth.getSession()).data.session;
+      if(!s && !em.trim()){
+        document.getElementById('track-email-wrap').style.display='';
+        document.getElementById('not-found-msg').style.display='block';
+        document.getElementById('not-found-msg').textContent=t().need_email;
+        document.getElementById('track-result').style.display='none';
+        return;
+      }
+    }
+    showOrder(res);
   }
   async function showOrder(order){
     const T = t();
@@ -175,14 +198,14 @@ window.TELEGANT_I18N = {
   document.getElementById('track-btn').addEventListener('click', async () => {
     const id = document.getElementById('track-input').value.trim();
     if (!id) return;
-    showOrder(await lookup(id));
+    tryTrack(id);
   });
 
   const params = new URLSearchParams(window.location.search);
   const preId = params.get('order');
   if (preId){
     document.getElementById('track-input').value = preId;
-    lookup(preId).then(showOrder);
+    tryTrack(preId);
   }
 })();
 </script>

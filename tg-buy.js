@@ -53,8 +53,7 @@
 
   /* called by the size picker after the item is put in the cart */
   TG.afterAdd = async function () {
-    var mode = TG.mode, s = (await TG.sb.auth.getSession()).data.session;
-    if (!s) { location.href = 'login.html?next=' + encodeURIComponent(mode === 'cart' ? location.href : 'cart.html'); return; }   // sign in first
+    var mode = TG.mode;   // guests are welcome: sign-in only matters again for "my orders"
     if (mode !== 'cart') { location.href = 'cart.html'; return; }
     if (window.TelegantShop) window.TelegantShop.Cart.renderBadge();
     toast();

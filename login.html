@@ -80,6 +80,7 @@ async function route(){const p=await TG.profile();
   if(!p){await TG.signOut();return msg('m_nf',1);}
   if(p.status!=='approved'){await TG.signOut();return msg(p.status==='pending'?'m_pend':'m_rej',1);}
   if(p.role==='customer')sessionStorage.tg_welcome2=p.full_name||p.email.split('@')[0];
+  TG.sb.rpc('claim_my_orders').then(function(){});   // link any guest orders made with this email
   location.href=p.role==='owner'?'admin.html':(p.role==='manufacturer'||p.role==='delivery')?'staff.html':p.role==='support'?'chat-admin.html':NEXT;}
 TG.sb.auth.onAuthStateChange(ev=>{if(ev==='PASSWORD_RECOVERY')view('reset');});
 function panel(p){['#ttl','#tabs','#chips','#nm','#em','.pwrap','#note','#go','#msg','#fg','#bk'].forEach(s=>$(s).classList.add('h'));

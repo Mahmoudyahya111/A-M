@@ -278,8 +278,7 @@ window.TELEGANT_I18N = {
 
   document.getElementById('place-order-btn').addEventListener('click', async () => {
     const T = t();
-    const sess = (await TG.sb.auth.getSession()).data.session;
-    if (!sess){ location.href = 'login.html?next=' + encodeURIComponent('cart.html'); return; }
+    const sess = (await TG.sb.auth.getSession()).data.session;   // guests can order too; their email is their reference
     const date = expressOn ? Shop.Delivery.expressDate() : selectedDate;
     if (!date){ alert(T.alert_no_date); return; }
     const name = document.getElementById('cust-name').value.trim();
@@ -287,6 +286,7 @@ window.TELEGANT_I18N = {
     const address = document.getElementById('cust-address').value.trim();
     const email = document.getElementById('cust-email').value.trim();
     if (!name || !phone || !address){ alert(T.alert_fields); return; }
+    if (!sess && !email){ alert(ar ? 'من فضلك اكتب بريدك الإلكتروني، نحفظ به طلبك.' : 'Please enter your email - your order is saved against it.'); return; }
     const payment = document.querySelector('input[name="payment"]:checked').value;
     const ar = document.documentElement.lang === 'ar';
     let payRef = null, payProof = null;
@@ -298,10 +298,10 @@ window.TELEGANT_I18N = {
     try {
       const pf = document.getElementById('ip-file').files[0];
       if (payment === 'instapay_now' && pf){
-        const path = sess.user.id + '/' + Date.now() + '-' + pf.name.replace(/[^\w.-]/g, '_');
+        const path = (sess ? sess.user.id : 'guest') + '/' + Date.now() + '-' + pf.name.replace(/[^\w.-]/g, '_');
         const up = await TG.sb.storage.from('payment-proofs').upload(path, pf); if (up.error) throw up.error; payProof = path;
       }
-      const num = await TG.placeOrder({ customer_name: name, phone, email: email || sess.user.email, address,
+      const num = await TG.placeOrder({ customer_name: name, phone, email: email || (sess && sess.user.email) || '', address,
         payment_method: payment, payment_ref: payRef, payment_proof: payProof, items: Shop.Cart.all(), express: expressOn, delivery_date: date });
       Shop.Cart.clear();
       TG.sb.functions.invoke('swift-action', { body: { action: 'confirm', order_number: num } });
