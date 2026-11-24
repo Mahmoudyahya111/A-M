@@ -49,6 +49,7 @@ Not changed on purpose: login.html (no real bug found), account.html (old redire
 
 ## 30. Security fix: anonymous callers could run staff-only database functions (TELEGANT)
 - Found: confirm_payment, refund_order, chat_claim/close/transfer, set_order_photo, confirm_delivery and others checked the role with `my_role() <> 'owner'`, which is NULL (not true) for signed-out visitors, so the check was skipped. Verified with a signed-out call to confirm_payment (it ran).
-- Fix (no design change): REVOKE EXECUTE from anon/public on staff-only functions (confirm_payment, refund_order, chat_claim, chat_close, chat_transfer, set_order_photo, set_order_status, confirm_delivery, cancel_order, staff_orders, staff_list, delivery_counts, set_presence, set_my_alias, claim_my_orders, service_report, csat_report). Signed-in users unchanged. place_order, track_order and chat start are untouched.
+- Fix (no design change): REVOKE EXECUTE from anon/public on staff-only functions (confirm_payment, refund_order, chat_claim, chat_close, chat_transfer, set_order_photo, set_order_status, confirm_delivery, cancel_order, staff_orders, staff_list, set_presence, set_my_alias, claim_my_orders, service_report, csat_report). Signed-in users unchanged. place_order, track_order and chat start are untouched.
 - Backups of previous grants: backups/grants-before-revoke-anon*.json. Revert: GRANT EXECUTE ... TO anon.
 - A stray test event row made by the probe (order_events id 185) was deleted.
+- Correction: delivery_counts is used by the signed-out cart (delivery-date capacity, only aggregate counts) so anon access was restored.
