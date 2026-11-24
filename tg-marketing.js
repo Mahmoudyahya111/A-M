@@ -52,6 +52,7 @@
     ['Canva', L('تصميم المنشورات والستوري وتعديل فيديو بسيط', 'Post and story design plus simple video editing'), L('لم أتمكن من قراءة صفحة الأسعار تلقائياً. راجع الرابط للسعر الحالي', 'I could not read the pricing page automatically. Check the link for current prices'), 'https://www.canva.com/pricing/']
   ];
 
+  var TPLN = { launch: L('إطلاق منتج', 'Launch'), offer: L('عرض', 'Offer'), features: L('مميزات', 'Features'), urgency: L('آخر القطع', 'Low stock'), style: L('طريقة اللبس', 'How to wear'), story: L('كواليس', 'Behind the scenes'), reviews: L('طلب رأي', 'Ask for reviews') };
   V.mkt = async function () {
     var prods = (await sb.from('products').select('*').eq('archived', false).order('id')).data || [], plan = (await items('plan'))[0], posts = await items('post'), camps = await items('campaign');
     var pl = (plan && plan.data) || { goal: '', audience: '', budget: 0, channels: ['facebook', 'instagram', 'whatsapp'], notes: '' };
@@ -110,7 +111,6 @@ return true; }
     ['#ip', '#is', '#ist', '#il'].forEach(function (s) { $(s).onchange = drawImg; }); $('#ib').oninput = $('#ic').oninput = drawImg;
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(drawImg); else drawImg();
     /* ---- batch content: several posts at once ---- */
-    var TPLN = { launch: L('إطلاق منتج', 'Launch'), offer: L('عرض', 'Offer'), features: L('مميزات', 'Features'), urgency: L('آخر القطع', 'Low stock'), style: L('طريقة اللبس', 'How to wear'), story: L('كواليس', 'Behind the scenes'), reviews: L('طلب رأي', 'Ask for reviews') };
     var BADGE = { launch: ['جديد', 'New'], offer: ['عرض', 'Offer'], urgency: ['آخر القطع', 'Last pieces'] }, THEMES = ['cream', 'taupe', 'gold'], BATCH = [], bgen = 0;
     function caption(p, lang, tk) { var v = pv(p, lang), t = TPL[tk][lang]; v.material = v.material ? (lang === 'ar' ? 'الخامة: ' : 'Material: ') + v.material : ''; v.dims = v.dims ? (lang === 'ar' ? ' | المقاس: ' : ' | Size: ') + v.dims : ''; return fill(t, v) + '\n\n' + hashtags(lang); }
     function addDays(d, n) { var x = new Date(d + 'T12:00:00'); x.setDate(x.getDate() + n); return x.toISOString().slice(0, 10); }
