@@ -21,6 +21,7 @@ Each change is its own commit. To undo one: `git revert <hash>` (or revert the m
 | 14 | 8ed5dca | The PWA manifest is linked on all public pages. | It was only linked from terms.html. | all public .html heads |
 | 15 | 59b34ce | Cart merges duplicate lines of the same product+size into one line with higher quantity, and product names render in the current language. | Adding the same shirt twice (or once in Arabic and once in English) created separate cart lines; names stayed stuck in the language they were added in. | telegant-shop.js, cart.html |
 | 16 | aa0df44 | Cart page re-renders items, totals and the delivery-date grid when the language is toggled. | Item names and "N orders so far" labels stayed in the previous language until reload. | cart.html |
+| 17 | da01bc2 | Delivery-date labels on the cart page are formatted in the site language. | Day/month names stayed in the browser's language (English) in Arabic mode. | telegant-shop.js |
 
 Revert examples: `git revert c538dc0`, `git revert 0f18ddd`, `git revert a87d9d7`.
 Not changed on purpose: login.html (no real bug found), account.html (old redirect page), order data.
