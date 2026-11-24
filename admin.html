@@ -129,7 +129,13 @@ function statusCell(o,aw){
   return `<select data-st="${o.id}"${aw?' data-aw="1"':''}>${ST.map(s=>`<option${s===o.status?' selected':''}>${s}</option>`).join('')}</select>`+(aw?'<br><small>On hold: manufacturer cannot see it until payment is confirmed</small>':'')+refund+
     (o.status==='delivered'?'':`<br><button class="b" data-oc="${o.id}">Cancel order</button>`)+(canRefund?` <button class="b" data-orf="${o.id}">Refund</button>`:'')+em;}
 const PTK=['chest','length','shoulder','sleeve','neckW','frontDrop','backDrop','armhole','collarH','sleeveW'];
-function ptFill(sz){const m=TGPattern.defaults(sz==='custom'?'m':sz);PTK.forEach(k=>{const e=$('#pt_'+k);if(e)e.value=m[k];});if($('#ptRefVal')&&$('#ptRefType').value==='chest')$('#ptRefVal').value=m.chest;}
+let PTMODEL='mock-neck';
+function ptFill(sz){const m=TGPattern.defaultsFor(PTMODEL,sz==='custom'?'m':sz);PTK.forEach(k=>{const e=$('#pt_'+k);if(e)e.value=m[k];});if($('#ptRefVal')&&$('#ptRefType').value==='chest')$('#ptRefVal').value=m.chest;}
+function ptModelSet(id){PTMODEL=id;const md=TGPattern.modelById(id),im=$('#ptModelImg');
+  if(im){if(md&&md.photo){im.src=md.photo;im.style.display='';}else im.style.display='none';}
+  if(md&&md.fabric&&$('#ptFab'))$('#ptFab').value=md.fabric;
+  ptFill($('#ptSize')?$('#ptSize').value:'m');}
+async function ptModelPdfPhoto(){const md=TGPattern.modelById(PTMODEL);if(!md||!md.photo)return null;try{return await TGPattern.loadPhoto(md.photo,900);}catch(e){return null;}}
 function ptApply(j,note){const m=TGPattern.complete(j);PTK.forEach(k=>{const e=$('#pt_'+k);if(e&&m[k])e.value=m[k];});$('#ptSize').value='custom';if($('#ptStatus'))$('#ptStatus').textContent=note;}
 async function ptAuto(){const st=$('#ptStatus');try{const ph=await ptPhoto(1400);if(!ph)return alert('Choose a photo first.');st.textContent='Reading the photo, this takes a few seconds...';
   const j=await TGPattern.analyze(ph,{type:$('#ptRefType').value,value:+$('#ptRefVal').value});ptApply(j,'Filled from the photo'+(j.confidence?' (AI confidence: '+j.confidence+')':'')+'. Check the numbers, then create the PDF.'+(j.assumptions?' Assumed: '+j.assumptions:''));}
@@ -259,8 +265,12 @@ const TABS={
  async 'Pattern maker'(){const{data:os}=await sb.from('orders').select('id,order_number,items').neq('status','cancelled').order('created_at',{ascending:false}).limit(100);
   const F=[['chest','Chest width (flat)'],['length','Body length'],['shoulder','Shoulder width'],['sleeve','Sleeve length'],['sleeveW','Sleeve width (flat)'],['neckW','Neck width'],['frontDrop','Front neck drop'],['backDrop','Back neck drop'],['armhole','Armhole depth'],['collarH','Collar height']];
   const ta='width:100%;min-height:70px;padding:8px;border:1px solid var(--line);border-radius:8px;background:transparent;color:var(--ink);font:inherit;margin-top:6px';
-  return `<div class="card"><h3>Pattern maker</h3><small>Enter the finished garment measurements in cm (flat). You get a professional PDF for the manufacturer: tech spec, scaled overview of all pieces, and optional full-size sheets to print at 100%.</small>
-   <div class="row" style="margin-top:10px"><select id="ptSize">${TGSizes.order.map(k=>`<option value="${k}"${k==='m'?' selected':''}>${TGSizes.chart[k].label}</option>`).join('')}<option value="custom">Custom</option></select>
+  return `<div class="card"><h3>Pattern maker</h3><small>Pick a model and a size, or enter the finished garment measurements in cm (flat). You get a professional PDF for the manufacturer: tech spec, scaled overview of all pieces, and optional full-size sheets to print at 100%. Each model keeps its own collar height, neck drops, fabric and photo.</small>
+   <div class="row" style="margin-top:10px"><select id="ptModel" title="Model">${TGPattern.models().map(md=>`<option value="${esc(md.id)}"${md.id===PTMODEL?' selected':''}>${esc(md.name)}</option>`).join('')}<option value="">No model (plain defaults)</option></select>
+    <img id="ptModelImg" alt="Model photo" style="height:110px;border-radius:8px;border:1px solid var(--line);display:none">
+    <button class="b" data-pt="savemodel" title="Save the current collar height, neck drops, fabric and photo as a reusable model">Save as model</button>
+    <button class="b" data-pt="delmodel" title="Remove a model you added">Remove model</button></div>
+   <div class="row"><select id="ptSize">${TGSizes.order.map(k=>`<option value="${k}"${k==='m'?' selected':''}>${TGSizes.chart[k].label}</option>`).join('')}<option value="custom">Custom</option></select>
     <select id="ptOrder"><option value="">Fill from an order item...</option>${(os||[]).flatMap(o=>(Array.isArray(o.items)?o.items:[]).map((x,i)=>`<option value="${o.id}|${i}">${esc(o.order_number)} · ${esc(x.name)} · ${esc(x.size)}</option>`)).join('')}</select>
     <input id="ptRef" placeholder="Reference / order no."></div>
    <div class="row">${F.map(([k,n])=>`<label style="margin-right:10px">${n}<br><input id="pt_${k}" type="number" step="0.5" style="width:110px"></label>`).join('')}</div>
@@ -280,7 +290,7 @@ const TABS={
 };
 
 async function show(n){document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('on',b.textContent===n));
-  $('#v').innerHTML=await TABS[n]();$('#v').dataset.tab=n;if(n==='Pages')pgToggle();if(n==='Pattern maker')ptFill('m');}
+  $('#v').innerHTML=await TABS[n]();$('#v').dataset.tab=n;if(n==='Pages')pgToggle();if(n==='Pattern maker')ptModelSet(PTMODEL);}
 const done=(r,n)=>{if(r&&r.error)alert(r.error.message||r.error);show(n||$('#v').dataset.tab)};
 
 $('#v').addEventListener('change',async e=>{const id=e.target.dataset.st;
@@ -290,6 +300,7 @@ $('#v').addEventListener('change',async e=>{const t=e.target;if(!t.dataset.role)
   done(await sb.from('profiles').update({role:t.value,status:'approved'}).eq('id',t.dataset.role));});
 $('#v').addEventListener('change',async e=>{const t=e.target;
   if(t.id==='pgT'||t.id==='gps')pgToggle();
+  if(t.id==='ptModel')ptModelSet(t.value);
   if(t.id==='ptSize')ptFill(t.value);
   if(t.id==='ptPhoto'&&t.files[0])ptAuto();
   if(t.id==='ptOrder'&&t.value){const[id,ix]=t.value.split('|'),o=(await sb.from('orders').select('items,order_number').eq('id',+id).single()).data,x=(o.items||[])[+ix]||{},sd=x.sizeDetail||{},key=String(x.size||'').toLowerCase();
@@ -313,10 +324,18 @@ $('#v').addEventListener('click',async e=>{const t=e.target,d=t.dataset;if(!t.cl
   if(d.pt){try{
     if(d.pt==='ai'){await ptAuto();return;}
     if(d.pt==='hand'){const ph=await ptPhoto(1400);if(!ph)return alert('Choose a photo first.');const g=await TGPattern.measureOnPhoto(ph.data);if(g)ptApply(g,'Filled from your measurements on the photo. Check the numbers, then create the PDF.');return;}
+    if(d.pt==='savemodel'){const f=await TG.form({title:'Save these settings as a model',ok:'Save model',fields:[{id:'name',label:'Model name (for example "Polo shirt")',type:'text',required:true}]});
+      if(!f)return;const m=ptRead(),up=await ptPhoto(500),cur=TGPattern.modelById(PTMODEL);
+      TGPattern.saveModel({id:slug(f.name),name:f.name.trim(),photo:up?up.data:(cur&&cur.photo?cur.photo:null),fabric:$('#ptFab').value.trim(),settings:{collarH:m.collarH,frontDrop:m.frontDrop,backDrop:m.backDrop}});
+      PTMODEL=slug(f.name);return show('Pattern maker');}
+    if(d.pt==='delmodel'){const md=TGPattern.modelById(PTMODEL);if(!md)return alert('Choose a model you added first (under "No model" the built-in list stays).');
+      TGPattern.removeModel(PTMODEL);
+      if(TGPattern.modelById(PTMODEL))return alert('"'+md.name+'" is built into the site code, not added on this page. Removing it is a one-line edit in tg-pattern.js (the MODELS list).');
+      PTMODEL='mock-neck';return show('Pattern maker');}
     if(d.pt==='copy'){await navigator.clipboard.writeText($('#ptPrompt').value);return alert('Copied. Paste it into your AI tool together with the photo.');}
     if(d.pt==='fill'){const raw=$('#ptJson').value.replace(/```json|```/g,'').trim(),j=JSON.parse(raw);PTK.forEach(k=>{if(+j[k]>0)$('#pt_'+k).value=+j[k];});$('#ptSize').value='custom';return alert('Measurements filled in. Check them, then create the PDF.'+(j.confidence?' AI confidence: '+j.confidence+'.':''));}
-    const m=ptRead(),sz=$('#ptSize').value;t.disabled=true;
-    await TGPattern.pdf({m,size:sz==='custom'?'CUSTOM':TGSizes.chart[sz].label,ref:$('#ptRef').value.trim(),fabric:$('#ptFab').value.trim(),note:$('#ptNote').value.trim(),photo:await ptPhoto(),full:d.pt==='full',lang:RL()});
+    const m=ptRead(),sz=$('#ptSize').value,md=TGPattern.modelById(PTMODEL);t.disabled=true;
+    await TGPattern.pdf({m,size:sz==='custom'?'CUSTOM':TGSizes.chart[sz].label,model:md?md.name:'',ref:$('#ptRef').value.trim(),fabric:$('#ptFab').value.trim(),note:$('#ptNote').value.trim(),photo:await ptPhoto()||await ptModelPdfPhoto(),full:d.pt==='full',lang:RL()});
   }catch(e){alert(e.message||e);}finally{t.disabled=false;}return;}
   if(t.id==='applyD'){DR.f=$('#df').value;DR.t=$('#dt').value;return show(d.tab);}
   if(t.id==='chatSw'){const r=await sb.from('site_settings').upsert({key:'chat_enabled',value:{on:d.on!=='1'}});if(r.error)return alert(r.error.message);return show('Chat');}
