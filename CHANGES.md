@@ -96,3 +96,4 @@ Not changed on purpose: login.html (no real bug found), account.html (old redire
 - Next in this tab: Order emails and the per-email-type switches (see the inventory in the report).
 
 - #40 tg-marketing.js: guard the poster download link when the Marketing module renders hidden inside Settings (removes a harmless null .href console error). Revert: git revert this commit.
+- #41 backups/order-mail: deployed swift-action (order-mail) v12 eszip + extracted transpiled source + repo copy, taken before any change.
