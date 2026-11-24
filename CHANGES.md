@@ -53,3 +53,6 @@ Not changed on purpose: login.html (no real bug found), account.html (old redire
 - Backups of previous grants: backups/grants-before-revoke-anon*.json. Revert: GRANT EXECUTE ... TO anon.
 - A stray test event row made by the probe (order_events id 185) was deleted.
 - Correction: delivery_counts is used by the signed-out cart (delivery-date capacity, only aggregate counts) so anon access was restored.
+
+## 31. SEO tidy (TELEGANT, head tags only, no visual change)
+- Added Open Graph and Twitter card tags to colors, size-guide and terms (og:image added to terms). Pages already had title, description, canonical, JSON-LD (home/shop), sitemap and robots.
