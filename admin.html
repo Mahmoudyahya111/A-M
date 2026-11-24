@@ -207,7 +207,7 @@ const TABS={
    (data||[]).map(r=>[esc(r.page),r.views,r.visitors,r.engaged,Math.max(r.sessions-r.engaged,0),r.exits]))+await metaAds();},
  async Orders(){const[{data},ip]=await Promise.all([sb.from('orders').select('*').order('created_at',{ascending:false}).limit(300),sb.from('site_settings').select('value').eq('key','instapay').maybeSingle()]);
   const ipCard=`<div class="card"><h3>InstaPay account shown to customers</h3><div class="row"><input id="ipv" style="min-width:260px" placeholder="your InstaPay address or phone" value="${esc((ip.data&&ip.data.value&&ip.data.value.handle)||'')}"><button class="b p" id="saveIP">Save</button></div></div>`;
-  return ipCard+tbl(['Order','Customer','Items','Shipping','Payment','Total','Status'],(data||[]).map(o=>{const aw=o.payment_status==='awaiting';
+  return ipCard+`<div class="card"><div class="row"><input id="osrch" placeholder="Search by order number, name, phone or email" style="min-width:260px"></div></div>`+tbl(['Order','Customer','Items','Shipping','Payment','Total','Status'],(data||[]).map(o=>{const aw=o.payment_status==='awaiting';
    return [`<b>${esc(o.order_number)}</b><br><small>${new Date(o.created_at).toLocaleString()}<br>Deliver by ${esc(o.delivery_date||'-')}</small>`,
    `${esc(o.customer_name)}<br><small>${esc(o.phone)}<br>${esc(o.email||'')}<br>${esc(o.address||'')}</small>`,
    (itemParts(o.items).map(esc).join('<br>')||'-')+`<br><button class="b" data-rp="style" data-id="${o.id}" data-fmt="pdf">Styling PDF</button> <button class="b" data-rp="style" data-id="${o.id}" data-fmt="xlsx">Styling Excel</button>`,
@@ -326,6 +326,9 @@ const TABS={
     <div class="row"><button class="b p" id="omSave">Save email settings</button> <span id="omMsg" class="note"></span></div></div>
 `;},
 
+ async Customers(){setTimeout(blList,0);
+  return `<div class="card"><h3>Customer lookup</h3><p class="note">Enter an email or a phone number to see every order from that customer. Egyptian numbers match in any format (010, +20 or 0020).</p><div class="row"><input id="clq" dir="ltr" placeholder="name@mail.com or 010xxxxxxxx" style="min-width:240px"><button class="b p" id="clGo">Search</button></div></div><div id="clr"></div>
+  <div class="card"><h3>Blocked customers</h3><p class="note">A blocked customer cannot place a new order. This is enforced in the database, and the customer only sees a general message.</p><div id="blist">Loading…</div></div>`;},
  async Reviews(){const{data}=await sb.from('reviews').select('*').order('created_at',{ascending:false});
   return `<div class="card"><h3>Add review</h3><div class="row"><input id="ra" placeholder="Name"><input id="rr" type="number" min="1" max="5" placeholder="Stars 1-5">
    <input id="rb" placeholder="Review text" style="min-width:240px"><button class="b p" id="addR">Add</button></div></div>`+
@@ -333,10 +336,19 @@ const TABS={
    `<button class="b" data-rv="${r.id}|${r.visible?0:1}">${r.visible?'Hide':'Show'}</button> <button class="b" data-rd="${r.id}">Delete</button>`]));}
 };
 
+let CLAST=null;
+async function blList(){const b=document.getElementById('blist');if(!b)return;const r=await sb.from('blocked_contacts').select('*').order('created_at',{ascending:false});if(r.error){b.innerHTML='<small>'+esc(r.error.message)+'</small>';return;}
+ b.innerHTML=r.data.length?'<table><tr><th>Type</th><th>Value</th><th>Note</th><th>Since</th><th></th></tr>'+r.data.map(x=>`<tr><td>${esc(x.kind)}</td><td dir="ltr">${esc(x.value)}</td><td>${esc(x.note||'')}</td><td>${esc(String(x.created_at).slice(0,10))}</td><td><button class="b" data-ubl="${x.id}">Unblock</button></td></tr>`).join('')+'</table>':'<small>No data yet. Nobody is blocked.</small>';}
+async function clSearch(){const q=document.getElementById('clq').value,box=document.getElementById('clr');box.innerHTML='<div class="card">Searching…</div>';const r=await sb.rpc('customer_lookup',{p_q:q});
+ if(r.error){box.innerHTML='<div class="card">'+esc(r.error.message)+'</div>';return;}CLAST=r.data;const d=r.data,os=d.orders||[],live=os.filter(o=>o.status!=='cancelled'),tot=live.reduce((s,o)=>s+Number(o.total),0);
+ box.innerHTML=`<div class="card"><h3 dir="ltr">${esc(d.key)}</h3>${d.blocked?'<p><b style="color:#c0392b">Blocked: cannot place new orders.</b></p>':''}<div class="row">${kpi('Orders',os.length)}${kpi('Total (excl. cancelled)',fm(tot)+' EGP')}${kpi('First order',os.length?esc(String(os[os.length-1].created_at).slice(0,10)):'-')}</div>
+  ${d.blocked?'<button class="b" id="clUb">Unblock</button>':'<div class="row"><input id="clNote" placeholder="Note (optional)"><button class="b" id="clBl">Block this customer</button></div>'}</div>`+
+ (os.length?tbl(['Order','Date','Items','Total','Status'],os.map(o=>[`<b>${esc(o.number)}</b>`,esc(String(o.created_at).slice(0,10)),itemParts(o.items).map(esc).join('<br>')||'-',fm(o.total)+' EGP',esc(o.status)])):'<div class="card">No data yet. No orders for this contact.</div>');}
 async function show(n){document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('on',b.textContent===n));
   $('#v').innerHTML=await TABS[n]();$('#v').dataset.tab=n;if(n==='Pages')pgToggle();if(n==='Pattern maker')ptModelSet(PTMODEL);}
 const done=(r,n)=>{if(r&&r.error)alert(r.error.message||r.error);show(n||$('#v').dataset.tab)};
 
+$('#v').addEventListener('input',e=>{if(e.target.id!=='osrch')return;const q=e.target.value.trim().toLowerCase();const tb=[...document.querySelectorAll('#v table')].pop();if(!tb)return;[...tb.rows].slice(1).forEach(r=>{r.style.display=!q||r.textContent.toLowerCase().includes(q)?'':'none';});});
 $('#v').addEventListener('change',async e=>{const id=e.target.dataset.st;
   if(id){if(e.target.dataset.aw&&!await TG.ask('Payment is not confirmed yet. Move this order anyway?')){show('Orders');return;}const r=await sb.rpc('set_order_status',{p_order:+id,p_status:e.target.value});if(!r.error)sb.functions.invoke('swift-action',{body:{action:'status',order_id:+id}});done(r);}});
 $('#v').addEventListener('change',async e=>{const t=e.target;if(!t.dataset.role)return;
@@ -386,6 +398,10 @@ $('#v').addEventListener('click',async e=>{const t=e.target,d=t.dataset;if(!t.cl
   if(t.id==='saveSch'){const days={};DAYS.forEach((n,i)=>{days[i]={on:document.querySelector(`[data-day="${i}"]`).checked,from:document.querySelector(`[data-from="${i}"]`).value||'10:00',to:document.querySelector(`[data-to="${i}"]`).value||'18:00'};});
     const r=await sb.from('site_settings').upsert({key:'chat_schedule',value:{mode:$('#schMode').value,days}});if(r.error)return alert(r.error.message);alert('Opening hours saved.');return;}
   if(d.rp){t.disabled=true;try{const sp=await specFor(d.rp,d.id,RL());sp.lang=RL();await TGReport[d.fmt](sp);}catch(e){alert(e.message||e);}finally{t.disabled=false;}return;}
+  if(t.id==='clGo'){return clSearch();}
+  if(t.id==='clBl'&&CLAST){if(!await TG.ask('Block this customer from placing new orders?'))return;const x=await sb.from('blocked_contacts').insert({kind:CLAST.kind,value:CLAST.key,note:(document.getElementById('clNote').value||'').trim()||null});if(x.error)return alert(/duplicate|unique/i.test(x.error.message)?'Already blocked':x.error.message);await clSearch();return blList();}
+  if(t.id==='clUb'&&CLAST){const y=await sb.from('blocked_contacts').delete().eq('kind',CLAST.kind).eq('value',CLAST.key);if(y.error)return alert(y.error.message);await clSearch();return blList();}
+  if(t.dataset&&t.dataset.ubl){const y=await sb.from('blocked_contacts').delete().eq('id',t.dataset.ubl);if(y.error)return alert(y.error.message);await blList();if(CLAST)clSearch();return;}
   if(t.id==='omSave'){const types={};document.querySelectorAll('.omt').forEach(c=>{types[c.dataset.t]=c.checked;});const r=await sb.from('order_mail_cfg').upsert({id:1,types,provider:document.getElementById('omProv').value,from_name:(document.getElementById('omName').value||'TELEGANT').trim().slice(0,60),from_email:(document.getElementById('omFrom').value||'').trim()});document.getElementById('omMsg').textContent=r.error?r.error.message:'Saved';return;}
   if(t.id==='alertSw'){const on=d.on==='1';const r=await sb.from('chat_alert_cfg').upsert({id:1,enabled:!on});if(r.error)return alert(r.error.message);return show('Settings');}
   if(t.id==='saveIP'){const r=await sb.from('site_settings').upsert({key:'instapay',value:{handle:$('#ipv').value.trim()}});if(r.error)return alert(r.error.message);return alert('Saved. Customers will see this account when they choose InstaPay.');}
