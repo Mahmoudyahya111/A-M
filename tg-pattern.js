@@ -11,6 +11,25 @@ window.TGPattern = (function () {
   function defaults(sz) { var c = TGSizes.chart[sz] || TGSizes.chart.m;
     return { chest: c.chest, length: c.length, shoulder: c.shoulder, sleeve: c.sleeve, neckW: Math.round(c.shoulder * 0.37), frontDrop: 7, backDrop: 2, armhole: Math.round(c.chest * 0.46), collarH: 4.5, sleeveW: Math.round(c.chest * 0.4) }; }
 
+  /* ---------- models: each garment model keeps its own style settings, fabric and photo.
+     Add a model with ONE more line in MODELS below, or with "Save as model" on the Pattern
+     maker page (models saved there are kept in this browser's localStorage). ---------- */
+  var MODELS = [
+    { id: 'mock-neck', name: 'Mock neck T-shirt', photo: 'Black-Mock-Nexk.jpg', fabric: 'cotton jersey with a little stretch, about 190 gsm, pre-shrunk', settings: { collarH: 5.5, frontDrop: 4, backDrop: 2 } }
+  ];
+  function extraModels() { try { var x = JSON.parse(localStorage.getItem('tg_pattern_models') || '[]'); return Array.isArray(x) ? x : []; } catch (e) { return []; } }
+  function models() { return MODELS.concat(extraModels()); }
+  function modelById(id) { var a = models(); for (var i = 0; i < a.length; i++) if (a[i].id === id) return a[i]; return null; }
+  function saveModel(m) { var ex = extraModels().filter(function (x) { return x.id !== m.id; }); ex.push(m); localStorage.setItem('tg_pattern_models', JSON.stringify(ex)); return m; }
+  function removeModel(id) { localStorage.setItem('tg_pattern_models', JSON.stringify(extraModels().filter(function (x) { return x.id !== id; }))); }
+  function defaultsFor(modelId, sz) { var d = defaults(sz), md = modelById(modelId); if (md && md.settings) for (var k in md.settings) if (+md.settings[k] > 0) d[k] = +md.settings[k]; return d; }
+  function loadPhoto(src, mx) {                                   // photo file or URL -> {data,w,h} for the PDF
+    return new Promise(function (res, rej) { var im = new Image();
+      im.onload = function () { var s = Math.min(1, (mx || 900) / Math.max(im.width, im.height)), c = document.createElement('canvas');
+        c.width = Math.round(im.width * s); c.height = Math.round(im.height * s); c.getContext('2d').drawImage(im, 0, 0, c.width, c.height);
+        res({ data: c.toDataURL('image/jpeg', .82), w: c.width, h: c.height }); };
+      im.onerror = function () { rej(new Error('Could not load the photo: ' + src)); }; im.src = src; }); }
+
   function fromMeasures(c, l, s) { return { chest: c, length: l, shoulder: s, sleeve: Math.round(s * 0.45), neckW: Math.round(s * 0.37), frontDrop: 7, backDrop: 2, armhole: Math.round(c * 0.46), collarH: 4.5, sleeveW: Math.round(c * 0.4) }; }
 
   /* ---------- geometry (cm; x to the right, y downwards) ---------- */
@@ -112,7 +131,7 @@ window.TGPattern = (function () {
     if (ar) { await TGReport.arabic(doc); var ot = doc.text; doc.text = function (t, x, y, o) { return ot.call(doc, Array.isArray(t) ? t.map(trP) : trP(t), x, y, o); }; } doc.__fn = FN; doc.setFont(FN, 'normal');
     function head(w, title, sub) { doc.setFillColor(17, 17, 17); doc.rect(0, 0, w, 28, 'F'); if (lg) doc.addImage(lg.data, 'PNG', ar ? w - M - 17 * lg.w / lg.h : M, 5, 17 * lg.w / lg.h, 17); doc.setTextColor(201, 162, 75); doc.setFont(FN, 'bold'); doc.setFontSize(15); doc.text(title, ar ? M : w - M, 12, { align: ar ? 'left' : 'right' }); doc.setFont(FN, 'normal'); doc.setFontSize(8.5); doc.setTextColor(220, 220, 220); doc.text(sub, ar ? M : w - M, 19, { align: ar ? 'left' : 'right' }); }
     /* page 1: tech spec */
-    head(W, L('Pattern & Tech Pack', 'باترون ومواصفات التصنيع'), L('Mock neck T-shirt · size ', 'تيشيرت بياقة عالية · المقاس ') + size + (spec.ref ? ' · ' + spec.ref : '') + ' · ' + TODAY);
+    head(W, L('Pattern & Tech Pack', 'باترون ومواصفات التصنيع'), L((spec.model || 'Mock neck T-shirt') + ' · size ', 'تيشيرت بياقة عالية · المقاس ') + size + (spec.ref ? ' · ' + spec.ref : '') + ' · ' + TODAY);
     var rows = [['A', L('Chest width (flat, armpit to armpit)', 'عرض الصدر (مسطح، من الإبط إلى الإبط)'), m.chest], ['B', L('Body length (highest shoulder point to hem)', 'طول الجسم (من أعلى الكتف إلى الحافة السفلية)'), m.length], ['C', L('Shoulder width (seam to seam)', 'عرض الكتف (من درزة إلى درزة)'), m.shoulder], ['D', L('Sleeve length (shoulder seam to hem)', 'طول الكم (من درزة الكتف إلى الحافة)'), m.sleeve], ['E', L('Sleeve width at underarm', 'عرض الكم عند الإبط'), m.sleeveW], ['F', L('Sleeve opening width (flat)', 'عرض فتحة الكم (مسطح)'), P.s.SO / 2], ['G', L('Neck opening width', 'عرض فتحة الرقبة'), m.neckW], ['H', L('Front neck drop', 'انخفاض الرقبة من الأمام'), m.frontDrop], ['I', L('Back neck drop', 'انخفاض الرقبة من الخلف'), m.backDrop], ['J', L('Armhole depth (straight)', 'عمق فتحة الإبط (مستقيم)'), m.armhole], ['K', L('Collar height (finished)', 'ارتفاع الياقة (نهائي)'), m.collarH]];
     doc.autoTable({ startY: 34, margin: ar ? { left: spec.photo ? 92 : M, right: M } : { left: M, right: spec.photo ? 92 : M }, head: [rv(['', L('Point of measure (finished, flat)', 'نقطة القياس (نهائي، مسطح)'), L('cm', 'سم')])], body: rows.map(rv), styles: { font: FN, fontSize: 8.5, cellPadding: 1.8, halign: ar ? 'right' : 'left' }, headStyles: { fillColor: [201, 162, 75], textColor: [17, 17, 17], halign: ar ? 'right' : 'left' }, columnStyles: ar ? { 2: { cellWidth: 8, fontStyle: 'bold' }, 0: { halign: 'right', cellWidth: 16 } } : { 0: { cellWidth: 8, fontStyle: 'bold' }, 2: { halign: 'right', cellWidth: 16 } }, alternateRowStyles: { fillColor: [250, 247, 240] } });
     if (spec.photo) { var ph = spec.photo, bw = 78, bh = 100, r = Math.min(bw / ph.w, bh / ph.h); doc.setFontSize(8); doc.setTextColor(110, 90, 50); doc.text(L('Reference photo', 'صورة مرجعية'), ar ? M : 120, 36); doc.addImage(ph.data, 'JPEG', ar ? M : 120, 39, ph.w * r, ph.h * r); }
@@ -156,5 +175,5 @@ window.TGPattern = (function () {
     var n = doc.getNumberOfPages(); for (var p = 1; p <= n; p++) { doc.setPage(p); doc.setFontSize(7); doc.setTextColor(130, 130, 130); var pw = doc.internal.pageSize.getWidth(), ph2 = doc.internal.pageSize.getHeight(); if (p <= 2) doc.text(L('TELEGANT · pattern ' + p + ' of ' + n + ' · confidential', 'TELEGANT · باترون ' + p + ' من ' + n + ' · سري'), ar ? pw - M : M, ph2 - 6, AL); }
     doc.save('telegant-pattern-' + (spec.ref || size) + (ar ? '-ar' : '') + '.pdf');
   }
-  return { PROMPT: PROMPT, defaults: defaults, fromMeasures: fromMeasures, complete: complete, analyze: analyze, measureOnPhoto: measureOnPhoto, build: build, pdf: pdf, bbox: bbox };
+  return { PROMPT: PROMPT, defaults: defaults, defaultsFor: defaultsFor, fromMeasures: fromMeasures, complete: complete, analyze: analyze, measureOnPhoto: measureOnPhoto, build: build, pdf: pdf, bbox: bbox, models: models, modelById: modelById, saveModel: saveModel, removeModel: removeModel, loadPhoto: loadPhoto };
 })();
