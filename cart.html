@@ -193,9 +193,9 @@ window.TELEGANT_I18N = {
       document.getElementById('checkout-section').style.display = '';
       wrap.innerHTML = items.map((it, i) => `
         <div class="cart-item">
-          <img src="${it.image}" alt="${it.name}">
+          <img src="${it.image}" alt="${Shop.displayName(it)}">
           <div class="ci-name-wrap">
-            <div class="ci-name">${it.name}</div>
+            <div class="ci-name">${Shop.displayName(it)}</div>
             <div class="ci-meta">${T.size}: ${it.size} · ${it.price} EGP</div>
           </div>
           <div class="ci-qty">

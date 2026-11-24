@@ -35,13 +35,37 @@ window.TelegantShop = (function () {
     return d.toISOString().slice(0, 10); // YYYY-MM-DD
   }
 
+  /* product display names by colour, so the cart renders in the current
+     language no matter which language the item was added in */
+  const PRODUCT_NAMES = {
+    navy:  { en: 'Mock Neck — Navy',  ar: 'ياقة موك — كحلي'  },
+    white: { en: 'Mock Neck — White', ar: 'ياقة موك — أبيض' },
+    black: { en: 'Mock Neck — Black', ar: 'ياقة موك — أسود' },
+    grey:  { en: 'Mock Neck — Grey',  ar: 'ياقة موك — رمادي' },
+    red:   { en: 'Mock Neck — Red',   ar: 'ياقة موك — أحمر'  }
+  };
+  function displayName(it) {
+    let lang = 'en';
+    try { lang = (localStorage.getItem('telegant-lang') || document.documentElement.lang) === 'ar' ? 'ar' : 'en'; } catch (e) {}
+    const e = PRODUCT_NAMES[it && it.color];
+    return (e && e[lang]) || (it && it.name) || '';
+  }
+
   /* ---------------- Cart ---------------- */
   const Cart = {
     all() { return read(CART_KEY, []); },
     save(items) { write(CART_KEY, items); Cart.renderBadge(); },
     add(item) {
       const items = Cart.all();
-      items.push(item);
+      // same product + same size = one line with a higher qty, even when it was
+      // added in a different language (name is display-only, so match on
+      // colour + size numbers, never on the translated name)
+      const m = items.find(it =>
+        it.color === item.color && it.size === item.size &&
+        (it.sizeDetail || {}).chest === (item.sizeDetail || {}).chest &&
+        (it.sizeDetail || {}).length === (item.sizeDetail || {}).length &&
+        (it.sizeDetail || {}).shoulder === (item.sizeDetail || {}).shoulder);
+      if (m) m.qty += item.qty || 1; else items.push(item);
       Cart.save(items);
     },
     removeAt(index) {
@@ -160,7 +184,7 @@ window.TelegantShop = (function () {
     signOut() { localStorage.removeItem(SESSION_KEY); }
   };
 
-  return { Cart, Delivery, Orders, Users, SIZE_CHART, fmtDate };
+  return { Cart, Delivery, Orders, Users, SIZE_CHART, fmtDate, displayName };
 })();
 
 document.addEventListener('DOMContentLoaded', () => window.TelegantShop.Cart.renderBadge());
