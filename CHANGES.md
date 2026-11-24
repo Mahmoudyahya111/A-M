@@ -76,3 +76,6 @@ Not changed on purpose: login.html (no real bug found), account.html (old redire
 
 ## 35. TELEGANT SEO re-audit fixes (no visual change)
 - Survey: added a visually hidden h1 (page had none). About: the second h1 is now a level-2 heading for crawlers (looks identical). Home: added WebSite structured data next to the ClothingStore data.
+
+## 36. "Back to website" button in the admin header (TELEGANT)
+- New button at the left of the admin header actions (same style as Chat console). Opens the home page; the admin session stays signed in, nothing is signed out.
