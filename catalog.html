@@ -364,7 +364,7 @@ window.TELEGANT_I18N = {
   }
   if (!list.length) $('cat-msg').textContent = ar ? 'لا توجد منتجات هنا بعد.' : 'No products here yet.';
   $('cat-grid').innerHTML = list.map(p => { const e = eff(p), off = e < Number(p.price), oos = p.stock <= 0;
-    return `<div class="product-card" data-color="${esc(p.slug)}" data-price="${e}"><div id="img-cont"><img src="${esc(p.image_url || '')}" alt="${esc(p.name_en)}"></div>
+    return `<div class="product-card" data-color="${esc(p.slug)}" data-price="${e}"><div class="img-cont"><img src="${esc(p.image_url || '')}" alt="${esc(p.name_en)}"></div>
      <div class="product-info"><h3>${esc((ar && p.name_ar) || p.name_en)}</h3><p>${off ? '<s style="opacity:.6">' + esc(p.price) + '</s> <b>' + e + ' EGP</b>' + (p.offer_label ? ' <span style="background:#c9a24b;color:#16110a;border-radius:99px;padding:1px 9px;font-size:.8em">' + esc(p.offer_label) + '</span>' : '') : e + ' EGP'}</p>
      <button name="buy-now" ${oos ? 'disabled style="opacity:.5"' : ''}>${oos ? (ar ? 'نفد المخزون' : 'Out of stock') : (ar ? 'اشتري الآن' : 'Buy Now')}</button></div></div>`; }).join('');
 })();
