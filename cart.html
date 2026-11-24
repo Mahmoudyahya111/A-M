@@ -304,7 +304,7 @@ window.TELEGANT_I18N = {
       const num = await TG.placeOrder({ customer_name: name, phone, email: email || (sess && sess.user.email) || '', address,
         payment_method: payment, payment_ref: payRef, payment_proof: payProof, items: Shop.Cart.all(), express: expressOn, delivery_date: date });
       Shop.Cart.clear();
-      TG.sb.functions.invoke('swift-action', { body: { action: 'confirm', order_number: num } });
+      TG.sb.functions.invoke('swift-action', { body: { action: 'confirm', order_number: num, email: email || '' } });
       TG.thanks(num, payment === 'instapay_now');
     } catch (err) { btn.disabled = false; alert(err.message || err); }
   });
