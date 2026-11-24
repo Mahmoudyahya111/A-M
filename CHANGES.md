@@ -85,3 +85,8 @@ Not changed on purpose: login.html (no real bug found), account.html (old redire
 - tg-core.js: the existing visit tracking now also records the UTM tags, Meta click id (fbclid flag), referrer host and in-app browser flag on the view event, kept for the whole visit. Writes to TELEGANT's own project only (vjnaaubbxpqlolvgtweo, from tg-core.js). tg-core.js is now cache-busted (?v=) on all pages.
 - Admin > Analytics: the existing table is unchanged; below it a new "Meta ads visitors per page" section and a Campaigns table. Until a Pixel ID is saved and an ad-sourced visit exists it shows "No data yet. Add your Pixel ID in Marketing and run ads with UTM links."
 - Limits stated on the page: in-app browsers and ad blockers undercount; campaign detail needs UTM links.
+
+## 38. TELEGANT: on/off switch for new-chat email alerts (admin > Chat)
+- DB additive (sql/chat-alert-toggle.sql): owner-only table chat_alert_cfg (enabled, default ON = today's behavior) and a BEFORE INSERT trigger on chats that marks a new chat as already notified when alerts are OFF, which the existing mail function treats as "skip". The mail function (swift-action / order-mail) was NOT changed or redeployed. Tested in a rolled-back transaction: ON gives notified=false (alert sent), OFF gives notified=true (skipped).
+- Admin > Chat: new card "Email alert for new chats" with an ON/OFF button. Public pages unchanged.
+- Not done on purpose: choosing recipients or sender address/name in the admin needs a change to the mail function. Its deployed source (order-mail, v12) can't be proven identical to the repo copy, so I did not redeploy it. Gmail app password stays a Supabase secret.
