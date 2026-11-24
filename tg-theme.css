@@ -46,3 +46,7 @@ html[data-tg-theme="dark"] img[src*="MEBG-GOLDEN"]{filter:brightness(0) invert(1
 
 /* Shop: "Add to Cart" must match the "Buy Now" button size (it had a 1px border + wide padding, so it grew taller/wrapped on narrow cards) */
 .tg-add{border:0 !important;box-shadow:inset 0 0 0 1px #c9a24b;padding-inline:12px !important;white-space:nowrap;line-height:normal}
+
+/* Light theme: Add to Cart text and the size "Learn more" link were hardcoded for dark theme (contrast about 1.4:1 and 2.4:1 on cream) */
+:root[data-theme="light"] .tg-add{color:#7a5a1e !important;box-shadow:inset 0 0 0 1px #a9813f !important;}
+:root[data-theme="light"] a[style*="c9a24b"][style*="underline"]{color:#7a5a1e !important;}
