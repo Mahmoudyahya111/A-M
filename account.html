@@ -14,6 +14,10 @@
   <link rel="stylesheet" href="tg-theme.css">
   <script>location.replace('login.html'+location.hash)</script>
      <script>location.replace('login.html?next='+encodeURIComponent(document.referrer))</script>
+<!-- DISABLED 24 Nov 2026 (owner decision): this page was the old demo account page (localStorage demo auth, plaintext passwords).
+     It is unreachable - the redirect above sends everyone to login.html. The old markup and scripts below are kept only as a reference, wrapped in <template> so the browser never parses or runs them. Delete the file entirely when convenient. -->
+<template data-disabled>
+
 <script>
 window.TELEGANT_I18N = {
   en: {
@@ -246,4 +250,5 @@ window.TELEGANT_I18N = {
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="tg-core.js"></script>
 </body>
+</template>
 </html>

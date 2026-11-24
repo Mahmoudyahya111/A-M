@@ -82,8 +82,8 @@
   };
   TG.thanks = function (num, pending) {
     TG.celebrate({ title: ar() ? 'شكراً لطلبك!' : 'Thank you for your order!',
-      text: (ar() ? 'رقم طلبك ' : 'Your order number is ') + num + (ar() ? '. أرسلنا لك رسالة تأكيد على بريدك.' : '. A confirmation email is on its way.') + (pending ? (ar() ? ' سنؤكد التحويل ثم نبدأ التصنيع.' : ' We will confirm your InstaPay transfer, then start making your order.') : ''),
-      buttons: [{ t: ar() ? 'تتبع طلبي' : 'Track my order', href: 'my-orders.html' }, { t: ar() ? 'متابعة التسوق' : 'Keep shopping', href: 'shop.html' }] });
+      text: (ar() ? 'رقم طلبك ' : 'Your order number is ') + num + (ar() ? '. احفظه لتتبع طلبك.' : '. Save it to track your order.') + (pending ? (ar() ? ' سنؤكد التحويل ثم نبدأ التصنيع.' : ' We will confirm your InstaPay transfer, then start making your order.') : ''),
+      buttons: [{ t: ar() ? 'تتبع طلبي' : 'Track my order', href: 'track.html?order=' + encodeURIComponent(num) }, { t: ar() ? 'متابعة التسوق' : 'Keep shopping', href: 'shop.html' }] });
   };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', syncShop); else syncShop();
 })();
