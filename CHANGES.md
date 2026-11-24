@@ -56,3 +56,6 @@ Not changed on purpose: login.html (no real bug found), account.html (old redire
 
 ## 31. SEO tidy (TELEGANT, head tags only, no visual change)
 - Added Open Graph and Twitter card tags to colors, size-guide and terms (og:image added to terms). Pages already had title, description, canonical, JSON-LD (home/shop), sitemap and robots.
+
+## 32. Fix: sideways scroll on phone for login/account and chat survey (TELEGANT)
+- The login card was 100% wide plus padding, so it overflowed a 375px screen by about 10px. Added box-sizing:border-box to .box in the affected pages. Same look, no horizontal scroll.
