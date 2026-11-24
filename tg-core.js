@@ -62,8 +62,18 @@
   if (page !== 'admin.html' && page !== 'login.html') {
     var sid = sessionStorage.tg_sid || (sessionStorage.tg_sid = crypto.randomUUID());
     var vid = localStorage.tg_vid || (localStorage.tg_vid = crypto.randomUUID());
+    /* Where the visit came from (UTM tags, Meta click id, referrer host), kept for the whole visit. Stored on the view event only. */
+    var att = null; try { att = JSON.parse(sessionStorage.tg_att || 'null'); } catch (e) { }
+    if (!att) {
+      var q0 = new URLSearchParams(location.search), rh = '';
+      try { rh = document.referrer ? new URL(document.referrer).hostname.replace(/^www\./, '') : ''; if (rh === location.hostname) rh = ''; } catch (e) { }
+      att = { utm_source: q0.get('utm_source') || null, utm_medium: q0.get('utm_medium') || null, utm_campaign: q0.get('utm_campaign') || null, utm_content: q0.get('utm_content') || null, has_fbclid: !!q0.get('fbclid'), ref_host: rh || null, inapp: /FBAN|FBAV|FB_IAB|Instagram/i.test(navigator.userAgent) };
+      try { sessionStorage.tg_att = JSON.stringify(att); } catch (e) { }
+    }
     var ev = function (t, target) {
-      sb.from('page_events').insert({ session_id: sid, visitor_id: vid, page: page, event_type: t, target: target || null }).then(function () {});
+      var row = { session_id: sid, visitor_id: vid, page: page, event_type: t, target: target || null };
+      if (t === 'view') Object.assign(row, att);
+      sb.from('page_events').insert(row).then(function () {});
     };
     ev('view');
     var eng = 0, engage = function () { if (!eng) { eng = 1; ev('engaged'); } };

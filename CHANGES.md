@@ -79,3 +79,9 @@ Not changed on purpose: login.html (no real bug found), account.html (old redire
 
 ## 36. "Back to website" button in the admin header (TELEGANT)
 - New button at the left of the admin header actions (same style as Chat console). Opens the home page; the admin session stays signed in, nothing is signed out.
+
+## 37. Analytics: Meta ads visitors per page and campaigns (no design change)
+- DB additive (sql/analytics-meta.sql): nullable columns on page_events (utm_source, utm_medium, utm_campaign, utm_content, has_fbclid, ref_host, channel, platform, inapp), a BEFORE INSERT trigger that classifies the channel on the server (meta_paid, meta_click, meta_organic, referral, direct), function meta_ads_summary (owner only). Existing rows, policies and the page_stats view are untouched; old rows have no channel and are not counted as ad traffic.
+- tg-core.js: the existing visit tracking now also records the UTM tags, Meta click id (fbclid flag), referrer host and in-app browser flag on the view event, kept for the whole visit. Writes to TELEGANT's own project only (vjnaaubbxpqlolvgtweo, from tg-core.js). tg-core.js is now cache-busted (?v=) on all pages.
+- Admin > Analytics: the existing table is unchanged; below it a new "Meta ads visitors per page" section and a Campaigns table. Until a Pixel ID is saved and an ad-sourced visit exists it shows "No data yet. Add your Pixel ID in Marketing and run ads with UTM links."
+- Limits stated on the page: in-app browsers and ad blockers undercount; campaign detail needs UTM links.
