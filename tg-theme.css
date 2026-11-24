@@ -43,3 +43,6 @@ html[data-tg-theme="dark"] img[src*="MEBG-GOLDEN"]{filter:brightness(0) invert(1
 
 /* PRODUCT PHOTOS: the new pictures are portrait photos of a person. Show the shirt, not just the middle of the picture. */
 .product-card img,#cat-grid .product-card img{width:100%;aspect-ratio:4/5;object-fit:cover;object-position:50% 30%}
+
+/* Shop: "Add to Cart" must match the "Buy Now" button size (it had a 1px border + wide padding, so it grew taller/wrapped on narrow cards) */
+.tg-add{border:0 !important;box-shadow:inset 0 0 0 1px #c9a24b;padding-inline:12px !important;white-space:nowrap;line-height:normal}
