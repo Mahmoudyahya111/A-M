@@ -115,7 +115,9 @@ window.TelegantShop = (function () {
         const count = counts[key] || 0;
         out.push({
           date: key,
-          label: d.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' }),
+          label: d.toLocaleDateString(
+            (function () { try { return (localStorage.getItem('telegant-lang') || document.documentElement.lang) === 'ar' ? 'ar-EG' : 'en-GB'; } catch (e) { return 'en-GB'; } })(),
+            { weekday: 'short', month: 'short', day: 'numeric' }),
           count,
           full: count > DAILY_CAP
         });
