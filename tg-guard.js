@@ -9,8 +9,8 @@
       if (off[h] && !a.dataset.tgg) { a.dataset.tgg = 1; var li = a.closest('li'); (li || a).style.display = 'none'; }
     });
   }
-  TG.sb.from('site_pages').select('file,active').then(function (r) {
-    if (!r.data) return; off = {}; r.data.forEach(function (p) { if (!p.active) off[p.file] = 1; });
+  TG.sb.from('site_pages').select('file,active,deleted').then(function (r) {
+    if (!r.data) return; off = {}; r.data.forEach(function (p) { if (!p.active || p.deleted) off[p.file] = p.deleted ? 2 : 1; });
     if (!Object.keys(off).length) return;
     var go = function () {
       hideLinks(); new MutationObserver(hideLinks).observe(document.body, { childList: true, subtree: true });
@@ -20,8 +20,8 @@
         document.title = 'TELEGANT';
         Array.prototype.slice.call(document.body.children).forEach(function (n) { if (n.tagName !== 'SCRIPT' && n.tagName !== 'NAV' && n.tagName !== 'HEADER' && n.tagName !== 'FOOTER' && !/navbar|nav|footer/i.test(n.className + n.id)) n.style.display = 'none'; });
         var d = document.createElement('div'); d.style.cssText = 'max-width:520px;margin:90px auto;padding:0 20px;text-align:center;font-family:inherit';
-        d.innerHTML = '<h1 style="font-size:26px;margin-bottom:12px">' + (ar ? 'هذه الصفحة غير متاحة' : 'This page is not available') + '</h1><p style="margin-bottom:22px">' + (ar ? 'يمكنك متابعة التسوق من الصفحة الرئيسية.' : 'You can keep browsing from the home page.') + '</p><a href="' + (off['index.html'] ? 'shop.html' : 'index.html') + '" style="display:inline-block;padding:12px 26px;border:1px solid currentColor;border-radius:8px;text-decoration:none;color:inherit">' + (ar ? 'الصفحة الرئيسية' : 'Go to home page') + '</a>';
-        document.body.appendChild(d);
+        d.innerHTML = '<h1 style="font-size:26px;margin-bottom:12px">' + (off[f] === 2 ? (ar ? 'الصفحة غير موجودة' : 'Page not found') : (ar ? 'هذه الصفحة غير متاحة' : 'This page is not available')) + '</h1><p style="margin-bottom:22px">' + (ar ? 'يمكنك متابعة التسوق من الصفحة الرئيسية.' : 'You can keep browsing from the home page.') + '</p><a href="' + (off['index.html'] ? 'shop.html' : 'index.html') + '" style="display:inline-block;padding:12px 26px;border:1px solid currentColor;border-radius:8px;text-decoration:none;color:inherit">' + (ar ? 'الصفحة الرئيسية' : 'Go to home page') + '</a>';
+        var ft = document.querySelector('footer'); d.style.margin = '90px auto 110px'; if (ft && ft.parentNode) ft.parentNode.insertBefore(d, ft); else document.body.appendChild(d);
       }
     };
     if (document.body) go(); else document.addEventListener('DOMContentLoaded', go);

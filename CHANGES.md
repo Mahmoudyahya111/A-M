@@ -66,3 +66,10 @@ Not changed on purpose: login.html (no real bug found), account.html (old redire
 - Admin > Pages: new "Website pages" card with Hide/Activate per page; essential pages (home, shop, category/product, cart and checkout, account, terms) ask for a warning confirmation. Created pages below now say Hide/Activate too (they already had the toggle).
 - Limit: sitemap.xml is a static file on GitHub Pages, it cannot change when a toggle changes. Hidden pages carry noindex, so Google drops them after the next crawl. Edit sitemap.xml too if a page is hidden for good.
 - Revert: remove the tg-guard.js script tags (drop table optional).
+
+## 34. Delete pages with restore (TELEGANT)
+- DB additive: site_pages.deleted column, new table pages_trash (owner-only) that stores a full copy of a created page before it is deleted.
+- Admin > Pages: Delete on every non-essential built-in page (soft delete: it leaves menu, footer and Google and the URL shows "Page not found"; Restore brings it back, because the page files live in the website code). Essential pages (home, shop, category/product, cart and checkout, account, terms) cannot be deleted, the admin explains and offers Hide.
+- Created pages: Delete saves a copy to pages_trash first (if the copy fails nothing is deleted), "Deleted pages" list has Restore.
+- Hidden/deleted page message now sits between header and footer.
+- Note: sitemap.xml is static, edit it if a page is removed for good.
