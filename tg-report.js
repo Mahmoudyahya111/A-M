@@ -3,7 +3,8 @@
    a cell is a value, or { v, c:'#hex' } to show a colour swatch */
 window.TGReport = (function () {
   var LIB = { x: 'https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js', j: 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js', a: 'https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js' }, P = {};
-  function load(k) { return P[k] || (P[k] = new Promise(function (res, rej) { var s = document.createElement('script'); s.src = LIB[k]; s.onload = res; s.onerror = function () { rej(new Error('Could not load the report library. Check your internet connection.')); }; document.head.appendChild(s); })); }
+  /* the autotable plugin (a) must execute after jsPDF (j) or it never registers and doc.autoTable is undefined */
+  function load(k) { return P[k] || (P[k] = (k === 'a' ? load('j') : Promise.resolve()).then(function () { return new Promise(function (res, rej) { var s = document.createElement('script'); s.src = LIB[k]; s.onload = res; s.onerror = function () { rej(new Error('Could not load the report library. Check your internet connection.')); }; document.head.appendChild(s); }); })); }
   LIB.f1 = 'https://cdn.jsdelivr.net/npm/@expo-google-fonts/noto-naskh-arabic@0.4.5/400Regular/NotoNaskhArabic_400Regular.ttf';
   LIB.f2 = 'https://cdn.jsdelivr.net/npm/@expo-google-fonts/noto-naskh-arabic@0.4.5/700Bold/NotoNaskhArabic_700Bold.ttf';
   function b64(u) { return fetch(u).then(function (r) { if (!r.ok) throw new Error('Could not load the Arabic font. Check your internet connection.'); return r.arrayBuffer(); }).then(function (b) { var a = new Uint8Array(b), s = '', i; for (i = 0; i < a.length; i += 0x8000) s += String.fromCharCode.apply(null, a.subarray(i, i + 0x8000)); return btoa(s); }); }
