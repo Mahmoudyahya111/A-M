@@ -190,14 +190,14 @@ const TABS={
    statusCell(o,aw)];}));},
  async Users(){const{data}=await sb.from('profiles').select('*').order('created_at',{ascending:false});
   return `<div id="adrBox"></div><div class="card"><h3>Add user (manufacturer, delivery, support or another owner)</h3><div class="row">
-   <input id="ue" type="email" placeholder="Email"><input id="up" type="text" placeholder="Password (8+)">
+   <input id="ue" type="email" placeholder="Email"><input id="up" type="text" placeholder="Password (8+)"><button class="b" type="button" id="genU">Generate</button>
    <select id="ur"><option>manufacturer</option><option>delivery</option><option>support</option><option>owner</option></select><button class="b p" id="addU">Add user</button></div></div>`+
    tbl(['Email','Name','Role','Status','Joined','Actions'],(data||[]).map(u=>[esc(u.email),
     `<input data-nm="${u.id}" value="${esc(u.full_name||'')}" placeholder="Add name" style="width:150px">`,
     u.id===me.id?esc(u.role):`<select data-role="${u.id}">${R.map(x=>`<option${x===u.role?' selected':''}>${x}</option>`).join('')}</select>`,
     `<span class="tag">${esc(u.status)}</span>`,new Date(u.created_at).toLocaleDateString(),
     (u.id===me.id?'(you) ':'')+(u.id!==me.id&&u.status!=='approved'?`<button class="b" data-ap="${u.id}">Approve</button> `:'')+(u.id!==me.id&&u.status==='pending'?`<button class="b" data-rj="${u.id}">Reject</button> `:'')+
-    `<button class="b" data-rs="${esc(u.email)}">Send password reset</button> <button class="b" data-ad="${u.id}" data-who="${esc(u.full_name||u.email)}">Saved addresses</button>`+(u.id!==me.id?` <button class="b" data-del="${u.id}">Remove</button>`:'')]));},
+    `<button class="b" data-rs="${esc(u.email)}">Send password reset</button> <button class="b" data-pw="${esc(u.email)}">Set / generate password</button> <button class="b" data-ad="${u.id}" data-who="${esc(u.full_name||u.email)}">Saved addresses</button>`+(u.id!==me.id?` <button class="b" data-del="${u.id}">Remove</button>`:'')]));},
  async Products(){const[{data},{data:cats}]=await Promise.all([sb.from('products').select('*').order('id'),sb.from('categories').select('*').order('name_en')]);
   const co=v=>'<option value="">No category</option>'+(cats||[]).slice().sort((x,y)=>clabel(x,cats).localeCompare(clabel(y,cats))).map(c=>`<option value="${c.id}"${String(c.id)===String(v)?' selected':''}>${esc(clabel(c,cats))}</option>`).join('');
   return `<div class="card"><div class="row"><label>Show products in <select id="pfil"><option value="">All categories</option>${(cats||[]).slice().sort((x,y)=>clabel(x,cats).localeCompare(clabel(y,cats))).map(c=>`<option value="${c.id}"${String(c.id)===PF?' selected':''}>${esc(clabel(c,cats))}</option>`).join('')}</select></label></div></div><div class="card"><h3>Add product</h3><div class="row"><input id="pn" placeholder="Name (EN)"><input id="pa" placeholder="Name (AR)">
@@ -407,6 +407,12 @@ $('#v').addEventListener('click',async e=>{const t=e.target,d=t.dataset;if(!t.cl
       const secs=[...document.querySelectorAll('#gsec .sec')].map(s=>({h:s.querySelector('.gsh').value.trim(),p:s.querySelector('.gsb').value.trim()})).filter(s=>s.h||s.p);
       Object.assign(row,{kind:'custom',slug:slug(ti),content:JSON.stringify({sections:secs})});const g=await sb.from('pages').insert(row);if(g.error)throw g.error;alert('Page created.');return show('Pages');
     }catch(e){alert(e.code==='23505'?'A page with this name already exists.':(e.message||e));}finally{t.disabled=false;}return;}
+  if(t.id==='genU'){const A='ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%*-_',b=new Uint32Array(14);crypto.getRandomValues(b);$('#up').value=[...b].map(x=>A[x%A.length]).join('')+'7';return;}
+  if(d.pw){$('#adrBox').innerHTML=`<div class="card" id="pwc"><h3>Password for ${esc(d.pw)}</h3><p><small>The user is signed out only when their current session expires. Share the password privately. It is shown once here and is never saved or logged by the site.</small></p><div class="row"><input id="pwn" type="text" dir="ltr" placeholder="Type a new password (8+)" autocomplete="off"><button class="b p" data-pws="${esc(d.pw)}">Set this password</button><button class="b" data-pwg="${esc(d.pw)}">Generate for me</button></div><div id="pwo"></div></div>`;$('#pwc').scrollIntoView({block:'center'});return;}
+  if(d.pws||d.pwg){const em=d.pws||d.pwg,pw=$('#pwn').value;if(d.pws&&pw.length<8)return alert('Password must be at least 8 characters.');if(!await TG.ask((d.pwg?'Generate a new password for ':'Change the password of ')+em+'? Their old password will stop working.'))return;
+    const r=await sb.functions.invoke('admin-passwords',{body:d.pwg?{action:'generate_password',email:em}:{action:'set_password',email:em,password:pw}});
+    const err=r.data?.error||(r.error&&r.error.message);if(err)return alert(err);const p=d.pwg?r.data.password:pw;
+    $('#pwo').innerHTML=`<div class="card" style="margin-top:10px"><b>Done. New password for ${esc(em)}:</b><div style="font-size:20px;font-family:monospace;margin:8px 0;user-select:all" dir="ltr">${esc(p)}</div><button class="b" id="pwcp">Copy</button> <small>Shown once. Close this panel when you have shared it.</small></div>`;$('#pwn').value='';$('#pwcp').onclick=()=>{navigator.clipboard&&navigator.clipboard.writeText(p);$('#pwcp').textContent='Copied';};return;}
   if(d.rs&&await TG.ask('Send a password reset email to '+d.rs+'?')){const r=await sb.auth.resetPasswordForEmail(d.rs,{redirectTo:new URL('login.html',location.href).href});return alert(r.error?r.error.message:'Reset link sent to '+d.rs+'.');}
   if(d.ad){const r=await sb.from('orders').select('customer_name,phone,address,created_at,order_number').eq('user_id',d.ad).order('created_at',{ascending:false}),seen={},L=[];
     (r.data||[]).forEach(o=>{const k=String(o.address||'').toLowerCase().replace(/\\s+/g,' ').trim()+'|'+o.phone;if(!seen[k]){seen[k]={o,n:0};L.push(seen[k]);}seen[k].n++;});

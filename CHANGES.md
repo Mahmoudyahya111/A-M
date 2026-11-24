@@ -41,3 +41,8 @@ Not changed on purpose: login.html (no real bug found), account.html (old redire
 - UTM/fbclid kept 30 days in localStorage (tg_utm) and sent with the order: new nullable column orders.attribution jsonb; place_order patched to store it (old definition: backups/place_order-before-attribution.sql).
 - Admin > Marketing section 9: Pixel ID field (validated), Save, Remove, Check status, Test Events steps, consent note, UTM link builder.
 - Revert: git revert this commit (column can stay).
+
+## 29. Owner password management (TELEGANT)
+- New edge function `admin-passwords` (supabase/functions/admin-passwords/index.ts, deployed, verify_jwt on). Owner-only (checked server-side from profiles). Actions: set_password, generate_password (server makes a 14-char random password with crypto RNG, returns it once, never stores/logs it). Cannot change another owner's password. Existing `admin-users` function untouched. No DB change.
+- Admin > Users: "Set / generate password" button per user, and a "Generate" button beside the password field of Add user.
+- Revert: git revert + delete the function.
