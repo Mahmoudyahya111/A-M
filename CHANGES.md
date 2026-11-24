@@ -59,3 +59,10 @@ Not changed on purpose: login.html (no real bug found), account.html (old redire
 
 ## 32. Fix: sideways scroll on phone for login/account and chat survey (TELEGANT)
 - The login card was 100% wide plus padding, so it overflowed a 375px screen by about 10px. Added box-sizing:border-box to .box in the affected pages. Same look, no horizontal scroll.
+
+## 33. Pages on/off for every page (TELEGANT)
+- New table site_pages (file, title, essential, active). Additive, no existing table touched, so no backup needed. Public read, owner-only write (is_owner()). Seeded with the 12 public pages.
+- New tg-guard.js on the public pages: a hidden page shows "This page is not available" (AR/EN), is set to noindex, and its links disappear from menu and footer.
+- Admin > Pages: new "Website pages" card with Hide/Activate per page; essential pages (home, shop, category/product, cart and checkout, account, terms) ask for a warning confirmation. Created pages below now say Hide/Activate too (they already had the toggle).
+- Limit: sitemap.xml is a static file on GitHub Pages, it cannot change when a toggle changes. Hidden pages carry noindex, so Google drops them after the next crawl. Edit sitemap.xml too if a page is hidden for good.
+- Revert: remove the tg-guard.js script tags (drop table optional).
